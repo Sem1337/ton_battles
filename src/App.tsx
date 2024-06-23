@@ -46,7 +46,7 @@ function App() {
   const [count, setCount] = useState(0)
   return (
     <TonConnectUIProvider 
-      manifestUrl="https://sem1337.github.io/tonconnect-manifest.json"
+      manifestUrl="https://sem1337.github.io/ton_battles/tonconnect-manifest.json"
       actionsConfiguration={{
         twaReturnUrl: 'https://t.me/ton_battles_bot'
       }}
