@@ -1,10 +1,9 @@
+import './App.css'
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
-import './App.css'
 import WebApp from '@twa-dev/sdk'
-import { TonConnectUIProvider } from '@tonconnect/ui-react';
-import {Header} from './components/Header/Header'
+import { Header } from './components/Header/Header'
 
 /*
 export const Address = () => {
@@ -39,12 +38,6 @@ export const Wallet = () => {
 function App() {
   const [count, setCount] = useState(0)
   return (
-    <TonConnectUIProvider 
-      manifestUrl="https://sem1337.github.io/ton_battles/tonconnect-manifest.json"
-      actionsConfiguration={{
-        twaReturnUrl: 'https://t.me/ton_battles_bot'
-      }}
-    > 
     <>
     <Header />
       <div>
@@ -68,8 +61,6 @@ function App() {
         </button>
       </div>
     </>
-
-    </TonConnectUIProvider>
   )
 }
 
