@@ -8,7 +8,7 @@ import { TonConnectUIProvider, TonConnectButton } from '@tonconnect/ui-react';
 function App() {
   const [count, setCount] = useState(0)
   return (
-    <TonConnectUIProvider manifestUrl="https://<YOUR_APP_URL>/tonconnect-manifest.json">
+    <TonConnectUIProvider manifestUrl="https://sem1337.github.io/tonconnect-manifest.json">
     <>
       <div>
         <a href="https://vitejs.dev" target="_blank">
