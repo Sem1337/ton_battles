@@ -1,8 +1,4 @@
 import './App.css'
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import WebApp from '@twa-dev/sdk'
 import { Header } from './components/Header/Header'
 import { AddressInfo } from './components/AddressInfo/AddressInfo'
 import { WalletInfo } from './components/WalletInfo/WalletInfo'

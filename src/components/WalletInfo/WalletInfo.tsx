@@ -1,4 +1,4 @@
-import { useTonWallet } from "@tonconnect/ui-react"
+import { WalletInfoWithOpenMethod, isWalletInfoInjectable, useTonWallet } from "@tonconnect/ui-react"
 
 export const WalletInfo = () => {
     const wallet = useTonWallet();
@@ -9,8 +9,8 @@ export const WalletInfo = () => {
 
     return (
         <div style={{marginBottom: '20px', display: 'flex', gap: '10px', alignItems: 'center'}}>
-            <img src={wallet.imageUrl} height="30px" width="30px" />
-            { wallet.name }
+            <img src={(wallet as WalletInfoWithOpenMethod).imageUrl} height="30px" width="30px" />
+            { (wallet as WalletInfoWithOpenMethod).name }
         </div>
     );
 }
