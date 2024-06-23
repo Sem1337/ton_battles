@@ -37,8 +37,10 @@ function App() {
   return (
     <>
     <Header />
-    <AddressInfo />
-    <WalletInfo />
+    <div style={{height: '140px'}}>
+      <AddressInfo />
+      <WalletInfo />
+    </div>
     </>
   )
 }
