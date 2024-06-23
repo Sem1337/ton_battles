@@ -2,13 +2,13 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
-
 import WebApp from '@twa-dev/sdk'
+import { TonConnectUIProvider, TonConnectButton } from '@tonconnect/ui-react';
 
 function App() {
   const [count, setCount] = useState(0)
-
   return (
+    <TonConnectUIProvider manifestUrl="https://<YOUR_APP_URL>/tonconnect-manifest.json">
     <>
       <div>
         <a href="https://vitejs.dev" target="_blank">
@@ -31,7 +31,17 @@ function App() {
         </button>
       </div>
     </>
+    </TonConnectUIProvider>
   )
 }
+
+export const Header = () => {
+  return (
+      <header>
+          <span>My App with React UI</span>
+          <TonConnectButton />
+      </header>
+  );
+};
 
 export default App
