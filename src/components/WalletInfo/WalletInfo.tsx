@@ -1,4 +1,4 @@
-import { WalletInfoWithOpenMethod, isWalletInfoInjectable, useTonWallet } from "@tonconnect/ui-react"
+import { WalletInfoWithOpenMethod, useTonWallet } from "@tonconnect/ui-react"
 
 export const WalletInfo = () => {
     const wallet = useTonWallet();
