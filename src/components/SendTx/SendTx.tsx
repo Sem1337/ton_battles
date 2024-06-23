@@ -24,7 +24,7 @@ export const SendTx = () => {
             break;
     }
 
-    const onClick = () => {
+    const onClick = async () => {
         if (!wallet) {
             tonConnectUI.openModal();
         } else {
