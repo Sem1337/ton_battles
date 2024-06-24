@@ -9,7 +9,8 @@
     "build:backend": "cd backend; tsc -b",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview:frontend": "cd frontend; vite preview",
-    "start:backend": "cd backend; tsc -b && node ../dist_backend/index.js"
+    "start:backend": "cd backend; tsc -b && node ../dist_backend/index.js",
+    "build": "npm run build:backend; npm run build:frontend"
   },
   "dependencies": {
     "@tonconnect/ui-react": "^2.0.5",
