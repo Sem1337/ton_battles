@@ -15,6 +15,7 @@ docs
 certs
 dist_backend
 dist_frontend
+.env
 
 # Editor directories and files
 .vscode/*
