@@ -4,21 +4,27 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
+    "dev:frontend": "cd frontend; vite",
+    "build:frontend": "cd frontend; tsc -b  && vite build --emptyOutDir ",
+    "build:backend": "cd backend; tsc -b",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview:frontend": "cd frontend; vite preview",
+    "start:backend": "cd backend; tsc -b && node ../dist_backend/index.js"
   },
   "dependencies": {
     "@tonconnect/ui-react": "^2.0.5",
     "@twa-dev/sdk": "^7.0.0",
     "@vitejs/plugin-basic-ssl": "^1.1.0",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
     "express": "^4.19.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "vite-plugin-mkcert": "^1.17.5"
   },
   "devDependencies": {
+    "@types/body-parser": "^1.19.5",
+    "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/node": "^20.14.8",
     "@types/react": "^18.3.3",

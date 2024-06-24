@@ -13,6 +13,8 @@ dist-ssr
 *.local
 docs
 certs
+dist_backend
+dist_frontend
 
 # Editor directories and files
 .vscode/*
