@@ -1,0 +1,56 @@
+name: Backend CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+        options: >-
+          --health-cmd="pg_isready -U ${{ secrets.POSTGRES_USER }}"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+        ports:
+          - 5432:5432
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'
+
+    - name: Install dependencies
+      run: npm install --prefix backend
+
+    - name: Wait for PostgreSQL
+      run: until pg_isready -h localhost -p 5432 -U ${{ secrets.POSTGRES_USER }}; do echo waiting for postgres; sleep 2; done
+
+    - name: Run migrations (if applicable)
+      env:
+        DB_USERNAME: ${{ secrets.POSTGRES_USER }}
+        DB_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+        DB_NAME: ${{ secrets.POSTGRES_DB }}
+        DB_HOST: localhost
+      run: npm run migrate:backend --prefix backend
+
+    - name: Compile TypeScript
+      run: npm run build --prefix backend
+
+    - name: Run tests
+      env:
+        DATABASE_URL: postgres://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/${{ secrets.POSTGRES_DB }}
+      run: npm test --prefix backend

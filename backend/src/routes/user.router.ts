@@ -9,9 +9,15 @@ const jsonParser = bodyParser.json();
 router.get('/users', async (_req: Request, res: Response) => {
   try {
     const users = await User.findAll();
-    res.json(users);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch users' });
+    return res.json(users);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error fetching users:", error.message);
+      return res.status(500).json({ error: 'Failed to fetch users', details: error.message });
+    } else {
+      console.error("Unexpected error:", error);
+      return res.status(500).json({ error: 'Failed to fetch users', details: 'Unknown error occurred' });
+    }
   }
 });
 
@@ -21,17 +27,21 @@ router.post('/users/:id', jsonParser, async (req: Request, res: Response) => {
   const { balance } = req.body;
 
   try {
-    // Check if user with the same ID already exists
     const existingUser = await User.findByPk(id);
     if (existingUser) {
       return res.status(400).json({ error: 'User with this ID already exists' });
     }
 
-    // Create new user
     const newUser = await User.create({ id, balance });
     return res.status(201).json(newUser);
-  } catch (error) {
-    return res.status(500).json({ error: 'Failed to create user' });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error creating user:", error.message);
+      return res.status(500).json({ error: 'Failed to create user', details: error.message });
+    } else {
+      console.error("Unexpected error:", error);
+      return res.status(500).json({ error: 'Failed to create user', details: 'Unknown error occurred' });
+    }
   }
 });
 
@@ -46,8 +56,14 @@ router.get('/users/:id', async (req: Request, res: Response) => {
     }
 
     return res.json(user);
-  } catch (error) {
-    return res.status(500).json({ error: 'Failed to fetch user' });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error fetching user by ID:", error.message);
+      return res.status(500).json({ error: 'Failed to fetch user', details: error.message });
+    } else {
+      console.error("Unexpected error:", error);
+      return res.status(500).json({ error: 'Failed to fetch user', details: 'Unknown error occurred' });
+    }
   }
 });
 
