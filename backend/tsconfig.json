@@ -17,8 +17,6 @@
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
     "strict": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
