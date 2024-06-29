@@ -52,7 +52,7 @@ jobs:
         DB_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
         DB_NAME: ${{ secrets.POSTGRES_DB }}
         DB_HOST: localhost
-      run: npm run migrate:backend --prefix backend
+      run: npm run migrate --prefix backend
 
     - name: Compile TypeScript
       run: npm run build --prefix backend
