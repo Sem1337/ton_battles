@@ -9,6 +9,7 @@ on:
 jobs:
   backend:
     uses: ./.github/workflows/ci-backend.yml
+    secrets: inherit
     with:
       POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
       POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
