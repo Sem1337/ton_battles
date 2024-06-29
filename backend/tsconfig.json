@@ -4,6 +4,7 @@
     "module": "ESNext",
     "lib": ["dom", "es6", "es2018", "esnext.asynciterable"],
     "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
     "sourceMap": true,
     "outDir": "./dist_backend",
     "moduleResolution": "node",
@@ -21,7 +22,10 @@
     "strict": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "paths": {
+      "*": ["./node_modules/*"]
+    }
   },
   "exclude": ["node_modules"],
   "include": ["src/**/*"],   /* Files to include */
