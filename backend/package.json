@@ -3,31 +3,33 @@
     "version": "1.0.0",
     "type": "module",
     "scripts": {
-      "build": "tsc",
-      "test": "",
-      "pre-migrate": "mkdir -p ./migrations",
-      "migrate": "npm run pre-migrate && npx sequelize-cli db:migrate",
-      "seed": "npx sequelize-cli db:seed:all"
+        "build": "tsc",
+        "test": "",
+        "pre-migrate": "mkdir -p ./migrations",
+        "migrate": "npm run pre-migrate && npx sequelize-cli db:migrate",
+        "seed": "npx sequelize-cli db:seed:all"
     },
     "dependencies": {
-      "body-parser": "^1.20.2",
-      "cors": "^2.8.5",
-      "dotenv": "^16.4.5",
-      "express": "^4.19.2",
-      "pg": "^8.12.0",
-      "sequelize": "^6.37.3",
-      "tsconfig-paths": "^4.2.0"
+        "body-parser": "^1.20.2",
+        "cors": "^2.8.5",
+        "dotenv": "^16.4.5",
+        "express": "^4.19.2",
+        "pg": "^8.12.0",
+        "sequelize": "^6.37.3",
+        "tsconfig-paths": "^4.2.0"
     },
     "devDependencies": {
-      "@types/body-parser": "^1.19.5",
-      "@types/cors": "^2.8.17",
-      "@types/express": "^4.17.21",
-      "@types/node": "^20.14.8",
-      "sequelize-cli": "^6.6.2",
-      "ts-node": "^10.9.2",
-      "typescript": "^5.5.2"
+        "@types/body-parser": "^1.19.5",
+        "@types/cors": "^2.8.17",
+        "@types/dotenv": "^8.2.0",
+        "@types/express": "^4.17.21",
+        "@types/node": "^20.14.9",
+        "@types/sequelize": "^4.28.20",
+        "sequelize-cli": "^6.6.2",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.5.2"
     },
     "sequelize": {
-      "config": "config/config.js"
+        "config": "config/config.js"
     }
 }
