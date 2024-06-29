@@ -37,9 +37,13 @@ jobs:
       run: npm install --prefix backend
 
     - name: Wait for PostgreSQL
-      run: until pg_isready -h localhost -p 5432 -U ${{ secrets.POSTGRES_USER }}; do echo waiting for postgres; sleep 2; done
+      run: |
+        until pg_isready -h localhost -p 5432 -U ${{ secrets.POSTGRES_USER }}; do
+          echo waiting for postgres
+          sleep 2
+        done
 
-    - name: Run migrations (if applicable)
+    - name: Run migrations
       env:
         DB_USERNAME: ${{ secrets.POSTGRES_USER }}
         DB_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
