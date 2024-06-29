@@ -29,3 +29,14 @@ jobs:
 
     - name: Run tests
       run: npm test --prefix frontend
+
+    - name: Setup Pages
+      uses: actions/configure-pages@v5
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        # Upload dist repository
+        path: './frontend/dist_frontend'
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
