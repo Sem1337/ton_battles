@@ -5,7 +5,8 @@
     "scripts": {
       "build": "tsc",
       "test": "",
-      "migrate": "npx sequelize-cli db:migrate",
+      "pre-migrate": "mkdir -p ./migrations",
+      "migrate": "npm run pre-migrate && npx sequelize-cli db:migrate",
       "seed": "npx sequelize-cli db:seed:all"
     },
     "dependencies": {
