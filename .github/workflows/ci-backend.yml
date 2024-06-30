@@ -10,8 +10,9 @@ on:
       DB_NAME:
         required: true
       DB_HOST:
-          required: true
-
+        required: true
+      GCP_SERVICE_ACCOUNT_KEY:
+        required: true
 jobs:
   backend:
     runs-on: ubuntu-latest
