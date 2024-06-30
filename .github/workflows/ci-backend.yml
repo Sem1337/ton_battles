@@ -46,25 +46,52 @@ jobs:
     - name: Install dependencies
       run: npm install --prefix backend
 
-    - name: Wait for PostgreSQL
+    - name: Authenticate to Google Cloud
       run: |
-        until pg_isready -h ${{ secrets.DB_HOST }} -p 5432 -U ${{ secrets.DB_USERNAME }}; do
-          echo waiting for postgres
-          sleep 2
-        done
+        echo "${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}" > ${HOME}/gcp-key.json
+        gcloud auth activate-service-account --key-file=${HOME}/gcp-key.json
+        gcloud --quiet config set project ${{ secrets.GCP_PROJECT }}
 
-    - name: Run migrations
+    - name: Install Cloud SQL Proxy
+      run: |
+        wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
+        chmod +x cloud_sql_proxy
+
+    - name: Start Cloud SQL Proxy
+      run: |
+        ./cloud_sql_proxy -instances=${{ secrets.DB_HOST }}=tcp:5432 &
       env:
-        DB_USER: ${{ secrets.DB_USERNAME }}
+        DB_USER: ${{ secrets.DB_USER }}
         DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         DB_NAME: ${{ secrets.DB_NAME }}
-        DB_HOST: ${{ secrets.DB_HOST }}
-      run: npm run migrate --prefix backend
+        DB_HOST: 127.0.0.1
 
-    - name: Compile TypeScript
-      run: npm run build --prefix backend
+    - name: Wait for Cloud SQL Proxy to be ready
+      run: |
+        until nc -z -v -w30 127.0.0.1 5432
+        do
+          echo "Waiting for Cloud SQL Proxy to be ready..."
+          sleep 5
+        done
+
+    - name: Run database migrations
+      run: |
+        cd backend
+        npm run migrate
+      env:
+        DB_USER: ${{ secrets.DB_USER }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        DB_NAME: ${{ secrets.DB_NAME }}
+        DB_HOST: 127.0.0.1
+        DB_PORT: 5432
 
     - name: Run tests
+      run: |
+        cd backend
+        npm test
       env:
-        DATABASE_URL: postgres://${{ secrets.DB_USERNAME }}:${{ secrets.DB_PASSWORD }}@${{ secrets.DB_HOST }}:5432/${{ secrets.DB_NAME }}
-      run: npm test --prefix backend
+        DB_USER: ${{ secrets.DB_USER }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        DB_NAME: ${{ secrets.DB_NAME }}
+        DB_HOST: 127.0.0.1
+        DB_PORT: 5432
