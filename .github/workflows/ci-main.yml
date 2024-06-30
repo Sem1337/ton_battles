@@ -20,12 +20,7 @@ concurrency:
 jobs:
   backend:
     uses: ./.github/workflows/ci-backend.yml
-    secrets:
-      DB_USERNAME: ${{ secrets.DB_USERNAME }}
-      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-      DB_NAME: ${{ secrets.DB_NAME }}
-      DB_HOST: ${{ secrets.DB_HOST}}
-      GCP_SERVICE_ACCOUNT_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+    secrets: inherit  # Pass all secrets to the backend workflow
 
   frontend:
     uses: ./.github/workflows/ci-frontend.yml
