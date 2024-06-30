@@ -6,11 +6,19 @@
   "scripts": {
     "dev:frontend": "npm --prefix frontend run dev",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+
+
+    "install:backend": "cd backend && npm ci",
+    "install:frontend": "cd frontend && npm ci",
+    "postinstall": "npm run install:backend && npm run install:frontend",
+
     "build:frontend": "npm --prefix frontend run build",
     "build:backend": "npm --prefix backend run build",
+    "build": "npm run build:backend && npm run build:frontend",
+
     "preview:frontend": "cd frontend && vite preview",
     "start:backend": "cd backend && ./stop_db.sh && ./run_db.sh && tsc -b && node ./dist_backend/index.js",
-    "build": "npm run build:backend && npm run build:frontend",
+
     "test:frontend": "cd frontend && npm test",
     "test:backend": "cd backend && npm test",
     "migrate:backend": "npm --prefix backend run migrate"
