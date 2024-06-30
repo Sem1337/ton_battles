@@ -13,6 +13,9 @@ on:
         required: true
       GCP_SERVICE_ACCOUNT_KEY:
         required: true
+      GCP_PROJECT:
+        required: true
+
 jobs:
   backend:
     runs-on: ubuntu-latest
@@ -33,7 +36,7 @@ jobs:
 
     - name: Authenticate to Google Cloud
       run: |
-        echo "${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}" > ${HOME}/gcp-key.json
+        echo "${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}" | base64 --decode > ${HOME}/gcp-key.json
         gcloud auth activate-service-account --key-file=${HOME}/gcp-key.json
         gcloud --quiet config set project ${{ secrets.GCP_PROJECT }}
 
