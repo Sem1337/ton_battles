@@ -15,6 +15,8 @@ handlers:
   - url: /.*
     script: auto
 
+entrypoint: npm start:backend
+
 automatic_scaling:
   target_cpu_utilization: 0.65
   min_instances: 1
