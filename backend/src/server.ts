@@ -38,6 +38,5 @@ sequelize.authenticate()
         });
     })
     .catch((error) => {
-        console.log('trying database host:', sequelize.config.host)
-        console.error('Unable to connect to the database or sync:', error);
+        console.error('Unable to connect to the database or sync:', error, sequelize.config.host);
     });

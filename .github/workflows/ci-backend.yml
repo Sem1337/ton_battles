@@ -17,6 +17,8 @@ on:
         required: true
       INSTANCE_CONNECTION_NAME:
         required: true
+      BOT_TOKEN:
+        required: true
 
 jobs:
   backend:
@@ -35,6 +37,15 @@ jobs:
 
     - name: Install dependencies
       run: npm install --prefix backend
+
+    - name: Replace placeholders with environment variables
+      run: |
+        sed -i 's/PLACEHOLDER_DB_HOST/${{ secrets.DB_HOST }}/g' app.yaml
+        sed -i 's/PLACEHOLDER_DB_USERNAME/${{ secrets.DB_USERNAME }}/g' app.yaml
+        sed -i 's/PLACEHOLDER_DB_PASSPASSWORD/${{ secrets.DB_PASSWORD }}/g' app.yaml
+        sed -i 's/PLACEHOLDER_DB_NAME/${{ secrets.DB_NAME }}/g' app.yaml
+        sed -i 's/PLACEHOLDER_INSTANCE_CONNECTION_NAME/${{ secrets.INSTANCE_CONNECTION_NAME }}/g' app.yaml
+        sed -i 's/PLACEHOLDER_BOT_TOKEN/${{ secrets.BOT_TOKEN }}/g' app.yaml
 
     - name: Authenticate to Google Cloud
       run: |

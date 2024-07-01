@@ -3,11 +3,12 @@ runtime: nodejs22
 instance_class: F2
 
 env_variables:
-  DB_USER: ${DB_USER}
-  DB_PASSWORD: ${DB_PASSWORD}
-  DB_NAME: ${DB_NAME}
-  DB_HOST: ${DB_HOST}
-  BOT_TOKEN: ${BOT_TOKEN}
+  DB_USERNAME: 'PLACEHOLDER_DB_USERNAME'
+  DB_PASSWORD: 'PLACEHOLDER_DB_PASSWORD'
+  DB_NAME: 'PLACEHOLDER_DB_NAME'
+  DB_HOST: 'PLACEHOLDER_DB_HOST'
+  BOT_TOKEN: 'PLACEHOLDER_BOT_TOKEN'
+  INSTANCE_CONNECTION_NAME: 'PLACEHOLDER_INSTANCE_CONNECTION_NAME'
 
 handlers:
   - url: /static
@@ -15,7 +16,7 @@ handlers:
   - url: /.*
     script: auto
 
-entrypoint: npm run start:backend
+entrypoint: ./cloud_sql_proxy -dir=/cloudsql -instances=$INSTANCE_CONNECTION_NAME & npm run start:backend
 
 automatic_scaling:
   target_cpu_utilization: 0.65
