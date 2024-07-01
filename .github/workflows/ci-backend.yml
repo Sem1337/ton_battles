@@ -66,8 +66,7 @@ jobs:
 
     - name: Run database migrations
       run: |
-        cd backend
-        npm run migrate
+        npm run migrate --prefix backend
       env:
         DB_USER: ${{ secrets.DB_USER }}
         DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
@@ -75,13 +74,32 @@ jobs:
         DB_HOST: 127.0.0.1
         DB_PORT: 5432
 
+    - name: Build backend
+      run: |
+        npm run build --prefix backend
+  
+    - name: Deploy to Google App Engine
+      env:
+        GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
+        GCP_SERVICE_ACCOUNT_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+        DB_USER: ${{ secrets.DB_USERNAME }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        DB_NAME: ${{ secrets.DB_NAME }}
+        DB_HOST: ${{ secrets.DB_HOST }}
+        BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+      run: |
+        echo "$GCP_SERVICE_ACCOUNT_KEY" > ${HOME}/gcp-key.json
+        gcloud auth activate-service-account --key-file=${HOME}/gcp-key.json
+        gcloud --quiet config set project $GCP_PROJECT
+        gcloud app deploy app.yaml --quiet
+
     - name: Run tests
       run: |
-        cd backend
-        npm test
+        npm test --prefix backend
       env:
         DB_USER: ${{ secrets.DB_USER }}
         DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         DB_NAME: ${{ secrets.DB_NAME }}
+        BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
         DB_HOST: 127.0.0.1
         DB_PORT: 5432

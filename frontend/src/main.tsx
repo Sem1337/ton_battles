@@ -5,8 +5,45 @@ import './index.css'
 import WebApp from '@twa-dev/sdk'
 import { TonConnectUIProvider } from '@tonconnect/ui-react'
 
-
 WebApp.ready();
+
+// Function to parse query string
+function parseQuery(queryString: string) {
+  const query: { [key: string]: string } = {};
+  const pairs = (queryString[0] === '?' ? queryString.substr(1) : queryString).split('&');
+  for (const pair of pairs) {
+    const [key, value] = pair.split('=');
+    query[decodeURIComponent(key)] = decodeURIComponent(value || '');
+  }
+  return query;
+}
+
+// Extract authData from the URL
+const authData = parseQuery(window.location.search);
+
+// Function to send authData to backend
+async function authenticateUser(authData: { [key: string]: string }) {
+  const response = await fetch('https://your-backend-url.com/auth', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(authData)
+  });
+
+  const result = await response.json();
+  if (result.status === 'ok') {
+    // User is authenticated
+    console.log('User authenticated', result.authData);
+  } else {
+    // Authentication failed
+    console.error('Authentication failed', result.message);
+  }
+}
+
+// Send authData to backend for verification
+authenticateUser(authData);
+
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

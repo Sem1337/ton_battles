@@ -4,6 +4,7 @@ import bodyParser from "body-parser";
 import userRouter from './routes/user.router.js';
 import gameRoomRouter from './routes/gameRoom.router.js';
 import sequelize from './database/db.js';
+import { authenticateUser } from './auth.js';
 
 const app = express();
 const port = 13337;
@@ -14,6 +15,9 @@ app.use(bodyParser.json());
 
 app.use(userRouter);
 app.use(gameRoomRouter);
+
+app.post('/auth', authenticateUser);
+
 
 sequelize.authenticate()
     .then(() => {
