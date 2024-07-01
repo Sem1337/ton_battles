@@ -1,14 +1,13 @@
 {
     "name": "backend",
     "version": "1.0.0",
-    "main": "src/server.ts",
     "type": "module",
     "scripts": {
         "build": "tsc",
         "test": "",
         "pre-migrate": "mkdir -p ./migrations",
         "migrate": "npm run pre-migrate && npx sequelize-cli db:migrate",
-        "start": "node ./dist_backend/index.js",
+        "start": "node ./dist_backend/server.js",
         "seed": "npx sequelize-cli db:seed:all"
     },
     "dependencies": {
