@@ -10,7 +10,7 @@ WebApp.ready();
 // Function to parse query string
 function parseQuery(queryString: string) {
   const query: { [key: string]: string } = {};
-  const pairs = (queryString[0] === '?' ? queryString.substr(1) : queryString).split('&');
+  const pairs = (queryString[0] === '?' ? queryString.slice(1) : queryString).split('&');
   for (const pair of pairs) {
     const [key, value] = pair.split('=');
     query[decodeURIComponent(key)] = decodeURIComponent(value || '');
@@ -23,7 +23,7 @@ const authData = parseQuery(window.location.search);
 
 // Function to send authData to backend
 async function authenticateUser(authData: { [key: string]: string }) {
-  const response = await fetch('https://ton-btl.ew.r.appspot.com/auth', {
+  const response = await fetch('https://ton-btl.ew.r.appspot.com:13337/auth', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
