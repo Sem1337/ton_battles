@@ -22,7 +22,7 @@ app.use(gameRoomRouter);
 
 app.post('/auth', authenticateUser);
 
-app.get('/', () => {console.log('Hello world !')});
+//app.get('/', () => {console.log('Hello world !')});
 
 
 sequelize.authenticate()

@@ -4,6 +4,7 @@ import crypto from 'crypto';
 const BOT_TOKEN = process.env.BOT_TOKEN || 'your_bot_token_here';
 
 export const authenticateUser = (req: Request, res: Response) => {
+  console.log('received auth request!')
   const authData = req.body;
   const checkString = Object.keys(authData)
     .filter(key => key !== 'hash')
