@@ -10,7 +10,11 @@ const app = express();
 const port = 13337;
 
 
-app.use(cors());
+app.use(cors({
+    origin: 'https://sem1337.github.io', // Replace with your frontend URL
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE'
+}));
+
 app.use(bodyParser.json());
 
 app.use(userRouter);
