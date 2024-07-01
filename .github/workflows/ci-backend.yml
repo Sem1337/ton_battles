@@ -87,7 +87,7 @@ jobs:
         DB_USER: ${{ secrets.DB_USERNAME }}
         DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         DB_NAME: ${{ secrets.DB_NAME }}
-        DB_HOST: ${{ secrets.DB_HOST }}
+        DB_HOST: 127.0.0.1
         BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
       run: |
         echo "$GCP_SERVICE_ACCOUNT_KEY" > ${HOME}/gcp-key.json
