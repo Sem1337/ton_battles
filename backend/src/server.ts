@@ -22,7 +22,7 @@ app.use(gameRoomRouter);
 
 app.post('/auth', authenticateUser);
 
-app.get('/', (req, res) => {
+app.get('/', (_req, res) => {
     res.send('Hello world');
   });
 //app.get('/', () => {console.log('Hello world !')});
