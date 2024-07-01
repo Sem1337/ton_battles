@@ -23,7 +23,7 @@ const authData = parseQuery(window.location.search);
 
 // Function to send authData to backend
 async function authenticateUser(authData: { [key: string]: string }) {
-  const response = await fetch('https://ton-btl.ew.r.appspot.com:13337/auth', {
+  const response = await fetch('https://ton-btl.ew.r.appspot.com/auth', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
