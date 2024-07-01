@@ -15,6 +15,8 @@ handlers:
     static_dir: frontend/dist
   - url: /.*
     script: auto
+  - url: /auth
+    script: auto
 
 beta_settings:
   cloud_sql_instances: PLACEHOLDER_INSTANCE_CONNECTION_NAME
