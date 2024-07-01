@@ -15,7 +15,7 @@ handlers:
   - url: /.*
     script: auto
 
-entrypoint: npm start:backend
+entrypoint: npm run start:backend
 
 automatic_scaling:
   target_cpu_utilization: 0.65
