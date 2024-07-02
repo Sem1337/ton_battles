@@ -7,25 +7,13 @@ import { TonConnectUIProvider } from '@tonconnect/ui-react'
 
 WebApp.ready();
 
-// Function to parse query string
-function parseQuery(queryString: string) {
-  console.error(queryString);
-  const query: { [key: string]: string } = {};
-  const pairs = (queryString[0] === '?' ? queryString.slice(1) : queryString).split('&');
-  for (const pair of pairs) {
-    const [key, value] = pair.split('=');
-    query[decodeURIComponent(key)] = decodeURIComponent(value || '');
-  }
-  return query;
-}
-
 const initData = WebApp.initData;
 const initDataUnsafe = WebApp.initDataUnsafe
 console.log("Init Data:", initData);
 console.log("Init Data Unsafe:", initDataUnsafe);
 
 // Function to send authData to backend
-async function authenticateUser(authData: { [key: string]: string }) {
+async function authenticateUser(authData: string) {
   const response = await fetch('https://ton-btl.ew.r.appspot.com/auth', {
     method: 'POST',
     headers: {
@@ -47,7 +35,7 @@ async function authenticateUser(authData: { [key: string]: string }) {
 }
 
 // Send authData to backend for verification
-authenticateUser(parseQuery(initData));
+authenticateUser(initData);
 
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
