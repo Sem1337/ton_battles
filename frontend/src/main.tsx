@@ -9,6 +9,7 @@ WebApp.ready();
 
 // Function to parse query string
 function parseQuery(queryString: string) {
+  console.error(queryString);
   const query: { [key: string]: string } = {};
   const pairs = (queryString[0] === '?' ? queryString.slice(1) : queryString).split('&');
   for (const pair of pairs) {
