@@ -4,8 +4,13 @@ import crypto from 'crypto';
 const BOT_TOKEN = process.env.BOT_TOKEN || 'your_bot_token_here';
 
 export const authenticateUser = (req: Request, res: Response) => {
-  const { initData } = req.body;
-  const urlParams = new URLSearchParams(initData);
+  const { authData } = req.body;
+
+  if (!authData) {
+    return res.status(400).send({ status: 'error', message: 'authData is required' });
+  }
+
+  const urlParams = new URLSearchParams(authData);
   const hash = urlParams.get('hash') || '';
   urlParams.delete('hash');
 
@@ -18,17 +23,17 @@ export const authenticateUser = (req: Request, res: Response) => {
   const hmac = crypto.createHmac('sha256', secretKey).update(dataCheckString).digest('hex');
 
   if (hash === hmac) {
-    const urlParams = new URLSearchParams(initData);
+    const urlParams = new URLSearchParams(authData);
     const authDate = Number(urlParams.get('auth_date'));
     const currentTime = Math.floor(Date.now() / 1000);
 
     // Check if auth_date is within acceptable time range (e.g., 1 hour)
     if (currentTime - authDate <= 3600) {
-      res.send({ status: 'ok', authData: Object.fromEntries(urlParams) });
+      return res.send({ status: 'ok', authData: Object.fromEntries(urlParams) });
     } else {
-      res.send({ status: 'error', message: 'Outdated data' });
+      return res.send({ status: 'error', message: 'Outdated data' });
     }
   } else {
-    res.send({ status: 'error', message: `Invalid hash: 1)${dataCheckString}\n 2)${hash}\n 3)${hmac}\n 4)${initData}\n 5)${urlParams}\n 6)${req.body}` });
+    return res.send({ status: 'error', message: `Invalid hash: 1)${dataCheckString}\n 2)${hash}\n 3)${hmac}\n 4)${authData}\n 5)${urlParams}\n 6)${req.body}` });
   }
 };
