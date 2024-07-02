@@ -19,7 +19,7 @@ async function authenticateUser(authData: string) {
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify(authData)
+    body: JSON.stringify({authData})
   });
 
   const result = await response.json();
