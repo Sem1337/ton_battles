@@ -32,8 +32,8 @@ async function authenticateUser(authData: { [key: string]: string }) {
   });
 
   const result = await response.json();
-  console.log(authData);
-  console.log(response);
+  console.error(authData);
+  console.error(response);
   if (result.status === 'ok') {
     // User is authenticated
     console.log('User authenticated', result.authData);
