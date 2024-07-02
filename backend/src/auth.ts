@@ -29,6 +29,6 @@ export const authenticateUser = (req: Request, res: Response) => {
       res.send({ status: 'error', message: 'Outdated data' });
     }
   } else {
-    res.send({ status: 'error', message: `Invalid hash: 1)${dataCheckString}\n 2)${hash}\n 3)${hmac}` });
+    res.send({ status: 'error', message: `Invalid hash: 1)${dataCheckString}\n 2)${hash}\n 3)${hmac}\n 4)${initData}\n 5)${urlParams}\n 6)${req.body}` });
   }
 };
