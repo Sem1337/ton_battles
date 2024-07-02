@@ -12,29 +12,27 @@ const initDataUnsafe = WebApp.initDataUnsafe
 console.log("Init Data:", initData);
 console.log("Init Data Unsafe:", initDataUnsafe);
 
-// Function to send authData to backend
-async function authenticateUser(authData: string) {
+// Function to send initData to backend
+async function authenticateUser(initData: string) {
   const response = await fetch('https://ton-btl.ew.r.appspot.com/auth', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({authData})
+    body: JSON.stringify({initData})
   });
 
   const result = await response.json();
-  console.error(authData);
-  console.error(response);
   if (result.status === 'ok') {
     // User is authenticated
-    console.log('User authenticated', result.authData);
+    console.log('User authenticated', result.initData);
   } else {
     // Authentication failed
     console.error('Authentication failed', result.message);
   }
 }
 
-// Send authData to backend for verification
+// Send initData to backend for verification
 authenticateUser(initData);
 
 
