@@ -19,8 +19,10 @@ function parseQuery(queryString: string) {
   return query;
 }
 
-// Extract authData from the URL
-const authData = parseQuery(window.location.search);
+const initData = WebApp.initData;
+const initDataUnsafe = WebApp.initDataUnsafe
+console.log("Init Data:", initData);
+console.log("Init Data Unsafe:", initDataUnsafe);
 
 // Function to send authData to backend
 async function authenticateUser(authData: { [key: string]: string }) {
@@ -45,7 +47,7 @@ async function authenticateUser(authData: { [key: string]: string }) {
 }
 
 // Send authData to backend for verification
-authenticateUser(authData);
+authenticateUser(parseQuery(initData));
 
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
