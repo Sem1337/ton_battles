@@ -3,7 +3,7 @@ import { Header } from './components/Header/Header'
 import { AddressInfo } from './components/AddressInfo/AddressInfo'
 import { WalletInfo } from './components/WalletInfo/WalletInfo'
 import { SendTx } from './components/SendTx/SendTx'
-import { BalanceInfo } from './components/BalanceInfo/BalanceInfo';
+//import { BalanceInfo } from './components/BalanceInfo/BalanceInfo';
 
 function App() {
   return (
@@ -13,7 +13,7 @@ function App() {
       <AddressInfo />
       <WalletInfo />
     </div>
-    <BalanceInfo />
+  
     <SendTx/>
     </>
   )
