@@ -26,6 +26,7 @@ async function authenticateUser(initData: string) {
   if (result.status === 'ok') {
     // User is authenticated
     console.log('User authenticated', result.initData);
+    localStorage.setItem('balance', result.balance);  // Store balance in localStorage
   } else {
     // Authentication failed
     console.error('Authentication failed', result.message);
