@@ -1,24 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import { useState} from 'react';
 import TopUpModal from '../TopUpModal/TopUpModal';
 import WithdrawModal from '../WithdrawModal/WithdrawModal';
 
-export const BalanceInfo: React.FC = () => {
+export const BalanceInfo = () => {
   const [balance, setBalance] = useState<number>(0);
   const [showTopUpModal, setShowTopUpModal] = useState<boolean>(false);
   const [showWithdrawModal, setShowWithdrawModal] = useState<boolean>(false);
 
-  useEffect(() => {
+  /*useEffect(() => {
     // Fetch the initial balance from the backend or wallet
-    /*const fetchBalance = async () => {
+    const fetchBalance = async () => {
       // Replace with your actual API call
       const response = await fetch('/getBalance');
       const data = await response.json();
       setBalance(data.balance);
-    };*/
+    };
 
     //fetchBalance();
     setBalance(0);
-  }, []);
+  }, []);*/
 
   const handleTopUp = async (amount: number) => {
     try {
