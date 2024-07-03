@@ -9,14 +9,15 @@ export const BalanceInfo: React.FC = () => {
 
   useEffect(() => {
     // Fetch the initial balance from the backend or wallet
-    const fetchBalance = async () => {
+    /*const fetchBalance = async () => {
       // Replace with your actual API call
       const response = await fetch('/getBalance');
       const data = await response.json();
       setBalance(data.balance);
-    };
+    };*/
 
-    fetchBalance();
+    //fetchBalance();
+    setBalance(0);
   }, []);
 
   const handleTopUp = async (amount: number) => {
