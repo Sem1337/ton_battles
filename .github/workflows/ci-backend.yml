@@ -19,6 +19,12 @@ on:
         required: true
       BOT_TOKEN:
         required: true
+      TON_PRIVATE_KEY_HEX:
+        required: true
+      TON_PUBLIC_KEY_HEX:
+        required: true
+      TON_API_KEY:
+        required: true
 
 jobs:
   backend:
@@ -100,6 +106,9 @@ jobs:
         DB_NAME: ${{ secrets.DB_NAME }}
         DB_HOST: localhost
         BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+        TON_API_KEY: ${{ secrets.TON_API_KEY }}
+        TON_PUBLIC_KEY_HEX: ${{ secrets.TON_PUBLIC_KEY_HEX }}
+        TON_PRIVATE_KEY_HEX: ${{ secrets.TON_PRIVATE_KEY_HEX }}
       run: |
         echo "$GCP_SERVICE_ACCOUNT_KEY" > ${HOME}/gcp-key.json
         gcloud auth activate-service-account --key-file=${HOME}/gcp-key.json
