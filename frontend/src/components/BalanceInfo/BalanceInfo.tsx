@@ -1,8 +1,8 @@
 // frontend/src/components/BalanceInfo/BalanceInfo.tsx
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-const BalanceInfo = () => {
+export const BalanceInfo = () => {
   const [balance, setBalance] = useState<number>(0);
 
   useEffect(() => {
