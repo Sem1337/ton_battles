@@ -54,6 +54,11 @@ jobs:
         sed -i "s|PLACEHOLDER_DB_NAME|${{ secrets.DB_NAME }}|g" app.yaml
         sed -i "s|PLACEHOLDER_INSTANCE_CONNECTION_NAME|${{ secrets.INSTANCE_CONNECTION_NAME }}|g" app.yaml
         sed -i "s|PLACEHOLDER_BOT_TOKEN|${{ secrets.BOT_TOKEN }}|g" app.yaml
+        sed -i "s|PLACEHOLDER_TON_API_KEY|${{ secrets.TON_API_KEY }}|g" app.yaml
+        sed -i "s|PLACEHOLDER_JWT_SECRET_KEY|${{ secrets.JWT_SECRET_KEY }}|g" app.yaml
+        sed -i "s|PLACEHOLDER_TON_PUBLIC_KEY_HEX|${{ secrets.TON_PUBLIC_KEY_HEX }}|g" app.yaml
+        sed -i "s|PLACEHOLDER_TON_PRIVATE_KEY_HEX|${{ secrets.TON_PRIVATE_KEY_HEX }}|g" app.yaml
+
 
     - name: Authenticate to Google Cloud
       run: |
@@ -107,11 +112,6 @@ jobs:
         DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         DB_NAME: ${{ secrets.DB_NAME }}
         DB_HOST: localhost
-        BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
-        TON_API_KEY: ${{ secrets.TON_API_KEY }}
-        TON_PUBLIC_KEY_HEX: ${{ secrets.TON_PUBLIC_KEY_HEX }}
-        TON_PRIVATE_KEY_HEX: ${{ secrets.TON_PRIVATE_KEY_HEX }}
-        JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
       run: |
         echo "$GCP_SERVICE_ACCOUNT_KEY" > ${HOME}/gcp-key.json
         gcloud auth activate-service-account --key-file=${HOME}/gcp-key.json
