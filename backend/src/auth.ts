@@ -15,8 +15,7 @@ export const verifyToken = (req : Request, res : Response, next : NextFunction) 
   jwt.verify(token, SECRET_KEY, (err : any, user : any) => {
     if (err) return res.status(401).send('Invalid token');
     (req as any).user = user; // Attach user information to the request using type assertion
-    next(); // Pass control to the next middleware function
-    return;
+    return next(); // Pass control to the next middleware function
   });
   return;
 };

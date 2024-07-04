@@ -19,7 +19,7 @@ app.use(cors({
 app.use(bodyParser.json());
 
 app.use((req, res, next) => {
-    if (req.path in ['/auth', '/'] ) {
+    if (req.path === '/auth') {
       return next(); // Skip verifyToken middleware for /auth
     }
     verifyToken(req, res, next); // Apply verifyToken middleware for all other routes
