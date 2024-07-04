@@ -1,5 +1,5 @@
 import { useState} from 'react';
-import TopUpModal from '../TopUpModal/TopUpModal';
+import { TopUpModal } from '../TopUpModal/TopUpModal';
 //import WithdrawModal from '../WithdrawModal/WithdrawModal';
 
 export const BalanceInfo = () => {
