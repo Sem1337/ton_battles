@@ -4,16 +4,34 @@ import { WithdrawModal } from '../WithdrawModal/WithdrawModal';
 
 export const BalanceInfo = () => {
   const [balance, setBalance] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null)
   const [showTopUpModal, setShowTopUpModal] = useState<boolean>(false);
   const [showWithdrawModal, setShowWithdrawModal] = useState<boolean>(false);
 
   useEffect(() => {
-    // Fetch the initial balance from the backend or wallet
     const fetchBalance = async () => {
-      // Replace with your actual API call
-      const response = await fetch('/getBalance');
-      const data = await response.json();
-      setBalance(data.balance);
+      try {
+        const response = await fetch('/getBalance', {
+          method: 'GET',
+          credentials: 'include', // Include cookies in the request
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch balance');
+        }
+
+        const data = await response.json();
+        setBalance(data.balance);
+      } catch (err) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError('An unknown error occurred');
+        }
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchBalance();
@@ -53,11 +71,21 @@ export const BalanceInfo = () => {
     }
   };
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
   return (
     <div>
-      <h1>Balance: {balance}</h1>
+      <h1>Your Balance</h1>
+      <p>{balance !== null ? `${balance} TON` : 'Balance not available'}</p>
       <button onClick={() => setShowTopUpModal(true)}>Top Up</button>
       <button onClick={() => setShowWithdrawModal(true)}>Withdraw</button>
+
       {showTopUpModal && (
         <TopUpModal
           onClose={() => setShowTopUpModal(false)}
