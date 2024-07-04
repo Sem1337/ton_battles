@@ -25,6 +25,8 @@ on:
         required: true
       TON_API_KEY:
         required: true
+      JWT_SECRET_KEY:
+        required: true
 
 jobs:
   backend:
@@ -109,6 +111,7 @@ jobs:
         TON_API_KEY: ${{ secrets.TON_API_KEY }}
         TON_PUBLIC_KEY_HEX: ${{ secrets.TON_PUBLIC_KEY_HEX }}
         TON_PRIVATE_KEY_HEX: ${{ secrets.TON_PRIVATE_KEY_HEX }}
+        JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
       run: |
         echo "$GCP_SERVICE_ACCOUNT_KEY" > ${HOME}/gcp-key.json
         gcloud auth activate-service-account --key-file=${HOME}/gcp-key.json

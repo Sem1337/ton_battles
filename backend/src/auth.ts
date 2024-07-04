@@ -1,8 +1,25 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import crypto from 'crypto';
+import jwt from 'jsonwebtoken';
 import User from './database/model/user.js';
 
+
 const BOT_TOKEN = process.env.BOT_TOKEN || 'your_bot_token_here';
+const SECRET_KEY = process.env.JWT_SECRET_KEY || '';
+
+
+export const verifyToken = (req : Request, res : Response, next : NextFunction) => {
+  const token = req.cookies.token;
+  if (!token) return res.status(403).send('Token is required');
+
+  jwt.verify(token, SECRET_KEY, (err : any, user : any) => {
+    if (err) return res.status(401).send('Invalid token');
+    (req as any).user = user; // Attach user information to the request using type assertion
+    next(); // Pass control to the next middleware function
+    return;
+  });
+  return;
+};
 
 
 function checkSignature(initData: string): boolean {
@@ -71,10 +88,16 @@ export const authenticateUser = async (req: Request, res: Response) => {
     let user = await User.findByPk(userId);
 
     if (!user) {
-      user = await User.create({ id: userId, balance: 0.0 });
+      user = await User.create({ userId: userId, balance: 0.0 });
     }
 
-    return res.status(200).send({ status: 'ok', userId: user.id, balance: user.balance });
+    const token = jwt.sign({ userId: userId }, SECRET_KEY, { expiresIn: '1h' });
+
+    // Set JWT in HTTP-only cookie
+    res.cookie('token', token, { httpOnly: true, secure: true, maxAge: 3600000 });
+    res.json({ success: true });
+
+    return res.status(200).send({ status: 'ok', userId: user.userId, balance: user.balance });
   } catch (error) {
     console.error(error);
     return res.status(500).send({ status: 'error', message: 'Server error' });

@@ -3,8 +3,9 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import userRouter from './routes/user.router.js';
 import gameRoomRouter from './routes/gameRoom.router.js';
+import balanceRouter from './routes/balance.router.js';
 import sequelize from './database/db.js';
-import { authenticateUser } from './auth.js';
+import { authenticateUser, verifyToken } from './auth.js';
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -17,8 +18,16 @@ app.use(cors({
 
 app.use(bodyParser.json());
 
+app.use((req, res, next) => {
+    if (req.path in ['/auth', '/'] ) {
+      return next(); // Skip verifyToken middleware for /auth
+    }
+    verifyToken(req, res, next); // Apply verifyToken middleware for all other routes
+  });
+
 app.use(userRouter);
 app.use(gameRoomRouter);
+app.use(balanceRouter);
 
 app.post('/auth', authenticateUser);
 

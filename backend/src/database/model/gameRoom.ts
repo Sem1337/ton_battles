@@ -2,7 +2,7 @@ import { DataTypes, Model } from 'sequelize';
 import sequelize from '../db.js';
 
 class GameRoom extends Model {
-  public id!: number;
+  public gameId!: number;
   public total_bank!: number;
   public winner!: string | null;
   public time_of_start!: Date;
@@ -14,7 +14,7 @@ class GameRoom extends Model {
 
 GameRoom.init(
   {
-    id: {
+    gameId: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,

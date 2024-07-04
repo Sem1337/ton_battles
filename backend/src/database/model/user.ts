@@ -2,7 +2,7 @@ import { DataTypes, Model } from 'sequelize';
 import sequelize from '../db.js';
 
 class User extends Model {
-  public id!: number;
+  public userId!: number;
   public balance!: number;
 
   public readonly createdAt!: Date;
@@ -11,7 +11,7 @@ class User extends Model {
 
 User.init(
   {
-    id: {
+    userId: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
