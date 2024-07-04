@@ -2,7 +2,9 @@ import { NextFunction, Request, Response } from 'express';
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import User from './database/model/user.js';
+import dotenv from 'dotenv';
 
+dotenv.config();
 
 const BOT_TOKEN = process.env.BOT_TOKEN || 'your_bot_token_here';
 const SECRET_KEY = process.env.JWT_SECRET_KEY || '';

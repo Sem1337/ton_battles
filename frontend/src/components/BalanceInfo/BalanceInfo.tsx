@@ -12,7 +12,7 @@ export const BalanceInfo = () => {
   useEffect(() => {
     const fetchBalance = async () => {
       try {
-        const response = await fetch('/getBalance', {
+        const response = await fetch('https://ton-btl.ew.r.appspot.com/getBalance', {
           method: 'GET',
           credentials: 'include', // Include cookies in the request
         });
