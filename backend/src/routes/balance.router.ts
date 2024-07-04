@@ -5,6 +5,6 @@ const router = Router();
 
 router.post('/topup', topUpBalance);
 router.post('/withdraw', withdrawBalance);
-router.post('/getBalance', getBalance);
+router.get('/getBalance', getBalance);
 
 export default router;
