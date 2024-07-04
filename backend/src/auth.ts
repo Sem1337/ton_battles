@@ -11,6 +11,8 @@ console.log('JWT KEY:', SECRET_KEY);
 
 
 export const verifyToken = (req : Request, res : Response, next : NextFunction) => {
+  console.log(req.cookies);
+  console.log(req.cookies['token']);
   const token = req.cookies.token;
   if (!token) return res.status(403).send('Token is required');
 
