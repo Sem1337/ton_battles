@@ -3,6 +3,7 @@ import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import User from './database/model/user.js';
 
+
 const BOT_TOKEN = process.env.BOT_TOKEN || 'your_bot_token_here';
 const SECRET_KEY = process.env.JWT_SECRET_KEY || 'test';
 
@@ -95,8 +96,6 @@ export const authenticateUser = async (req: Request, res: Response) => {
 
     // Set JWT in HTTP-only cookie
     res.cookie('token', token, { httpOnly: true, secure: true, maxAge: 3600000 });
-    res.json({ success: true });
-
     return res.status(200).send({ status: 'ok', userId: user.userId, balance: user.balance });
   } catch (error) {
     console.error(error);
