@@ -51,7 +51,8 @@ export const createTransaction = async (amount: number, walletAddress: string) =
 
 export const confirmTransaction = async (transfer: any) => {
   try {
-    await transfer.send();
+    //await transfer.send();
+    console.log(transfer);
     return true;
   } catch (error) {
     console.error('Transaction confirmation error:', error);
