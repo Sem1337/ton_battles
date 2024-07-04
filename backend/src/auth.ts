@@ -9,6 +9,8 @@ dotenv.config();
 const BOT_TOKEN = process.env.BOT_TOKEN || 'your_bot_token_here';
 const SECRET_KEY = process.env.JWT_SECRET_KEY || '';
 
+console.log('JWT KEY:', SECRET_KEY);
+
 
 export const verifyToken = (req : Request, res : Response, next : NextFunction) => {
   const token = req.cookies.token;
