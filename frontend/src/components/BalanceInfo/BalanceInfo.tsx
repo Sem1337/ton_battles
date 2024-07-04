@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { TopUpModal } from '../TopUpModal/TopUpModal';
 import { WithdrawModal } from '../WithdrawModal/WithdrawModal';
+import { useAuth } from '../AuthContext';
 
 export const BalanceInfo = () => {
+  const { isAuthenticated } = useAuth();
   const [balance, setBalance] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null)
@@ -34,8 +36,10 @@ export const BalanceInfo = () => {
       }
     };
 
-    fetchBalance();
-  }, []);
+    if (isAuthenticated) {
+      fetchBalance();
+    }
+  }, [isAuthenticated]);
 
   const handleTopUp = async (amount: number) => {
     try {
