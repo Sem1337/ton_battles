@@ -37,8 +37,8 @@ export const getBalance = async (req: Request, res: Response) => {
     if (!userId) {
       return res.status(400).json({ error: 'User ID is required' });
     }
-
-    return res.status(200).json({ balance: getUserBalance(userId) });
+    const balance = await getUserBalance(userId);
+    return res.status(200).json({ balance });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: 'Server error' });
