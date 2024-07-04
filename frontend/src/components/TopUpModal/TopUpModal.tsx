@@ -2,17 +2,30 @@ import { Buffer } from 'buffer';
 // @ts-ignore
 window.Buffer = Buffer;
 import { useState } from 'react';
+import { useTonConnectUI } from '@tonconnect/ui-react';
 
 interface TopUpModalProps {
   onClose: () => void;
   onTopUp: (amount: number) => void;
 }
 
-const TopUpModal = ({ onClose, onTopUp } : TopUpModalProps) => {
+export const TopUpModal = ({ onClose, onTopUp } : TopUpModalProps) => {
   const [amount, setAmount] = useState(0);
+  const [tonConnectUI] = useTonConnectUI();
 
   const handleTopUp = async () => {
     try {
+      const transaction = {
+        validUntil: Math.floor(Date.now() / 1000) + 60, // 60 sec
+        messages: [
+          {
+            address: 'UQCuzcR3-BXHkYHk7mN5ghbsUAX74mj-6BLn0wzvvXKHLXKx', // replace with your main wallet address
+            amount: (amount / 1000000000).toString(),
+            payload: ''
+          }
+        ]
+      };
+      await tonConnectUI.sendTransaction(transaction);
       onTopUp(amount);
     } catch (error) {
       console.error('Transaction error:', error);
@@ -36,4 +49,3 @@ const TopUpModal = ({ onClose, onTopUp } : TopUpModalProps) => {
   );
 };
 
-export default TopUpModal;
