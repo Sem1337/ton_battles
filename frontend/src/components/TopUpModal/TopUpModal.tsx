@@ -3,6 +3,7 @@ import { Buffer } from 'buffer';
 window.Buffer = Buffer;
 import { useState } from 'react';
 import { useTonConnectUI } from '@tonconnect/ui-react';
+import { toNano } from '@ton/ton'
 
 interface TopUpModalProps {
   onClose: () => void;
@@ -20,7 +21,7 @@ export const TopUpModal = ({ onClose, onTopUp } : TopUpModalProps) => {
         messages: [
           {
             address: 'UQCuzcR3-BXHkYHk7mN5ghbsUAX74mj-6BLn0wzvvXKHLXKx', // replace with your main wallet address
-            amount: (amount / 1000000000).toString(),
+            amount: toNano(amount).toString(),
             payload: ''
           }
         ]

@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 interface WithdrawModalProps {
   onClose: () => void;
   onWithdraw: (amount: number) => void;
 }
 
-const WithdrawModal: React.FC<WithdrawModalProps> = ({ onClose, onWithdraw }) => {
+export const WithdrawModal = ({ onClose, onWithdraw } : WithdrawModalProps) => {
   const [amount, setAmount] = useState<number>(0);
 
   const handleWithdraw = async () => {
@@ -42,5 +42,3 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ onClose, onWithdraw }) =>
     </div>
   );
 };
-
-export default WithdrawModal;
