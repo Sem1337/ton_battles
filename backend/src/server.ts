@@ -4,6 +4,7 @@ import bodyParser from "body-parser";
 import userRouter from './routes/user.router.js';
 import gameRoomRouter from './routes/gameRoom.router.js';
 import balanceRouter from './routes/balance.router.js';
+import cookieParser from 'cookie-parser';
 import sequelize from './database/db.js';
 import { authenticateUser, verifyToken } from './auth.js';
 
@@ -18,6 +19,7 @@ app.use(cors({
 }));
 
 app.use(bodyParser.json());
+app.use(cookieParser()); // Ensure cookie-parser middleware is used
 
 app.use((req, res, next) => {
     if (req.path === '/auth') {
