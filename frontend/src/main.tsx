@@ -1,6 +1,3 @@
-import { Buffer } from 'buffer';
-// @ts-ignore
-window.Buffer = Buffer;
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.tsx'

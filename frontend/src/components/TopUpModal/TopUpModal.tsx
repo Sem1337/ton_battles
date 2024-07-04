@@ -1,3 +1,6 @@
+import { Buffer } from 'buffer';
+// @ts-ignore
+window.Buffer = Buffer;
 import { useState } from 'react';
 import { useTonConnectUI } from '@tonconnect/ui-react';
 import { toNano } from '@ton/ton'
