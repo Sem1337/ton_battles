@@ -17,7 +17,6 @@ export const BalanceInfo = () => {
     };
 
     fetchBalance();
-    setBalance(0);
   }, []);
 
   const handleTopUp = async (amount: number) => {
