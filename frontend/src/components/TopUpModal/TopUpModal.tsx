@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useTonConnectUI } from '@tonconnect/ui-react';
 import { toNano } from '@ton/ton'
 
@@ -7,7 +7,7 @@ interface TopUpModalProps {
   onTopUp: (amount: number) => void;
 }
 
-const TopUpModal: React.FC<TopUpModalProps> = ({ onClose, onTopUp }) => {
+const TopUpModal = ({ onClose, onTopUp } : TopUpModalProps) => {
   const [amount, setAmount] = useState(0);
   const [tonConnectUI] = useTonConnectUI();
 

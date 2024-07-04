@@ -1,9 +1,9 @@
 import { useState} from 'react';
-//import TopUpModal from '../TopUpModal/TopUpModal';
+import TopUpModal from '../TopUpModal/TopUpModal';
 //import WithdrawModal from '../WithdrawModal/WithdrawModal';
 
 export const BalanceInfo = () => {
-  const [balance/*, setBalance*/] = useState<number>(0);
+  const [balance, setBalance] = useState<number>(0);
   const [showTopUpModal, setShowTopUpModal] = useState<boolean>(false);
   const [showWithdrawModal, setShowWithdrawModal] = useState<boolean>(false);
 
@@ -20,7 +20,7 @@ export const BalanceInfo = () => {
     setBalance(0);
   }, []);*/
 
-  /*const handleTopUp = async (amount: number) => {
+  const handleTopUp = async (amount: number) => {
     try {
       // Assuming the transaction is created and confirmed in the modal
       const response = await fetch('/topup', {
@@ -37,7 +37,7 @@ export const BalanceInfo = () => {
     }
   };
 
-  const handleWithdraw = async (amount: number) => {
+  /*const handleWithdraw = async (amount: number) => {
     try {
       // Assuming the transaction is created and confirmed in the modal
       const response = await fetch('/withdraw', {
@@ -59,7 +59,12 @@ export const BalanceInfo = () => {
       <h1>Balance: {balance}</h1>
       <button onClick={() => setShowTopUpModal(true)}>Top Up</button>
       <button onClick={() => setShowWithdrawModal(true)}>Withdraw</button>
-      {showTopUpModal}
+      {showTopUpModal && (
+        <TopUpModal
+          onClose={() => setShowTopUpModal(false)}
+          onTopUp={handleTopUp}
+        />
+      )}
       {showWithdrawModal}
     </div>
   );
