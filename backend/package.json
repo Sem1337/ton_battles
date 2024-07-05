@@ -11,6 +11,8 @@
         "seed": "npx sequelize-cli db:seed:all"
     },
     "dependencies": {
+        "@orbs-network/ton-access": "^2.3.3",
+        "@ton/ton": "^13.11.2",
         "@types/cookie-parser": "^1.4.7",
         "@types/jsonwebtoken": "^9.0.6",
         "body-parser": "^1.20.2",

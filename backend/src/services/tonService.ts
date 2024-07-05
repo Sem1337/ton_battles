@@ -1,14 +1,14 @@
-import TonWeb from 'tonweb';
+import { TonClient, WalletContractV4, internal } from "@ton/ton";
+import { getHttpEndpoint } from "@orbs-network/ton-access";
+import TonWeb from "tonweb"
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-const TonWebInstance = TonWeb.default || TonWeb;
 
-const providerUrl = 'https://toncenter.com/api/v2/jsonRPC';
-const apiKey = process.env.TON_API_KEY; // Replace with your TON center API key
+//const providerUrl = 'https://toncenter.com/api/v2/jsonRPC';
+//const apiKey = process.env.TON_API_KEY; // Replace with your TON center API key
 
-const tonweb = new TonWebInstance(new TonWebInstance.HttpProvider(providerUrl, { apiKey }));
 
 const hexToUint8Array = (hex: string): Uint8Array => {
   const bytes = [];
@@ -22,43 +22,46 @@ const hexToUint8Array = (hex: string): Uint8Array => {
 const publicKeyHex = process.env.TON_PUBLIC_KEY_HEX || '';
 const secretKeyHex = process.env.TON_PRIVATE_KEY_HEX || '';
 
-const publicKey = hexToUint8Array(publicKeyHex);
-const secretKey = hexToUint8Array(secretKeyHex);
+const publicKey = Buffer.from(hexToUint8Array(publicKeyHex));
+const secretKey = Buffer.from(hexToUint8Array(secretKeyHex));
 
-const wallet = tonweb.wallet.create({
-  publicKey: publicKey,
-});
+const wallet = WalletContractV4.create({ publicKey: publicKey, workchain: 0 });
+const endpoint = await getHttpEndpoint({ network: "mainnet" });
+const client = new TonClient({ endpoint });
+const walletContract = client.open(wallet);
 
 export const createTransaction = async (amount: number, walletAddress: string) => {
-  const seqno = await wallet.methods.seqno().call();
+  const seqno = await walletContract.getSeqno();
   if (seqno === undefined) {
     throw new Error('Failed to retrieve seqno');
   }
-
-  const amountNano = tonweb.utils.toNano(amount.toString());
+  if (!TonWeb.default.utils.Address.isValid(walletAddress)) {
+    throw new Error('receiver wallet address is incorrect!');
+  }
   console.log('seqno:', seqno);
-  const transfer = wallet.methods.transfer({
-    secretKey: secretKey,
-    toAddress: walletAddress,
-    amount: amountNano,
-    seqno,
-    payload: '',
-    sendMode: 3,
-  });
+  console.log('my wallet addr:', wallet.address.toString());
+  console.log('current balance:', client.getBalance(wallet.address));
 
+  const transfer = walletContract.createTransfer({
+    secretKey: secretKey,
+    seqno,
+    messages: [
+      internal({
+        to: walletAddress,
+        value: amount.toString(),
+        body: "Hello",
+        bounce: false
+      })
+    ]
+  });
+  
   return transfer;
 };
 
 export const confirmTransaction = async (transfer: any) => {
   try {
-    const transferFee = await transfer.estimateFee();   // get estimate fee of transfer
 
-    const transferSended = await transfer.send();  // send transfer query to blockchain
-    
-    const transferQuery = await transfer.getQuery(); // get transfer query Cell
-    console.log('transferFee', transferFee);
-    console.log('transferSended', transferSended);
-    console.log('transferQuery', transferQuery);
+    walletContract.sendTransfer(transfer);
     //await transfer.send();
     console.log('transfer', transfer);
     return true;
