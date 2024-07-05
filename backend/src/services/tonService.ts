@@ -5,7 +5,7 @@ dotenv.config();
 
 const TonWebInstance = TonWeb.default || TonWeb;
 
-const providerUrl = 'https://testnet.toncenter.com/api/v3/jsonRPC';
+const providerUrl = 'https://toncenter.com/api/v2/jsonRPC';
 const apiKey = process.env.TON_API_KEY; // Replace with your TON center API key
 
 const tonweb = new TonWebInstance(new TonWebInstance.HttpProvider(providerUrl, { apiKey }));
@@ -36,7 +36,7 @@ export const createTransaction = async (amount: number, walletAddress: string) =
   }
 
   const amountNano = tonweb.utils.toNano(amount.toString());
-
+  console.log('seqno:', seqno);
   const transfer = wallet.methods.transfer({
     secretKey: secretKey,
     toAddress: walletAddress,
