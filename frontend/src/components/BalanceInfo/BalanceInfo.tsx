@@ -48,6 +48,7 @@ export const BalanceInfo = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount }),
+        credentials: 'include', // Include cookies in the request
       });
       const data = await response.json();
       if (data.success) {
@@ -67,6 +68,7 @@ export const BalanceInfo = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount, walletAddress }),
+        credentials: 'include', // Include cookies in the request
       });
       const data = await response.json();
       if (data.success) {
