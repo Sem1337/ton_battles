@@ -58,13 +58,15 @@ export const BalanceInfo = () => {
     }
   };
 
-  const handleWithdraw = async (amount: number) => {
+  const handleWithdraw = async (amount: number, walletAddress: string) => {
     try {
+      console.log('amount: ', amount);
+      console.log('address: ', walletAddress);
       // Assuming the transaction is created and confirmed in the modal
       const response = await fetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/withdraw`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount }),
+        body: JSON.stringify({ amount, walletAddress }),
       });
       const data = await response.json();
       if (data.success) {

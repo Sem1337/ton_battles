@@ -1,26 +1,18 @@
+import { useTonWallet } from '@tonconnect/ui-react';
 import { useState } from 'react';
 
 interface WithdrawModalProps {
   onClose: () => void;
-  onWithdraw: (amount: number) => void;
+  onWithdraw: (amount: number, walletAddress: string) => void;
 }
 
 export const WithdrawModal = ({ onClose, onWithdraw } : WithdrawModalProps) => {
   const [amount, setAmount] = useState<number>(0);
-
+  const wallet = useTonWallet();
+  
   const handleWithdraw = async () => {
     try {
-      const response = await fetch('/withdraw', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount }),
-      });
-      const data = await response.json();
-      if (data.success) {
-        onWithdraw(amount);
-      } else {
-        console.error('Withdraw error:', data.message);
-      }
+      onWithdraw(amount, wallet?.account.address || 'undefined');
     } catch (error) {
       console.error('Withdraw error:', error);
     }
