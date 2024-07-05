@@ -1,5 +1,8 @@
 import { createContext, useState, useContext, useEffect, ReactNode  } from 'react';
 import WebApp from '@twa-dev/sdk';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 interface AuthContextProps {
   isAuthenticated: boolean;
@@ -25,7 +28,7 @@ export const AuthProvider = ({ children } : AuthProviderProps) => {
     }
 
     try {
-      const response = await fetch('https://ton-btl.ew.r.appspot.com/auth', {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/auth`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ initData }),

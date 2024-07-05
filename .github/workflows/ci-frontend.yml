@@ -25,7 +25,9 @@ jobs:
       run: npm install --prefix frontend
 
     - name: Build project
-      run: npm run build --prefix frontend
+      run: |
+        echo "REACT_APP_BACKEND_URL=https://6190-212-164-64-240.ngrok-free.app" > ./frontend/.env
+        npm run build --prefix frontend
 
     - name: Run tests
       run: npm test --prefix frontend

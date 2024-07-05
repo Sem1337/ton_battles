@@ -1,5 +1,7 @@
 import { Sequelize } from 'sequelize';
+import dotenv from 'dotenv';
 
+dotenv.config();
 
 console.log('DB_HOST:', process.env.DB_HOST);
 console.log('DB_USERNAME:', process.env.DB_USERNAME);
