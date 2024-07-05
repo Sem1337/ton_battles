@@ -1,8 +1,5 @@
 import { createContext, useState, useContext, useEffect, ReactNode  } from 'react';
 import WebApp from '@twa-dev/sdk';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 interface AuthContextProps {
   isAuthenticated: boolean;
@@ -28,7 +25,7 @@ export const AuthProvider = ({ children } : AuthProviderProps) => {
     }
 
     try {
-      const response = await fetch(`${import.meta.env.REACT_APP_BACKEND_URL}/auth`, {
+      const response = await fetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/auth`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ initData }),
