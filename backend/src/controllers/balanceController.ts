@@ -16,8 +16,9 @@ export const topUpBalance = async (req: Request, res: Response) => {
 };
 
 export const withdrawBalance = async (req: Request, res: Response) => {
-  const { amount, user, walletAddress } = req.body;
-  const userId = user?.userId;
+  const { amount, walletAddress } = req.body;
+  const user = (req as any).user;
+  const userId = user?.userId; // Extract user ID from the verified token
   if (!userId) {
     return res.status(400).json({ error: 'User ID is required' });
   }
