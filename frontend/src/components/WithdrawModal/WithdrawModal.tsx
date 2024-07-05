@@ -1,4 +1,4 @@
-import { useTonWallet } from '@tonconnect/ui-react';
+import { useTonAddress } from '@tonconnect/ui-react';
 import { useState } from 'react';
 
 interface WithdrawModalProps {
@@ -8,11 +8,11 @@ interface WithdrawModalProps {
 
 export const WithdrawModal = ({ onClose, onWithdraw } : WithdrawModalProps) => {
   const [amount, setAmount] = useState<number>(0);
-  const wallet = useTonWallet();
+  const walletAddress = useTonAddress();
   
   const handleWithdraw = async () => {
     try {
-      onWithdraw(amount, wallet?.account.address || 'undefined');
+      onWithdraw(amount, walletAddress || 'undefined');
     } catch (error) {
       console.error('Withdraw error:', error);
     }

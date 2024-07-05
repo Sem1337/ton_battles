@@ -32,15 +32,15 @@ const walletContract = client.open(wallet);
 
 export const createTransaction = async (amount: number, walletAddress: string) => {
   const seqno = await walletContract.getSeqno();
+  console.log('seqno:', seqno);
+  console.log('my wallet addr:', wallet.address.toString());
+  console.log('current balance:', client.getBalance(wallet.address));
   if (seqno === undefined) {
     throw new Error('Failed to retrieve seqno');
   }
   if (!TonWeb.default.utils.Address.isValid(walletAddress)) {
     throw new Error('receiver wallet address is incorrect!');
   }
-  console.log('seqno:', seqno);
-  console.log('my wallet addr:', wallet.address.toString());
-  console.log('current balance:', client.getBalance(wallet.address));
 
   const transfer = walletContract.createTransfer({
     secretKey: secretKey,
