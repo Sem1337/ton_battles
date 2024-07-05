@@ -17,7 +17,7 @@ export const BalanceInfo = () => {
   useEffect(() => {
     const fetchBalance = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/getBalance`, {
+        const response = await fetch(`${import.meta.env.REACT_APP_BACKEND_URL}/getBalance`, {
           method: 'GET',
           credentials: 'include', // Include cookies in the request
         });
@@ -47,7 +47,7 @@ export const BalanceInfo = () => {
   const handleTopUp = async (amount: number) => {
     try {
       // Assuming the transaction is created and confirmed in the modal
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/topup`, {
+      const response = await fetch(`${import.meta.env.REACT_APP_BACKEND_URL}/topup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount }),
@@ -64,7 +64,7 @@ export const BalanceInfo = () => {
   const handleWithdraw = async (amount: number) => {
     try {
       // Assuming the transaction is created and confirmed in the modal
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/withdraw`, {
+      const response = await fetch(`${import.meta.env.REACT_APP_BACKEND_URL}/withdraw`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount }),
