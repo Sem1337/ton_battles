@@ -12,6 +12,7 @@ console.log('JWT KEY:', SECRET_KEY);
 
 export const verifyToken = (req : Request, res : Response, next : NextFunction) => {
   const token = req.cookies?.token;
+  console.log('verify token failed');
   if (!token) return res.status(403).send('Token is required');
 
   jwt.verify(token, SECRET_KEY, (err : any, user : any) => {
@@ -94,7 +95,7 @@ export const authenticateUser = async (req: Request, res: Response) => {
     }
 
     const token = jwt.sign({ userId: userId }, SECRET_KEY, { expiresIn: '1h' });
-
+    console.log('user auth: ', userId);
     // Set JWT in HTTP-only cookie
     res.cookie('token', token, { httpOnly: true, secure: true, sameSite: 'none', maxAge: 3600000});
     return res.status(200).send({ status: 'ok', userId: user.userId, balance: user.balance });
