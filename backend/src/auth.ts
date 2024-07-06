@@ -97,8 +97,8 @@ export const authenticateUser = async (req: Request, res: Response) => {
 
     const token = jwt.sign({ userId: userId }, SECRET_KEY, { expiresIn: '1h' });
     console.log('user auth: ', userId);
-    // Set JWT in HTTP-only cookie
-    //res.cookie('token', token, { httpOnly: true, secure: true, sameSite: 'none', maxAge: 3600000});
+
+    res.setHeader('Access-Control-Expose-Headers', 'Authorization');
     res.setHeader('Authorization', `Bearer ${token}`);
     return res.status(200).send({ status: 'ok', userId: user.userId, balance: user.balance });
   } catch (error) {
