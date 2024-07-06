@@ -1,4 +1,5 @@
 import { createContext, useState, useContext, useEffect, ReactNode  } from 'react';
+import { authFetch } from '../utils/auth';
 import WebApp from '@twa-dev/sdk';
 
 interface AuthContextProps {
@@ -27,16 +28,20 @@ export const AuthProvider = ({ children } : AuthProviderProps) => {
     }
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/auth`, {
+      const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/auth`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ initData }),
+        mode: 'cors',
         credentials: 'include', // Include cookies in the request
       });
 
       const result = await response.json();
       if (result.status === 'ok') {
         // User is authenticated
+        const authHeader = response.headers.get('authorization');
+        const token = authHeader && authHeader.split(' ')[1];
+        localStorage.setItem('token', token!);
         console.log('User authenticated', result.initData);
         console.log(response.headers.getSetCookie());
         setTgUserId(result.userId);

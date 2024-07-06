@@ -11,9 +11,10 @@ console.log('JWT KEY:', SECRET_KEY);
 
 
 export const verifyToken = (req : Request, res : Response, next : NextFunction) => {
-  const token = req.cookies?.token;
-  console.log('verify token: ', req.cookies);
-  if (!token) return res.status(403).send('Token is required');
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (token == null) return res.status(403).send('Token is required');
 
   jwt.verify(token, SECRET_KEY, (err : any, user : any) => {
     if (err) return res.status(401).send('Invalid token');
