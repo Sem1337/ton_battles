@@ -44,16 +44,7 @@ export const BalanceInfo = () => {
   const handleTopUp = async (amount: number) => {
     try {
       // Assuming the transaction is created and confirmed in the modal
-      const response = await fetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/topup`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount }),
-        credentials: 'include', // Include cookies in the request
-      });
-      const data = await response.json();
-      if (data.success) {
-        setBalance(balance + amount);
-      }
+      setBalance(balance + amount);
     } catch (error) {
       console.error('Top-up error:', error);
     }
@@ -73,6 +64,8 @@ export const BalanceInfo = () => {
       const data = await response.json();
       if (data.success) {
         setBalance(balance - amount);
+      } else {
+        alert(data.error);
       }
     } catch (error) {
       console.error('Withdraw error:', error);

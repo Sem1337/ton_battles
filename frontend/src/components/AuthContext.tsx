@@ -4,6 +4,7 @@ import WebApp from '@twa-dev/sdk';
 interface AuthContextProps {
   isAuthenticated: boolean;
   authenticate: () => Promise<void>;
+  tgUserId: number;
 }
 
 interface AuthProviderProps {
@@ -13,6 +14,7 @@ interface AuthProviderProps {
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 export const AuthProvider = ({ children } : AuthProviderProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [tgUserId, setTgUserId] = useState<number>(-1);
 
   const authenticate = async () => {
     const initData = WebApp.initData;
@@ -36,6 +38,7 @@ export const AuthProvider = ({ children } : AuthProviderProps) => {
       if (result.status === 'ok') {
         // User is authenticated
         console.log('User authenticated', result.initData);
+        setTgUserId(result.userId);
         setIsAuthenticated(true);
       } else {
         // Authentication failed
@@ -53,7 +56,7 @@ export const AuthProvider = ({ children } : AuthProviderProps) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, authenticate }}>
+    <AuthContext.Provider value={{ isAuthenticated, authenticate, tgUserId }}>
       {children}
     </AuthContext.Provider>
   );

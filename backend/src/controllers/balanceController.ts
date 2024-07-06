@@ -2,25 +2,18 @@ import { Request, Response } from 'express';
 import { updateUserBalance, getUserBalance} from '../services/balanceService.js';
 import { createTransaction, confirmTransaction } from '../services/tonService.js';
 
-export const topUpBalance = async (req: Request, res: Response) => {
-  const { amount, user } = req.body;
-  const userId = user?.userId;
-  console.log('top up amount:', amount);
-  console.log('id:', userId);
-  try {
-    await updateUserBalance(userId, amount);
-    return res.status(200).send({ success: true });
-  } catch (error) {
-    return res.status(500).send({ success: false, error });
-  }
-};
-
 export const withdrawBalance = async (req: Request, res: Response) => {
   const { amount, walletAddress } = req.body;
   const user = (req as any).user;
   const userId = user?.userId; // Extract user ID from the verified token
   if (!userId) {
     return res.status(400).json({ error: 'User ID is required' });
+  }
+  if (amount < 0.5) {
+    return res.status(400).json({error: 'Minimal withdraw amount is 0.5 TON'});
+  }
+  if (getUserBalance(userId) < amount) {
+    return res.status(400).json({error: 'Insufficient balance'});
   }
   try {
     const transaction = await createTransaction(amount, walletAddress);
