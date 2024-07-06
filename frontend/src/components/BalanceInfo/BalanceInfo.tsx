@@ -20,7 +20,7 @@ export const BalanceInfo = () => {
         });
 
         if (!response.ok) {
-          throw new Error('Failed to fetch balance ' + response.text);
+          throw new Error('Failed to fetch balance ' + response.text());
         }
 
         const data = await response.json();
