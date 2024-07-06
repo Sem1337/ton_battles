@@ -38,7 +38,7 @@ export const AuthProvider = ({ children } : AuthProviderProps) => {
       if (result.status === 'ok') {
         // User is authenticated
         console.log('User authenticated', result.initData);
-        alert(response.headers.getSetCookie());
+        console.log(response.headers.getSetCookie());
         setTgUserId(result.userId);
         setIsAuthenticated(true);
       } else {
