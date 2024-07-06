@@ -45,6 +45,10 @@ export const AuthProvider = ({ children } : AuthProviderProps) => {
         console.log('User authenticated', result.initData);
         console.log(response.headers.get('authorization'));
         console.log(response.headers.get('Authorization'));
+        response.headers.forEach(element => {
+          console.log(element);
+        });
+        console.log(response.headers)
         setTgUserId(result.userId);
         setIsAuthenticated(true);
       } else {
