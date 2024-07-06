@@ -12,7 +12,8 @@ export const withdrawBalance = async (req: Request, res: Response) => {
   if (amount < 0.5) {
     return res.status(400).json({error: 'Minimal withdraw amount is 0.5 TON'});
   }
-  if (getUserBalance(userId) < amount) {
+  const userBalance = await getUserBalance(userId); 
+  if (userBalance < amount) {
     return res.status(400).json({error: 'Insufficient balance'});
   }
   try {
