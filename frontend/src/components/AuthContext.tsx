@@ -39,11 +39,12 @@ export const AuthProvider = ({ children } : AuthProviderProps) => {
       const result = await response.json();
       if (result.status === 'ok') {
         // User is authenticated
-        const authHeader = response.headers.get('authorization');
+        const authHeader = response.headers.get('Authorization');
         const token = authHeader && authHeader.split(' ')[1];
         localStorage.setItem('token', token!);
         console.log('User authenticated', result.initData);
-        console.log(response.headers.getSetCookie());
+        console.log(response.headers.get('authorization'));
+        console.log(response.headers.get('Authorization'));
         setTgUserId(result.userId);
         setIsAuthenticated(true);
       } else {
