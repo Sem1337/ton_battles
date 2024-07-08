@@ -23,7 +23,7 @@ export const TopUpModal = ({ onClose, onTopUp } : TopUpModalProps) => {
           {
             address: 'UQCuzcR3-BXHkYHk7mN5ghbsUAX74mj-6BLn0wzvvXKHLXKx', // replace with your main wallet address
             amount: (amount * 1000000000).toString(),
-            payload: 'TONBTL:' + tgUserId.toString()
+            payload: 'TONBTL_' + tgUserId.toString()
           }
         ]
       };

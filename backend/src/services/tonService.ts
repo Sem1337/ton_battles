@@ -99,7 +99,7 @@ async function fetchAndProcessTransactions(toLT: string): Promise<void> {
       const txValue = fromNano(transaction.in_msg.value);
       console.log('amount: ',txValue);
       console.log('msg: ', transaction.in_msg.message);
-      const data = transaction.in_msg.message.split(':');
+      const data = transaction.in_msg.message.split('_');
       if (data.length != 2) continue;
 
       const tag = data[0];
