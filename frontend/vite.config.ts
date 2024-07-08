@@ -4,7 +4,7 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [nodePolyfills(), react()],
+  plugins: [react(), nodePolyfills()],
   server: {
     https: {
       key: '../certs/localhost+2-key.pem',
