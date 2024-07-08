@@ -1,4 +1,5 @@
 import { Buffer } from 'buffer';
+import { beginCell} from "@ton/core";
 // @ts-ignore
 window.Buffer = Buffer;
 import { useState } from 'react';
@@ -18,13 +19,17 @@ export const TopUpModal = ({ onClose, onTopUp } : TopUpModalProps) => {
   const handleTopUp = async () => {
     try {
       console.log('TONBTL_' + tgUserId.toString());
+      const body = beginCell()
+                    .storeUint(0, 32) // write 32 zero bits to indicate that a text comment will follow
+                    .storeStringTail('TONBTL_' + tgUserId.toString()) // write our text comment
+                    .endCell();
       const transaction = {
         validUntil: Math.floor(Date.now() / 1000) + 60, // 60 sec
         messages: [
           {
             address: 'UQCuzcR3-BXHkYHk7mN5ghbsUAX74mj-6BLn0wzvvXKHLXKx', // replace with your main wallet address
-            amount: (amount * 1000000000).toString()//,
-            //payload: 'TONBTL_' + tgUserId.toString()
+            amount: (amount * 1000000000).toString(),
+            payload: body.toBoc().toString("base64")
           }
         ]
       };

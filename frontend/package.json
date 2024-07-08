@@ -8,6 +8,7 @@
         "test": ""
     },
     "dependencies": {
+        "@ton/core": "^0.56.3",
         "@ton/ton": "^13.11.2",
         "@tonconnect/ui-react": "^2.0.5",
         "@twa-dev/sdk": "^7.0.0",
