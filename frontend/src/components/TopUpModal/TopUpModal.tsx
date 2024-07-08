@@ -1,9 +1,9 @@
 import { Buffer } from 'buffer';
-import { beginCell} from "@ton/core";
 // @ts-ignore
 window.Buffer = Buffer;
 import { useState } from 'react';
 import { useTonConnectUI } from '@tonconnect/ui-react';
+import { beginCell } from "@ton/ton";
 import { useAuth } from '../AuthContext';
 
 interface TopUpModalProps {
