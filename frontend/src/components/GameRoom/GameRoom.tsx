@@ -13,7 +13,7 @@ export const GameRoomComponent: React.FC<GameRoomProps> = ({ roomId }) => {
 
   useEffect(() => {
     const fetchGameRoomDetails = async () => {
-      const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/api/gamerooms/${roomId}`)
+      const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/gamerooms/${roomId}`)
       if (response.ok) {
         const data: GameRoom = await response.json()
         setPlayers(data.players)
@@ -32,7 +32,7 @@ export const GameRoomComponent: React.FC<GameRoomProps> = ({ roomId }) => {
   }, [roomId])
 
   const makeBet = async () => {
-    const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/api/gamerooms/${roomId}/bets`, {
+    const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/gamerooms/${roomId}/bets`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

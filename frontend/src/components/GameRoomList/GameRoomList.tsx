@@ -13,7 +13,7 @@ export const GameRoomList: React.FC<GameRoomListProps> = ({ onClose, onJoinGameR
 
   useEffect(() => {
     const fetchGameRooms = async () => {
-      const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/api/gamerooms`)
+      const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/gamerooms`)
       if (response.ok) {
         const data: GameRoom[] = await response.json()
         setGameRooms(data)
@@ -26,7 +26,7 @@ export const GameRoomList: React.FC<GameRoomListProps> = ({ onClose, onJoinGameR
   }, [])
 
   const joinGameRoom = async (roomId: string) => {
-    const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/api/gamerooms/${roomId}/join`, {
+    const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/gamerooms/${roomId}/join`, {
       method: 'POST'
     })
     if (response.ok) {

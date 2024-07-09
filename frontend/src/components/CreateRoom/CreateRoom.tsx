@@ -11,7 +11,7 @@ export const CreateRoom: React.FC<CreateRoomProps> = ({ onClose }) => {
   const [maxPlayers, setMaxPlayers] = useState(0)
 
   const createRoom = async () => {
-    const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/api/gamerooms`, {
+    const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/gamerooms`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
