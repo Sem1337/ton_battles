@@ -3,6 +3,7 @@ import sequelize from '../db.js';
 
 class Player extends Model {
   public id!: string
+  public userId!: string
   public bet!: number
   public name!: string
   public gameRoomId!: string
@@ -14,6 +15,11 @@ Player.init(
       type: DataTypes.STRING,
       allowNull: false,
       primaryKey: true,
+      defaultValue: DataTypes.UUIDV4,
+    },
+    userId: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     bet: {
       type: DataTypes.INTEGER,
@@ -41,6 +47,7 @@ class Game extends Model {
   public total_bank!: number
   public winner_id!: string
   public winnerBetSize!: number
+  public status!: 'active' | 'closed'
 }
 
 Game.init(
@@ -49,6 +56,7 @@ Game.init(
       type: DataTypes.STRING,
       allowNull: false,
       primaryKey: true,
+      defaultValue: DataTypes.UUIDV4,
     },
     gameRoomId: {
       type: DataTypes.STRING,
@@ -60,10 +68,15 @@ Game.init(
     },
     winner_id: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     winnerBetSize: {
       type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    status: {
+      type: DataTypes.ENUM('active', 'closed'),
+      defaultValue: 'active',
       allowNull: false,
     },
   },
@@ -78,9 +91,8 @@ class GameRoom extends Model {
   public minBet!: number
   public maxBet!: number
   public maxPlayers!: number
-  public total_bank!: number
   public status!: 'active' | 'closed'
-  public currentGameId!: string
+  public currentGame!: Game
   public players!: Player[]
 }
 
@@ -90,6 +102,7 @@ GameRoom.init(
       type: DataTypes.STRING,
       allowNull: false,
       primaryKey: true,
+      defaultValue: DataTypes.UUIDV4,
     },
     minBet: {
       type: DataTypes.INTEGER,
@@ -103,19 +116,10 @@ GameRoom.init(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    total_bank: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0,
-      allowNull: false,
-    },
     status: {
       type: DataTypes.ENUM('active', 'closed'),
       defaultValue: 'active',
       allowNull: false,
-    },
-    currentGameId: {
-      type: DataTypes.STRING,
-      allowNull: true,
     },
   },
   {
@@ -126,7 +130,8 @@ GameRoom.init(
 
 // Define associations
 GameRoom.hasMany(Player, { as: 'players', foreignKey: 'gameRoomId' });
+GameRoom.hasOne(Game, {as: 'currentGame', foreignKey: 'gameRoomId'});
 Player.belongsTo(GameRoom, { foreignKey: 'gameRoomId' });
-Game.belongsTo(GameRoom, { foreignKey: 'gameRoomId' });
+Game.belongsTo(GameRoom, { foreignKey: 'currentGame' });
 
 export { GameRoom, Player, Game }

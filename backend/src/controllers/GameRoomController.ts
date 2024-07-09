@@ -19,7 +19,12 @@ export class GameRoomController {
   static async joinGameRoom(req: Request, res: Response) {
     const { roomId } = req.params
     try {
-      const gameRoom = await GameRoomService.joinGameRoom(roomId, (req as any).user.id)
+      const user = (req as any).user
+      const userId = user?.userId // Extract user ID from the verified token
+      if (!userId) {
+        res.status(400).json({ error: 'User ID is required' });
+      }
+      const gameRoom = await GameRoomService.joinGameRoom(roomId, userId)
       res.status(200).json(gameRoom)
     } catch (error) {
         if (error instanceof Error) {
@@ -61,7 +66,12 @@ export class GameRoomController {
     const { roomId } = req.params
     const { betSize } = req.body
     try {
-      const updatedRoom = await GameRoomService.makeBet(roomId, (req as any).user.id, betSize)
+      const user = (req as any).user
+      const userId = user?.userId // Extract user ID from the verified token
+      if (!userId) {
+        res.status(400).json({ error: 'User ID is required' });
+      }
+      const updatedRoom = await GameRoomService.makeBet(roomId, userId, betSize)
       res.status(200).json(updatedRoom)
     } catch (error) {
         if (error instanceof Error) {
