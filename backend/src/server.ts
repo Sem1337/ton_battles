@@ -6,7 +6,9 @@ import gameRoomRouter from './routes/gameRoom.router.js';
 import balanceRouter from './routes/balance.router.js';
 import cookieParser from 'cookie-parser';
 import sequelize from './database/db.js';
-import { authenticateUser, verifyToken } from './auth.js';
+import { authenticateUser, authenticateWebSocket, verifyToken } from './auth.js';
+import { createServer } from 'http';
+import { RawData, WebSocketServer } from 'ws';
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -47,8 +49,40 @@ sequelize.authenticate()
     })
     .then(() => {
         console.log('Database synced successfully.');
-        // Start the server
-        app.listen(port, () => {
+        // Create HTTP server
+        const server = createServer(app);
+
+        // Setup WebSocket server
+        const wss = new WebSocketServer({ server });
+
+        wss.on('connection', (ws, req) => {
+            const token = req.url?.split('token=')[1]; // Extract token from query string
+            if (!token) {
+                ws.close(4001, 'Unauthorized');
+                return;
+            }
+
+            try {
+                const decoded = authenticateWebSocket(token);
+                (ws as any).user = decoded; // Attach decoded token data to WebSocket
+            } catch (err) {
+                ws.close(4001, 'Unauthorized');
+                return;
+            }
+
+            ws.on('message', (message: RawData) => {
+                const messageString = message.toString(); // Convert RawData to string
+                const { type, roomId } = JSON.parse(messageString);
+                if (type === 'JOIN_ROOM') {
+                    (ws as any).roomId = roomId;
+                }
+            });
+
+            ws.send(JSON.stringify({ type: 'CONNECTED' }));
+        });
+
+        // Start the server (both HTTP and WebSocket)
+        server.listen(port, () => {
             console.log(`Server running on http://localhost:${port}`);
         });
     })

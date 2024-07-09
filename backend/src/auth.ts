@@ -7,9 +7,6 @@ import User from './database/model/user.js';
 const BOT_TOKEN = process.env.BOT_TOKEN || 'your_bot_token_here';
 const SECRET_KEY = process.env.JWT_SECRET_KEY || 'test';
 
-console.log('JWT KEY:', SECRET_KEY);
-
-
 export const verifyToken = (req : Request, res : Response, next : NextFunction) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
@@ -106,4 +103,14 @@ export const authenticateUser = async (req: Request, res: Response) => {
     return res.status(500).send({ status: 'error', message: 'Server error' });
   }
 
+};
+
+// WebSocket authentication
+export const authenticateWebSocket = (token: string) => {
+  try {
+    const decoded = jwt.verify(token, SECRET_KEY);
+    return decoded;
+  } catch (err) {
+    throw new Error('Unauthorized');
+  }
 };
