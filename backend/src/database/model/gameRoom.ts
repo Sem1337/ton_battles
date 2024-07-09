@@ -122,12 +122,11 @@ GameRoom.init(
     sequelize,
     modelName: 'GameRoom',
   }
-)
+);
 
 // Define associations
-GameRoom.hasMany(Player, { as: 'players', foreignKey: 'gameRoomId' })
-Player.belongsTo(GameRoom, { foreignKey: 'gameRoomId' })
-GameRoom.hasOne(Game, { as: 'currentGame', foreignKey: 'gameRoomId', sourceKey: 'currentGameId' })
-Game.belongsTo(GameRoom, { foreignKey: 'gameRoomId' })
+GameRoom.hasMany(Player, { as: 'players', foreignKey: 'gameRoomId' });
+Player.belongsTo(GameRoom, { foreignKey: 'gameRoomId' });
+Game.belongsTo(GameRoom, { foreignKey: 'gameRoomId' });
 
 export { GameRoom, Player, Game }

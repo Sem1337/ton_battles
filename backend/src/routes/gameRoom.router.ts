@@ -10,4 +10,4 @@ router.get('/gamerooms/:roomId', GameRoomController.getGameRoom)
 router.post('/gamerooms/:roomId/bets', GameRoomController.makeBet)
 router.post('/gamerooms/:roomId/complete', GameRoomController.completeGame)
 
-export default router
+export default router;

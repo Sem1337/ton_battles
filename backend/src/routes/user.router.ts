@@ -1,8 +1,8 @@
-import express, { Request, Response } from 'express';
+import { Request, Response, Router } from 'express';
 import bodyParser from 'body-parser';
 import User from '../database/model/user.js';
 
-const router = express.Router();
+const router = Router();
 const jsonParser = bodyParser.json();
 
 // Route to get all users
