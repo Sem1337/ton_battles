@@ -18,7 +18,7 @@ function App() {
   const [currentGameRoomId, setCurrentGameRoomId] = useState<string | null>(null) // State for current game room ID
   const { isAuthenticated, token } = useAuth();
   useEffect(() => {
-    if (isAuthenticated && token) {
+    if (isAuthenticated && token && !token) {
       // Connect to WebSocket server
       webSocketClient.connect(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}`, token);
     }

@@ -59,7 +59,9 @@ sequelize.authenticate()
 
     wss.on('connection', (ws, req) => {
       const token = req.url?.split('token=')[1]; // Extract token from query string
+      console.log('received connection, token: ', token);
       if (!token) {
+        console.log('no token');
         ws.close(4001, 'Unauthorized');
         return;
       }
@@ -68,6 +70,7 @@ sequelize.authenticate()
         const decoded = authenticateWebSocket(token);
         (ws as any).user = decoded; // Attach decoded token data to WebSocket
       } catch (err) {
+        console.log('error decoding token');
         ws.close(4001, 'Unauthorized');
         return;
       }
@@ -122,7 +125,7 @@ sequelize.authenticate()
           }
         }
       });
-
+      console.log('sending CONNECTED to ', (ws as any).user.userId);
       ws.send(JSON.stringify({ type: 'CONNECTED' }));
     });
     // Start the server (both HTTP and WebSocket)
