@@ -3,6 +3,7 @@ import { TopUpModal } from '../TopUpModal/TopUpModal';
 import { WithdrawModal } from '../WithdrawModal/WithdrawModal';
 import { useAuth } from '../AuthContext';
 import { authFetch } from '../../utils/auth';
+import { webSocketClient } from '../../utils/WebSocketClient';
 
 export const BalanceInfo = () => {
   const { isAuthenticated } = useAuth();
@@ -14,19 +15,13 @@ export const BalanceInfo = () => {
 
   useEffect(() => {
     const fetchBalance = async () => {
+      // Set up WebSocket event listener for balance updates
+      const handleBalanceUpdate = (newBalance: number) => {
+        setBalance(newBalance);
+      };
+      webSocketClient.on('balanceUpdate', handleBalanceUpdate);
       try {
-        const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/getBalance`, {
-          method: 'GET',
-          credentials: 'include', // Include cookies in the request
-        });
-
-        if (!response.ok) {
-          const text = await response.text();
-          throw new Error('Failed to fetch balance ' + text);
-        }
-
-        const data = await response.json();
-        setBalance(data.balance);
+        webSocketClient.getBalance();
       } catch (err) {
         if (err instanceof Error) {
           setError(err.message);
@@ -41,12 +36,16 @@ export const BalanceInfo = () => {
     if (isAuthenticated) {
       fetchBalance();
     }
+    // Cleanup listener on component unmount
+    return () => {
+      webSocketClient.off('balanceUpdate');
+    };
   }, [isAuthenticated]);
 
   const handleTopUp = async (amount: number) => {
     try {
       // Assuming the transaction is created and confirmed in the modal
-      setBalance(balance + amount);
+      alert(`Your balance will be updated after transaction processed. (top up ${amount} TON)`);
     } catch (error) {
       console.error('Top-up error:', error);
     }

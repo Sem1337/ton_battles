@@ -32,7 +32,6 @@ function App() {
   const handleJoinGameRoom = (roomId: string) => {
     setCurrentGameRoomId(roomId)
     setShowGameRoomList(false)
-    webSocketClient.joinRoom(roomId) // Join the game room via WebSocket
   }
 
   return (
