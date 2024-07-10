@@ -54,6 +54,9 @@ class WebSocketClient {
         alert(`Game completed! Winner: ${data.winner.name}`);
         // Handle game completion, update UI, etc.
         break;
+      case 'ERROR':
+        console.log('error from ws: ', data.message);
+        break;
       default:
         console.log('Unknown message type:', data);
     }

@@ -105,6 +105,8 @@ sequelize.authenticate()
             case 'GET_BALANCE':
               const user = await User.findByPk((ws as any).user.userId);
               if (user) {
+                console.log(user.userId)
+                console.log(user.balance)
                 ws.send(JSON.stringify({ type: 'BALANCE_UPDATE', balance: user.balance }));
               } else {
                 ws.send(JSON.stringify({ type: 'ERROR', message: 'User not found' }));
