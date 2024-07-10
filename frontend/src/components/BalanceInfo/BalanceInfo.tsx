@@ -9,38 +9,30 @@ export const BalanceInfo = () => {
   const { isAuthenticated, token } = useAuth();
   const [balance, setBalance] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null)
+  const [error] = useState<string | null>(null)
   const [showTopUpModal, setShowTopUpModal] = useState<boolean>(false);
   const [showWithdrawModal, setShowWithdrawModal] = useState<boolean>(false);
 
   useEffect(() => {
-    const fetchBalance = async () => {
-      // Set up WebSocket event listener for balance updates
-      const handleBalanceUpdate = (newBalance: number) => {
-        setBalance(newBalance);
-      };
-      webSocketClient.on('balanceUpdate', handleBalanceUpdate);
-      try {
-        console.log('fetching balance');
-        webSocketClient.getBalance();
-      } catch (err) {
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError('An unknown error occurred');
-        }
-      } finally {
-        setLoading(false);
-      }
+    const handleBalanceUpdate = (newBalance: number) => {
+      setBalance(newBalance);
+      setLoading(false);
+    };
+
+    const handleConnected = () => {
+      webSocketClient.getBalance();
     };
 
     if (isAuthenticated && token) {
-      fetchBalance();
+      webSocketClient.on('BALANCE_UPDATE', handleBalanceUpdate);
+      webSocketClient.on('CONNECTED', handleConnected);
+
+      // Cleanup listener on component unmount
+      return () => {
+        webSocketClient.off('BALANCE_UPDATE', handleBalanceUpdate);
+        webSocketClient.off('CONNECTED', handleConnected);
+      };
     }
-    // Cleanup listener on component unmount
-    return () => {
-      webSocketClient.off('balanceUpdate');
-    };
   }, [isAuthenticated, token]);
 
   const handleTopUp = async (amount: number) => {
