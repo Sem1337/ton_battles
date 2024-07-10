@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { authFetch } from '../../utils/auth' // Adjust the import path if necessary
 import type { GameRoom, Player } from '../../types/types' // Import shared types
 import { useAuth } from '../AuthContext'
+import { webSocketClient } from '../../utils/WebSocketClient'
 
 interface GameRoomProps {
   roomId: string
@@ -33,22 +34,22 @@ export const GameRoomComponent: React.FC<GameRoomProps> = ({ roomId }) => {
     return () => clearInterval(interval)
   }, [roomId])
 
-  const makeBet = async () => {
-    const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/gamerooms/${roomId}/bets`, token, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ betSize })
-    })
-    if (response.ok) {
-      const data: GameRoom = await response.json()
-      setPlayers(data.players)
-    } else {
-      // Handle error response
-      console.error('Failed to make a bet')
-    }
-  }
+  useEffect(() => {
+    const handleBetMade = (data: { players: Player[] }) => {
+      setPlayers(data.players);
+    };
+
+    webSocketClient.on('BET_MADE', handleBetMade);
+
+    // Cleanup listener on component unmount
+    return () => {
+      webSocketClient.off('BET_MADE', handleBetMade);
+    };
+  }, []);
+
+  const makeBet = () => {
+    webSocketClient.sendMessage({ type: 'MAKE_BET', roomId, betSize });
+  };
 
   return (
     <div>

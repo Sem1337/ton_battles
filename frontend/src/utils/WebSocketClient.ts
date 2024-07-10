@@ -1,4 +1,4 @@
-type EventCallback = (balance: number) => void;
+type EventCallback = (data: any) => void;
 
 class WebSocketClient {
   private socket: WebSocket | null = null;
@@ -11,6 +11,14 @@ class WebSocketClient {
 
     this.socket.onopen = () => {
       console.log('WebSocket connection opened');
+      this.isConnected = true;
+      // Send all queued messages
+      while (this.messageQueue.length > 0) {
+        const queuedMessage = this.messageQueue.shift();
+        if (queuedMessage && this.socket) {
+          this.socket.send(queuedMessage);
+        }
+      }
     };
 
     this.socket.onmessage = (event) => {
@@ -69,6 +77,9 @@ class WebSocketClient {
     switch (data.type) {
       case 'BALANCE_UPDATE':
         this.triggerEvent('BALANCE_UPDATE', data.balance);
+        break;
+      case 'BET_MADE':
+        this.triggerEvent('BET_MADE', data);
         break;
       case 'GAME_COMPLETED':
         alert(`Game completed! Winner: ${data.winner.name}`);
