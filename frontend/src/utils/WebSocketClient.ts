@@ -31,8 +31,13 @@ class WebSocketClient {
       this.isConnected = false;
     };
 
-    this.socket.onerror = (error) => {
+    this.socket.onerror = (error: Event) => {
       console.error('WebSocket error:', error);
+      if (error instanceof ErrorEvent) {
+        console.error('WebSocket error message:', error.message);
+      } else {
+        console.error('WebSocket error occurred');
+      }
     };
   }
 
