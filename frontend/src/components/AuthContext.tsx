@@ -6,6 +6,7 @@ interface AuthContextProps {
   isAuthenticated: boolean;
   authenticate: () => Promise<void>;
   tgUserId: number;
+  token: string | null;
 }
 
 interface AuthProviderProps {
@@ -16,6 +17,7 @@ const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 export const AuthProvider = ({ children } : AuthProviderProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [tgUserId, setTgUserId] = useState<number>(-1);
+  const [token, setToken] = useState<string | null>(null);
 
   const authenticate = async () => {
     const initData = WebApp.initData;
@@ -28,7 +30,7 @@ export const AuthProvider = ({ children } : AuthProviderProps) => {
     }
 
     try {
-      const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/auth`, {
+      const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/auth`, token, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ initData }),
@@ -42,9 +44,8 @@ export const AuthProvider = ({ children } : AuthProviderProps) => {
         const authHeader = response.headers.get('Authorization');
         const token = authHeader && authHeader.split(' ')[1];
         localStorage.setItem('token', token!);
+        setToken(token);
         console.log('User authenticated', result.initData);
-        console.log(response.headers.get('authorization'));
-        console.log(response.headers.get('Authorization'));
         response.headers.forEach(element => {
           console.log(element);
         });
@@ -67,7 +68,7 @@ export const AuthProvider = ({ children } : AuthProviderProps) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, authenticate, tgUserId }}>
+    <AuthContext.Provider value={{ isAuthenticated, authenticate, tgUserId, token }}>
       {children}
     </AuthContext.Provider>
   );

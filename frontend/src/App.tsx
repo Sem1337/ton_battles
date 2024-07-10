@@ -16,18 +16,13 @@ function App() {
   const [showGameRoomList, setShowGameRoomList] = useState(false)
   const [showCreateRoom, setShowCreateRoom] = useState(false)
   const [currentGameRoomId, setCurrentGameRoomId] = useState<string | null>(null) // State for current game room ID
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, token } = useAuth();
   useEffect(() => {
-    if (isAuthenticated) {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      console.log('ws dont have token to connect');
-      return;
+    if (isAuthenticated && token) {
+      // Connect to WebSocket server
+      webSocketClient.connect(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}`, token);
     }
-    // Connect to WebSocket server
-    webSocketClient.connect(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}`, token);
-    }
-  }, [isAuthenticated])
+  }, [isAuthenticated, token])
 
   const handleJoinGameRoom = (roomId: string) => {
     setCurrentGameRoomId(roomId)

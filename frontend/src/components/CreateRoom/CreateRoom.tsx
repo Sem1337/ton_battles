@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { authFetch } from '../../utils/auth' // Adjust the import path if necessary
+import { useAuth } from '../AuthContext'
 
 interface CreateRoomProps {
   onClose: () => void
@@ -9,9 +10,10 @@ export const CreateRoom: React.FC<CreateRoomProps> = ({ onClose }) => {
   const [minBet, setMinBet] = useState(0)
   const [maxBet, setMaxBet] = useState(0)
   const [maxPlayers, setMaxPlayers] = useState(0)
+  const { token } = useAuth(); // Get the token from AuthContext
 
   const createRoom = async () => {
-    const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/gamerooms`, {
+    const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/gamerooms`, token, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

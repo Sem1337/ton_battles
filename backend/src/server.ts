@@ -104,6 +104,7 @@ sequelize.authenticate()
               break;
             case 'GET_BALANCE':
               const user = await User.findByPk((ws as any).user.userId);
+              console.log('getting balance')
               if (user) {
                 console.log(user.userId)
                 console.log(user.balance)

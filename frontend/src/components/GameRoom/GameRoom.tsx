@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { authFetch } from '../../utils/auth' // Adjust the import path if necessary
 import type { GameRoom, Player } from '../../types/types' // Import shared types
+import { useAuth } from '../AuthContext'
 
 interface GameRoomProps {
   roomId: string
@@ -10,10 +11,11 @@ export const GameRoomComponent: React.FC<GameRoomProps> = ({ roomId }) => {
   const [betSize, setBetSize] = useState(0)
   const [players, setPlayers] = useState<Player[]>([])
   const [timer, setTimer] = useState(60)
+  const { token } = useAuth(); // Get the token from AuthContext
 
   useEffect(() => {
     const fetchGameRoomDetails = async () => {
-      const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/gamerooms/${roomId}`)
+      const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/gamerooms/${roomId}`, token)
       if (response.ok) {
         const data: GameRoom = await response.json()
         setPlayers(data.players)
@@ -32,7 +34,7 @@ export const GameRoomComponent: React.FC<GameRoomProps> = ({ roomId }) => {
   }, [roomId])
 
   const makeBet = async () => {
-    const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/gamerooms/${roomId}/bets`, {
+    const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/gamerooms/${roomId}/bets`, token, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

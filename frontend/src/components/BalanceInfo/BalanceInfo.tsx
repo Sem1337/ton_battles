@@ -6,7 +6,7 @@ import { authFetch } from '../../utils/auth';
 import { webSocketClient } from '../../utils/WebSocketClient';
 
 export const BalanceInfo = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, token } = useAuth();
   const [balance, setBalance] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null)
@@ -34,14 +34,14 @@ export const BalanceInfo = () => {
       }
     };
 
-    if (isAuthenticated) {
+    if (isAuthenticated && token) {
       fetchBalance();
     }
     // Cleanup listener on component unmount
     return () => {
       webSocketClient.off('balanceUpdate');
     };
-  }, [isAuthenticated]);
+  }, [isAuthenticated, token]);
 
   const handleTopUp = async (amount: number) => {
     try {
@@ -57,7 +57,7 @@ export const BalanceInfo = () => {
       console.log('amount: ', amount);
       console.log('address: ', walletAddress);
       // Assuming the transaction is created and confirmed in the modal
-      const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/withdraw`, {
+      const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/withdraw`, token, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount, walletAddress }),

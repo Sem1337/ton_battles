@@ -1,7 +1,6 @@
 // frontend/src/utils/auth.ts
-export function authFetch(url: string, options: RequestInit = {}): Promise<Response> {
+export function authFetch(url: string, token: string | null, options: RequestInit = {}): Promise<Response> {
     // Get token from localStorage or your preferred storage
-    const token = localStorage.getItem('token');
   
     // Don't add Authorization header for /auth endpoints
     if (url.includes('/auth')) {

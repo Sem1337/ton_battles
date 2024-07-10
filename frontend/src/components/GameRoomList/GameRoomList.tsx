@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { authFetch } from '../../utils/auth' // Adjust the import path if necessary
 
 import type { GameRoom } from '../../types/types' // Import shared types
+import { useAuth } from '../AuthContext'
 
 interface GameRoomListProps {
   onClose: () => void
@@ -10,10 +11,11 @@ interface GameRoomListProps {
 
 export const GameRoomList: React.FC<GameRoomListProps> = ({ onClose, onJoinGameRoom }) => {
   const [gameRooms, setGameRooms] = useState<GameRoom[]>([])
+  const { token } = useAuth(); // Get the token from AuthContext
 
   useEffect(() => {
     const fetchGameRooms = async () => {
-      const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/gamerooms`)
+      const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/gamerooms`, token)
       if (response.ok) {
         const data: GameRoom[] = await response.json()
         setGameRooms(data)
@@ -26,7 +28,7 @@ export const GameRoomList: React.FC<GameRoomListProps> = ({ onClose, onJoinGameR
   }, [])
 
   const joinGameRoom = async (roomId: string) => {
-    const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/gamerooms/${roomId}/join`, {
+    const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/gamerooms/${roomId}/join`, token, {
       method: 'POST'
     })
     if (response.ok) {

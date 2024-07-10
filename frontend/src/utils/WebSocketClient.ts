@@ -3,6 +3,8 @@ type EventCallback = (balance: number) => void;
 class WebSocketClient {
   private socket: WebSocket | null = null;
   private eventListeners: { [key: string]: EventCallback | null } = {};
+  private messageQueue: string[] = [];
+  private isConnected: boolean = false;
 
   connect(url: string, token: string) {
     this.socket = new WebSocket(`${url}?token=${token}`);
@@ -18,6 +20,7 @@ class WebSocketClient {
 
     this.socket.onclose = () => {
       console.log('WebSocket connection closed');
+      this.isConnected = false;
     };
 
     this.socket.onerror = (error) => {
@@ -25,21 +28,25 @@ class WebSocketClient {
     };
   }
 
-  on(eventType: 'balanceUpdate', callback: EventCallback) {
-    if (eventType === 'balanceUpdate') {
-      this.eventListeners[eventType] = callback;
-    }
+  on(eventType: string, callback: EventCallback) {
+    this.eventListeners[eventType] = callback;
   }
 
-  off(eventType: 'balanceUpdate') {
-    if (eventType === 'balanceUpdate') {
-      this.eventListeners[eventType] = null;
-    }
+  off(eventType: string) {
+    delete this.eventListeners[eventType];
   }
 
   getBalance() {
-    if (this.socket) {
-      this.socket.send(JSON.stringify({ type: 'GET_BALANCE' }));
+    this.sendMessage({ type: 'GET_BALANCE' });
+  }
+
+  sendMessage(message: any) {
+    const messageString = JSON.stringify(message);
+
+    if (this.isConnected && this.socket && this.socket.readyState === WebSocket.OPEN) {
+      this.socket.send(messageString);
+    } else {
+      this.messageQueue.push(messageString);
     }
   }
 
@@ -56,6 +63,16 @@ class WebSocketClient {
         break;
       case 'ERROR':
         console.log('error from ws: ', data.message);
+        break;
+      case 'CONNECTED':
+        this.isConnected = true;
+        // Send all queued messages
+        while (this.messageQueue.length > 0) {
+          const queuedMessage = this.messageQueue.shift();
+          if (queuedMessage && this.socket) {
+            this.socket.send(queuedMessage);
+          }
+        }
         break;
       default:
         console.log('Unknown message type:', data);
