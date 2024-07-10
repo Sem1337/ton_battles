@@ -21,6 +21,7 @@ export const BalanceInfo = () => {
       };
       webSocketClient.on('balanceUpdate', handleBalanceUpdate);
       try {
+        console.log('fetching balance');
         webSocketClient.getBalance();
       } catch (err) {
         if (err instanceof Error) {
