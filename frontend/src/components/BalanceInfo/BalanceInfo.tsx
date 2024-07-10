@@ -6,7 +6,7 @@ import { authFetch } from '../../utils/auth';
 import { webSocketClient } from '../../utils/WebSocketClient';
 
 export const BalanceInfo = () => {
-  const { isAuthenticated, token } = useAuth();
+  const { token } = useAuth();
   const [balance, setBalance] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [error] = useState<string | null>(null)
@@ -23,7 +23,7 @@ export const BalanceInfo = () => {
       webSocketClient.getBalance();
     };
 
-
+    console.log('in BalanceInfo useEffect');
     webSocketClient.on('BALANCE_UPDATE', handleBalanceUpdate);
     webSocketClient.on('CONNECTED', handleConnected);
 
