@@ -23,17 +23,17 @@ export const BalanceInfo = () => {
       webSocketClient.getBalance();
     };
 
-    if (isAuthenticated && token) {
-      webSocketClient.on('BALANCE_UPDATE', handleBalanceUpdate);
-      webSocketClient.on('CONNECTED', handleConnected);
 
-      // Cleanup listener on component unmount
-      return () => {
-        webSocketClient.off('BALANCE_UPDATE', handleBalanceUpdate);
-        webSocketClient.off('CONNECTED', handleConnected);
-      };
-    }
-  }, [isAuthenticated, token]);
+    webSocketClient.on('BALANCE_UPDATE', handleBalanceUpdate);
+    webSocketClient.on('CONNECTED', handleConnected);
+
+    // Cleanup listener on component unmount
+    return () => {
+      webSocketClient.off('BALANCE_UPDATE', handleBalanceUpdate);
+      webSocketClient.off('CONNECTED', handleConnected);
+    };
+    
+  }, []);
 
   const handleTopUp = async (amount: number) => {
     try {

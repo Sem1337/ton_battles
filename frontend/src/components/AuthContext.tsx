@@ -44,7 +44,7 @@ export const AuthProvider = ({ children } : AuthProviderProps) => {
         const authHeader = response.headers.get('Authorization');
         const token = authHeader && authHeader.split(' ')[1];
         localStorage.setItem('token', token!);
-        setToken(token);
+
         console.log('User authenticated', result.initData);
         response.headers.forEach(element => {
           console.log(element);
@@ -52,6 +52,7 @@ export const AuthProvider = ({ children } : AuthProviderProps) => {
         console.log(response.headers)
         setTgUserId(result.userId);
         setIsAuthenticated(true);
+        setToken(token);
       } else {
         // Authentication failed
         console.error('Authentication failed', result.message);
