@@ -20,7 +20,12 @@ function App() {
   useEffect(() => {
     if (isAuthenticated && token) {
       // Connect to WebSocket server
-      webSocketClient.connect(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}`, token);
+      console.log('connecting to ws');
+      try {
+        webSocketClient.connect(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}`, token);
+      } catch (error) {
+        console.log('error connecting to websocket: ', error);
+      }
     }
   }, [isAuthenticated, token])
 
