@@ -2,7 +2,7 @@ type EventCallback = (balance: number) => void;
 
 class WebSocketClient {
   private socket: WebSocket | null = null;
-  private eventListeners: { [key: string]: EventCallback | null } = {};
+  private eventListeners: { [key: string]: EventCallback[] } = {};
   private messageQueue: string[] = [];
   private isConnected: boolean = false;
 
@@ -29,11 +29,20 @@ class WebSocketClient {
   }
 
   on(eventType: string, callback: EventCallback) {
-    this.eventListeners[eventType] = callback;
+    if (!this.eventListeners[eventType]) {
+      this.eventListeners[eventType] = [];
+    }
+    this.eventListeners[eventType].push(callback);
+    console.log('enabled callback for ', eventType);
   }
 
-  off(eventType: string) {
-    delete this.eventListeners[eventType];
+  off(eventType: string, callback?: EventCallback) {
+    if (callback) {
+      this.eventListeners[eventType] = this.eventListeners[eventType]?.filter(cb => cb !== callback) || [];
+    } else {
+      this.eventListeners[eventType] = [];
+    }
+    console.log('disabled callback for ', eventType);
   }
 
   getBalance() {
@@ -42,7 +51,7 @@ class WebSocketClient {
 
   sendMessage(message: any) {
     const messageString = JSON.stringify(message);
-
+    console.log('sending message: ', messageString);
     if (this.isConnected && this.socket && this.socket.readyState === WebSocket.OPEN) {
       this.socket.send(messageString);
     } else {
@@ -50,12 +59,16 @@ class WebSocketClient {
     }
   }
 
+  triggerEvent(eventType: string, data: any) {
+    if (this.eventListeners[eventType]) {
+      this.eventListeners[eventType].forEach(callback => callback(data));
+    }
+  }
+
   handleMessage(data: any) {
     switch (data.type) {
       case 'BALANCE_UPDATE':
-        if (this.eventListeners['balanceUpdate']) {
-          this.eventListeners['balanceUpdate'](data.balance);
-        }
+        this.triggerEvent('BALANCE_UPDATE', data.balance);
         break;
       case 'GAME_COMPLETED':
         alert(`Game completed! Winner: ${data.winner.name}`);
@@ -73,6 +86,7 @@ class WebSocketClient {
             this.socket.send(queuedMessage);
           }
         }
+        this.triggerEvent('CONNECTED', data);
         break;
       default:
         console.log('Unknown message type:', data);
