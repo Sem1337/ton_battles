@@ -24,6 +24,10 @@ function App() {
       try {
         webSocketClient.connect(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}`, token);
       } catch (error) {
+        if (error instanceof DOMException) {
+          console.log(error.message);
+          console.log(error.name);
+        }
         console.log('error connecting to websocket: ', error);
       }
     }
