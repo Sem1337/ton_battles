@@ -56,10 +56,14 @@ export const GameRoomComponent: React.FC<GameRoomProps> = ({ roomId }) => {
       <h2>Game Room {roomId}</h2>
       <div>Time left: {timer} seconds</div>
       <div>
-        <label>
-          Bet Size:
-          <input type="number" value={betSize} onChange={e => setBetSize(Number(e.target.value))} />
-        </label>
+      <label htmlFor="betSize">Bet Size:</label>
+        <input
+          type="number"
+          id="betSize"
+          name="betSize"
+          value={betSize}
+          onChange={(e) => setBetSize(Number(e.target.value))}
+        />
         <button onClick={makeBet}>Make Bet</button>
       </div>
       <div>

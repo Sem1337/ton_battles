@@ -33,26 +33,38 @@ export const CreateRoom: React.FC<CreateRoomProps> = ({ onClose }) => {
   return (
     <div>
       <h2>Create Room</h2>
-      <button onClick={onClose}>Close</button>
       <div>
-        <label>
-          Min Bet:
-          <input type="number" value={minBet} onChange={e => setMinBet(Number(e.target.value))} />
-        </label>
+        <label htmlFor="minBet">Min Bet:</label>
+        <input
+          type="number"
+          id="minBet"
+          name="minBet"
+          value={minBet}
+          onChange={(e) => setMinBet(Number(e.target.value))}
+        />
       </div>
       <div>
-        <label>
-          Max Bet:
-          <input type="number" value={maxBet} onChange={e => setMaxBet(Number(e.target.value))} />
-        </label>
+        <label htmlFor="maxBet">Max Bet:</label>
+        <input
+          type="number"
+          id="maxBet"
+          name="maxBet"
+          value={maxBet}
+          onChange={(e) => setMaxBet(Number(e.target.value))}
+        />
       </div>
       <div>
-        <label>
-          Max Players:
-          <input type="number" value={maxPlayers} onChange={e => setMaxPlayers(Number(e.target.value))} />
-        </label>
+        <label htmlFor="maxPlayers">Max Players:</label>
+        <input
+          type="number"
+          id="maxPlayers"
+          name="maxPlayers"
+          value={maxPlayers}
+          onChange={(e) => setMaxPlayers(Number(e.target.value))}
+        />
       </div>
-      <button onClick={createRoom}>Create</button>
+      <button onClick={createRoom}>Create Room</button>
+      <button onClick={onClose}>Cancel</button>
     </div>
   )
 }

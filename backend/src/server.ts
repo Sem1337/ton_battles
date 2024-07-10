@@ -79,30 +79,27 @@ sequelize.authenticate()
 
         try {
           switch (data.type) {
-            case 'JOIN_ROOM':
-              (ws as any).roomId = data.roomId;
-              await GameRoomService.joinGameRoom(data.roomId, (ws as any).user.userId);
-              ws.send(JSON.stringify({ type: 'JOINED_ROOM', roomId: data.roomId }));
-              break;
-            case 'MAKE_BET':
-              const { betSize } = data;
-              if ((ws as any).roomId) {
-                await GameRoomService.makeBet((ws as any).roomId, (ws as any).user.userId, betSize);
-                ws.send(JSON.stringify({ type: 'BET_MADE', betSize }));
+            case 'MAKE_BET': {
+              const { betSize, roomId } = data;
+              if (roomId) {
+                const gameRoom = await GameRoomService.makeBet(roomId, (ws as any).user.userId, betSize);
+                ws.send(JSON.stringify({ type: 'BET_MADE', players: gameRoom.players }));
               } else {
                 ws.send(JSON.stringify({ type: 'ERROR', message: 'User not in a room' }));
               }
               break;
-            case 'LEAVE_ROOM':
-              if ((ws as any).roomId) {
-                await GameRoomService.leaveGameRoom((ws as any).roomId, (ws as any).user.userId);
-                (ws as any).roomId = null;
+            }
+            case 'LEAVE_ROOM': {
+              const { roomId } = data;
+              if (roomId) {
+                await GameRoomService.leaveGameRoom(roomId, (ws as any).user.userId);
                 ws.send(JSON.stringify({ type: 'LEFT_ROOM' }));
               } else {
                 ws.send(JSON.stringify({ type: 'ERROR', message: 'User not in a room' }));
               }
               break;
-            case 'GET_BALANCE':
+            }
+            case 'GET_BALANCE': {
               const user = await User.findByPk((ws as any).user.userId);
               console.log('getting balance')
               if (user) {
@@ -113,6 +110,7 @@ sequelize.authenticate()
                 ws.send(JSON.stringify({ type: 'ERROR', message: 'User not found' }));
               }
               break;
+            }
             default:
               ws.send(JSON.stringify({ type: 'ERROR', message: 'Unknown message type' }));
           }
