@@ -22,7 +22,7 @@ function App() {
       // Connect to WebSocket server
       console.log('connecting to ws');
       try {
-        webSocketClient.connect(`${import.meta.env.VITE_REACT_APP_BACKEND_WS_URL}`, token);
+        webSocketClient.connect(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}`, token);
       } catch (error) {
         if (error instanceof DOMException) {
           console.log(error.message);

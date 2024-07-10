@@ -7,7 +7,9 @@ class WebSocketClient {
   private isConnected: boolean = false;
 
   connect(url: string, token: string) {
-    this.socket = new WebSocket(`${url}?token=${token}`);
+    const wsUrl = url.replace(/^http/, 'ws');
+    console.log('connecting ws to :',`${wsUrl}?token=${token}`);
+    this.socket = new WebSocket(`${wsUrl}?token=${token}`);
 
     this.socket.onopen = () => {
       console.log('WebSocket connection opened');
