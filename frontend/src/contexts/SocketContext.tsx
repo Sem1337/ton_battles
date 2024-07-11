@@ -27,6 +27,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const { isAuthenticated, token } = useAuth();
   const [socket, setSocket] = useState<Socket | null>(null);
   const eventCallbacks = new Map<string, (data: any) => void>();
+  const [callbacks, setCallbacks] = useState<number>(0);
 
   useEffect(() => {
     if (isAuthenticated && token) {
@@ -64,7 +65,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
         socketConnection.disconnect();
       };
     }
-  }, [isAuthenticated, token]);
+  }, [isAuthenticated, token, callbacks]);
 
   const sendMessage = (type: string, payload?: any) => {
     if (socket) {
@@ -76,10 +77,12 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     console.log('registered callback for ', event);
     eventCallbacks.set(event, callback);
     console.log(eventCallbacks.size);
+    setCallbacks(callbacks + 1);
   }, []);
 
   const off = useCallback((event: string) => {
     eventCallbacks.delete(event);
+    setCallbacks(callbacks - 1);
   }, []);
 
   return (
