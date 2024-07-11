@@ -46,6 +46,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
       socketConnection.on('message', (data: { type: string, payload?: any }) => {
         console.log(`Received message of type ${data.type}`);
         const callback = eventCallbacks.get(data.type);
+        console.log(eventCallbacks.size);
         if (callback) {
           try {
             callback(data.payload);
@@ -74,6 +75,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const on = useCallback((event: string, callback: (data: any) => void) => {
     console.log('registered callback for ', event);
     eventCallbacks.set(event, callback);
+    console.log(eventCallbacks.size);
   }, []);
 
   const off = useCallback((event: string) => {
