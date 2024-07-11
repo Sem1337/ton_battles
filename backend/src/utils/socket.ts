@@ -78,7 +78,7 @@ export const initializeSocket = (server: HttpServer) => {
       console.log('A user disconnected', socket.data.user);
     });
 
-    socket.emit('CONNECTED');
+    socket.emit('message', { type: 'CONNECTED' });
   });
 
   return io;

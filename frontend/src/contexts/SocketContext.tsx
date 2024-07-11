@@ -43,7 +43,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
         console.log('Disconnected from WebSocket server');
       });
 
-      socketConnection.on('message', (data: { type: string, payload: any }) => {
+      socketConnection.on('message', (data: { type: string, payload?: any }) => {
         console.log(`Received message of type ${data.type}`);
         const callback = eventCallbacks.get(data.type);
         if (callback) {
@@ -78,7 +78,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const off = useCallback((event: string) => {
     eventCallbacks.delete(event);
   }, []);
-  
+
   return (
     <SocketContext.Provider value={{ socket, sendMessage, on, off }}>
       {children}
