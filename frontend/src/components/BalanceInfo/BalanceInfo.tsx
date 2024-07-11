@@ -30,8 +30,8 @@ export const BalanceInfo = () => {
     on('CONNECTED', handleConnected);
 
     return () => {
-      off('BALANCE_UPDATE', handleBalanceUpdate);
-      off('CONNECTED', handleConnected);
+      off('BALANCE_UPDATE');
+      off('CONNECTED');
     };
   }, [sendMessage, on, off]);
 

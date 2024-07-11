@@ -7,7 +7,7 @@ interface CreateRoomProps {
   onCreateGameRoom: (roomId: string) => void // Add onCreateGameRoom prop
 }
 
-export const CreateRoom: React.FC<CreateRoomProps> = ({ onClose }) => {
+export const CreateRoom: React.FC<CreateRoomProps> = ({ onClose, onCreateGameRoom }) => {
   const [minBet, setMinBet] = useState(0)
   const [maxBet, setMaxBet] = useState(0)
   const [maxPlayers, setMaxPlayers] = useState(0)
@@ -24,7 +24,7 @@ export const CreateRoom: React.FC<CreateRoomProps> = ({ onClose }) => {
     if (response.ok) {
       const data = await response.json()
       console.log(`Created game room: ${data.id}`)
-      onClose()
+      onCreateGameRoom(data.id)
     } else {
       // Handle error response
       console.error('Failed to create game room')

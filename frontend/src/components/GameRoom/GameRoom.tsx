@@ -51,13 +51,13 @@ export const GameRoomComponent: React.FC<GameRoomProps> = ({ roomId }) => {
     on('GAME_COMPLETED', handleGameCompleted);
 
     return () => {
-      off('BET_MADE', handleBetMade);
-      off('GAME_COMPLETED', handleGameCompleted);
+      off('BET_MADE');
+      off('GAME_COMPLETED');
     };
   }, [on, off]);
 
   const makeBet = () => {
-    sendMessage({ type: 'MAKE_BET', roomId, betSize });
+    sendMessage('MAKE_BET', {roomId, betSize});
   };
 
   const leaveGameRoom = async () => {
