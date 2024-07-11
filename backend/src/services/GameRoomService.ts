@@ -79,7 +79,7 @@ export class GameRoomService {
 
       // Determine the winner (example logic: player with the highest bet)
       const winner = gameRoom.players.reduce((max, player) => (player.bet > max.bet ? player : max), gameRoom.players[0]);
-
+      console.log('winner determined')
       // Update the game's winner and status
       game.winner_id = winner.id;
       game.winnerBetSize = winner.bet;
@@ -144,20 +144,26 @@ export class GameRoomService {
     try {
       console.log(`${userId} user joins to ${roomId}`)
       const gameRoom = await GameRoom.findByPk(roomId, {
-        include: [{ model: Player, as: 'players' }]
+        include: [{ model: Player, as: 'players', include: [{ model: User, as: 'user' }] }]
       })
+      console.log('game room fetched')
       if (!gameRoom || gameRoom.status === 'closed') {
         throw new Error('Game room not found')
       }
       if (gameRoom.players.length >= gameRoom.maxPlayers) {
         throw new Error('Game room is full')
       }
+      const playersUser = await User.findByPk(userId);
+      if (!playersUser) {
+        throw new Error('User not found')
+      }
       const player = await Player.create({
-        userId: userId,
         bet: 0,
         name: `Player${userId}`,
         gameRoomId: roomId,
       })
+      console.log('player created')
+      player.user = playersUser
       gameRoom.players.push(player)
       await gameRoom.save()
       console.log('success')

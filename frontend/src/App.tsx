@@ -18,6 +18,7 @@ function App() {
   const handleJoinGameRoom = (roomId: string) => {
     setCurrentGameRoomId(roomId)
     setShowGameRoomList(false)
+    setShowCreateRoom(false)
   }
 
   return (
@@ -39,7 +40,11 @@ function App() {
           onJoinGameRoom={handleJoinGameRoom} // Pass the handleJoinGameRoom function
         />
       )}
-      {showCreateRoom && <CreateRoom onClose={() => setShowCreateRoom(false)} />}
+      {showCreateRoom && (
+        <CreateRoom
+          onClose={() => setShowCreateRoom(false)}
+          onCreateGameRoom={handleJoinGameRoom}
+       />)}
       {currentGameRoomId && <GameRoomComponent roomId={currentGameRoomId} />} {/* Render GameRoomComponent when a game room is joined */}
     </>
   )

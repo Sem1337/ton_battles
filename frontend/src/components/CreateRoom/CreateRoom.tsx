@@ -4,6 +4,7 @@ import { useAuth } from '../../contexts/AuthContext'
 
 interface CreateRoomProps {
   onClose: () => void
+  onCreateGameRoom: (roomId: string) => void // Add onCreateGameRoom prop
 }
 
 export const CreateRoom: React.FC<CreateRoomProps> = ({ onClose }) => {

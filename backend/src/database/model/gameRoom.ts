@@ -18,14 +18,6 @@ Player.init(
       primaryKey: true,
       defaultValue: DataTypes.UUIDV4,
     },
-    user: { // Change userId to user
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: User, // Reference User model
-        key: 'userId',
-      },
-    },
     bet: {
       type: DataTypes.INTEGER,
       defaultValue: 0,
@@ -140,7 +132,7 @@ Player.belongsTo(GameRoom, { foreignKey: 'gameRoomId' });
 Game.belongsTo(GameRoom, { foreignKey: 'currentGame' });
 
 // Add association between Player and User
-Player.belongsTo(User, { foreignKey: 'user' });
+Player.belongsTo(User, { as: 'user' });
 User.hasMany(Player, { foreignKey: 'user' });
 
 export { GameRoom, Player, Game }
