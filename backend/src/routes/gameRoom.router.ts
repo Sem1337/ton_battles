@@ -8,6 +8,6 @@ router.post('/gamerooms/:roomId/join', GameRoomController.joinGameRoom)
 router.get('/gamerooms', GameRoomController.getGameRooms)
 router.get('/gamerooms/:roomId', GameRoomController.getGameRoom)
 router.post('/gamerooms/:roomId/bets', GameRoomController.makeBet)
-router.post('/gamerooms/:roomId/complete', GameRoomController.completeGame)
+router.post('/gameRooms/:roomId/leave', GameRoomController.leaveGameRoom);
 
 export default router;

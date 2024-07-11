@@ -4,7 +4,8 @@ import App from './App.tsx'
 import './index.css'
 import WebApp from '@twa-dev/sdk'
 import { TonConnectUIProvider } from '@tonconnect/ui-react'
-import { AuthProvider } from './components/AuthContext'; // Adjust import path
+import { AuthProvider } from './contexts/AuthContext.tsx'; // Adjust import path
+import { SocketProvider } from './contexts/SocketContext.tsx'
 
 WebApp.ready();
 
@@ -15,7 +16,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       manifestUrl="https://sem1337.github.io/ton_battles/tonconnect-manifest.json"
     >
       <AuthProvider>
+        <SocketProvider>
         <App />
+        </SocketProvider>
       </AuthProvider>
     </TonConnectUIProvider>
   </React.StrictMode>,

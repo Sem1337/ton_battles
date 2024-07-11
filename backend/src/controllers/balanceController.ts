@@ -29,20 +29,3 @@ export const withdrawBalance = async (req: Request, res: Response) => {
     return res.status(500).send({ success: false, error });
   }
 };
-
-
-export const getBalance = async (req: Request, res: Response) => {
-  try {
-    const user = (req as any).user;
-    const userId = user?.userId; // Extract user ID from the verified token
-    console.log('getBalance: ', user);
-    if (!userId) {
-      return res.status(400).json({ error: 'User ID is required' });
-    }
-    const balance = await getUserBalance(userId);
-    return res.status(200).json({ balance });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: 'Server error' });
-  }
-};

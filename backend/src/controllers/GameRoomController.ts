@@ -1,11 +1,17 @@
 import { Request, Response } from 'express'
 import { GameRoomService } from '../services/GameRoomService.js'
+import { getSocketInstance } from '../utils/socket.js'
 
 export class GameRoomController {
   static async createGameRoom(req: Request, res: Response) {
     const { minBet, maxBet, maxPlayers } = req.body
+    const user = (req as any).user
+    const userId = user?.userId // Extract user ID from the verified token
+    if (!userId) {
+      res.status(400).json({ error: 'User ID is required' });
+    }
     try {
-      const gameRoom = await GameRoomService.createGameRoom(minBet, maxBet, maxPlayers)
+      const gameRoom = await GameRoomService.createGameRoom(minBet, maxBet, maxPlayers, userId)
       res.status(201).json(gameRoom)
     } catch (error) {
         if (error instanceof Error) {
@@ -25,6 +31,8 @@ export class GameRoomController {
         res.status(400).json({ error: 'User ID is required' });
       }
       const gameRoom = await GameRoomService.joinGameRoom(roomId, userId)
+      const io = getSocketInstance();
+      io.to(roomId).emit('PLAYER_JOINED', { userId, roomId }); // Notify other players
       res.status(200).json(gameRoom)
     } catch (error) {
         if (error instanceof Error) {
@@ -72,6 +80,8 @@ export class GameRoomController {
         res.status(400).json({ error: 'User ID is required' });
       }
       const updatedRoom = await GameRoomService.makeBet(roomId, userId, betSize)
+      const io = getSocketInstance();
+      io.to(roomId).emit('BET_MADE', { userId, roomId, betSize }); // Notify other players
       res.status(200).json(updatedRoom)
     } catch (error) {
         if (error instanceof Error) {
@@ -82,17 +92,19 @@ export class GameRoomController {
     }
   }
 
-  static async completeGame(req: Request, res: Response) {
-    const { roomId } = req.params
+  static async leaveGameRoom(req: Request, res: Response) {
+    const { roomId } = req.params;
+    const userId = (req as any).user.userId; // Assuming userId is available in the request
     try {
-      const game = await GameRoomService.completeGame(roomId)
-      res.status(200).json(game)
+      const gameRoom = await GameRoomService.leaveGameRoom(roomId, userId);
+      res.status(200).json(gameRoom);
     } catch (error) {
-        if (error instanceof Error) {
-            res.status(500).json({ error: error.message })
-        } else {
-            res.status(500).json({ error: 'An unknown error occurred' })
-        }
+      if (error instanceof Error) {
+        res.status(500).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: 'An unknown error occurred' });
+      }
     }
   }
+
 }

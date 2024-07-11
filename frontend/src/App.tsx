@@ -7,31 +7,13 @@ import { BalanceInfo } from './components/BalanceInfo/BalanceInfo';
 import { GameRoomList } from './components/GameRoomList/GameRoomList'
 import { CreateRoom } from './components/CreateRoom/CreateRoom'
 import { GameRoomComponent } from './components/GameRoom/GameRoom' // Adjust the import path if necessary
-import { useState, useEffect } from 'react'
-import { webSocketClient } from './utils/WebSocketClient' // Import WebSocket client
-import { useAuth } from './components/AuthContext'
+import { useState } from 'react'
 
 
 function App() {
   const [showGameRoomList, setShowGameRoomList] = useState(false)
   const [showCreateRoom, setShowCreateRoom] = useState(false)
   const [currentGameRoomId, setCurrentGameRoomId] = useState<string | null>(null) // State for current game room ID
-  const { isAuthenticated, token } = useAuth();
-  useEffect(() => {
-    if (isAuthenticated && token) {
-      // Connect to WebSocket server
-      console.log('connecting to ws');
-      try {
-        webSocketClient.connect(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}`, token);
-      } catch (error) {
-        if (error instanceof DOMException) {
-          console.log(error.message);
-          console.log(error.name);
-        }
-        console.log('error connecting to websocket: ', error);
-      }
-    }
-  }, [isAuthenticated, token])
 
   const handleJoinGameRoom = (roomId: string) => {
     setCurrentGameRoomId(roomId)

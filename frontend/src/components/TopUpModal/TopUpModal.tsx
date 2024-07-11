@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTonConnectUI } from '@tonconnect/ui-react';
 import { beginCell } from "@ton/ton";
-import { useAuth } from '../AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface TopUpModalProps {
   onClose: () => void;

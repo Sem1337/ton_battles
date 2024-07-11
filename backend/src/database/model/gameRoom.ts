@@ -1,9 +1,10 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../db.js';
+import User from './user.js';
 
 class Player extends Model {
   public id!: string
-  public userId!: string
+  public user!: User // Change userId to user of type User
   public bet!: number
   public name!: string
   public gameRoomId!: string
@@ -17,9 +18,13 @@ Player.init(
       primaryKey: true,
       defaultValue: DataTypes.UUIDV4,
     },
-    userId: {
-      type: DataTypes.STRING,
+    user: { // Change userId to user
+      type: DataTypes.INTEGER,
       allowNull: false,
+      references: {
+        model: User, // Reference User model
+        key: 'userId',
+      },
     },
     bet: {
       type: DataTypes.INTEGER,
@@ -133,5 +138,9 @@ GameRoom.hasMany(Player, { as: 'players', foreignKey: 'gameRoomId' });
 GameRoom.hasOne(Game, {as: 'currentGame', foreignKey: 'gameRoomId'});
 Player.belongsTo(GameRoom, { foreignKey: 'gameRoomId' });
 Game.belongsTo(GameRoom, { foreignKey: 'currentGame' });
+
+// Add association between Player and User
+Player.belongsTo(User, { foreignKey: 'user' });
+User.hasMany(Player, { foreignKey: 'user' });
 
 export { GameRoom, Player, Game }

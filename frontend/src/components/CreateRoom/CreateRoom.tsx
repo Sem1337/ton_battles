@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { authFetch } from '../../utils/auth' // Adjust the import path if necessary
-import { useAuth } from '../AuthContext'
+import { useAuth } from '../../contexts/AuthContext'
 
 interface CreateRoomProps {
   onClose: () => void

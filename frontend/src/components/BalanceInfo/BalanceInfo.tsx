@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { TopUpModal } from '../TopUpModal/TopUpModal';
 import { WithdrawModal } from '../WithdrawModal/WithdrawModal';
-import { useAuth } from '../AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
 import { authFetch } from '../../utils/auth';
 import { webSocketClient } from '../../utils/WebSocketClient';
+import { useSocket } from '../../contexts/SocketContext';
 
 export const BalanceInfo = () => {
   const { token } = useAuth();
@@ -12,6 +13,7 @@ export const BalanceInfo = () => {
   const [error] = useState<string | null>(null)
   const [showTopUpModal, setShowTopUpModal] = useState<boolean>(false);
   const [showWithdrawModal, setShowWithdrawModal] = useState<boolean>(false);
+  const { sendMessage, on, off } = useSocket();
 
   useEffect(() => {
     const handleBalanceUpdate = (newBalance: number) => {
@@ -20,20 +22,17 @@ export const BalanceInfo = () => {
     };
 
     const handleConnected = () => {
-      webSocketClient.getBalance();
+      sendMessage({ type: 'GET_BALANCE' });
     };
 
-    console.log('in BalanceInfo useEffect');
-    webSocketClient.on('BALANCE_UPDATE', handleBalanceUpdate);
-    webSocketClient.on('CONNECTED', handleConnected);
+    on('BALANCE_UPDATE', handleBalanceUpdate);
+    on('CONNECTED', handleConnected);
 
-    // Cleanup listener on component unmount
     return () => {
-      webSocketClient.off('BALANCE_UPDATE', handleBalanceUpdate);
-      webSocketClient.off('CONNECTED', handleConnected);
+      off('BALANCE_UPDATE', handleBalanceUpdate);
+      off('CONNECTED', handleConnected);
     };
-    
-  }, []);
+  }, [sendMessage, on, off]);
 
   const handleTopUp = async (amount: number) => {
     try {
