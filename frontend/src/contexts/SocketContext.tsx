@@ -65,7 +65,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
         socketConnection.disconnect();
       };
     }
-  }, [isAuthenticated, token, callbacks]);
+  }, [isAuthenticated, token, eventCallbacks.size]);
 
   const sendMessage = (type: string, payload?: any) => {
     if (socket) {
