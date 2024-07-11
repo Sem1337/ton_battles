@@ -22,6 +22,7 @@ export const BalanceInfo = () => {
     };
 
     const handleConnected = () => {
+      console.log('sengind GET_BALANCE');
       sendMessage({ type: 'GET_BALANCE' });
     };
 

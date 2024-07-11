@@ -66,7 +66,7 @@ export const initializeSocket = (server: HttpServer) => {
       console.log('A user disconnected', socket.data.user);
     });
 
-    socket.send('CONNECTED');
+    socket.emit('CONNECTED');
   });
 
   return io;
