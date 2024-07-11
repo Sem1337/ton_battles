@@ -33,32 +33,44 @@ export const initializeSocket = (server: HttpServer) => {
   io.on('connection', (socket) => {
     console.log('A user connected', socket.data.user);
 
-    socket.on('MAKE_BET', async (data) => {
-      const { betSize, roomId } = data;
-      if (roomId) {
-        const gameRoom = await GameRoomService.makeBet(roomId, socket.data.user.userId, betSize);
-        io.to(roomId).emit('BET_MADE', { players: gameRoom.players });
-      } else {
-        socket.emit('ERROR', { message: 'User not in a room' });
-      }
-    });
 
-    socket.on('LEAVE_ROOM', async (data) => {
-      const { roomId } = data;
-      if (roomId) {
-        await GameRoomService.leaveGameRoom(roomId, socket.data.user.userId);
-        socket.emit('LEFT_ROOM');
-      } else {
-        socket.emit('ERROR', { message: 'User not in a room' });
-      }
-    });
+    socket.on('message', async (data: { type: string, payload: any }) => {
+      const { type, payload } = data;
 
-    socket.on('GET_BALANCE', async () => {
-      const user = await User.findByPk(socket.data.user.userId);
-      if (user) {
-        socket.emit('BALANCE_UPDATE', { balance: user.balance });
-      } else {
-        socket.emit('ERROR', { message: 'User not found' });
+      console.log(`received message of type ${type}`);
+      
+      try {
+        switch (type) {
+          case 'MAKE_BET':
+            const { roomId, betSize } = payload;
+            await GameRoomService.makeBet(roomId, socket.data.user.userId, betSize);
+            io.to(roomId).emit('message', { type: 'BET_MADE', payload: { userId: socket.data.user.userId, roomId, betSize } });
+            break;
+        
+          case 'LEAVE_ROOM':
+            const { roomId: leaveRoomId } = payload;
+            await GameRoomService.leaveGameRoom(leaveRoomId, socket.data.user.userId);
+            io.to(leaveRoomId).emit('message', { type: 'PLAYER_LEFT', payload: { userId: socket.data.user.userId, roomId: leaveRoomId } });
+            break;
+        
+          case 'GET_BALANCE':
+            const user = await User.findByPk(socket.data.user.userId);
+            if (user) {
+              socket.emit('message', { type: 'BALANCE_UPDATE', payload: user.balance });
+            } else {
+              socket.emit('message', { type: 'ERROR', payload: { message: 'User not found' } });
+            }
+            break;
+        
+          default:
+            socket.emit('message', { type: 'ERROR', payload: { message: 'Unknown message type' } });
+        }
+      } catch (error) {
+        if (error instanceof Error) {
+          socket.emit('message', { type: 'ERROR', payload: { message: error.message } });
+        } else {
+          socket.emit('message', { type: 'ERROR', payload: { message: 'An unknown error occurred' } });
+        }
       }
     });
 
