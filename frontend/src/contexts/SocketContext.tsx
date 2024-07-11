@@ -72,6 +72,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   };
 
   const on = useCallback((event: string, callback: (data: any) => void) => {
+    console.log('registered callback for ', event);
     eventCallbacks.set(event, callback);
   }, []);
 
