@@ -1,12 +1,11 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { io, Socket } from 'socket.io-client';
+import React, { createContext, useContext, useEffect } from 'react';
 import { useAuth } from './AuthContext';
+import { webSocketManager } from '../utils/WebSocketManager';
 
 interface SocketContextType {
-  socket: Socket | null;
-  sendMessage: (message: any) => void;
+  sendMessage: (type: string, payload?: any) => void;
   on: (event: string, callback: (data: any) => void) => void;
-  off: (event: string, callback: (data: any) => void) => void;
+  off: (event: string) => void;
 }
 
 const SocketContext = createContext<SocketContextType | undefined>(undefined);
@@ -25,68 +24,26 @@ interface SocketProviderProps {
 
 export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const { isAuthenticated, token } = useAuth();
-  const [socket, setSocket] = useState<Socket | null>(null);
-  const eventCallbacks = new Map<string, (data: any) => void>();
-  const [callbacks, setCallbacks] = useState<number>(0);
 
   useEffect(() => {
     if (isAuthenticated && token) {
-      const socketConnection = io(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}`, {
-        query: { token },
-        transports: ['websocket'],
-      });
-
-      socketConnection.on('connect', () => {
-        console.log('Connected to WebSocket server');
-      });
-
-      socketConnection.on('disconnect', () => {
-        console.log('Disconnected from WebSocket server');
-      });
-
-      socketConnection.on('message', (data: { type: string, payload?: any }) => {
-        console.log(`Received message of type ${data.type}`);
-        const callback = eventCallbacks.get(data.type);
-        console.log(eventCallbacks.size);
-        if (callback) {
-          try {
-            callback(data.payload);
-          } catch (error) {
-            console.error(`Error handling ${data.type}:`, error);
-          }
-        } else {
-          console.warn(`No callback registered for message type: ${data.type}`);
-        }
-      });
-
-      setSocket(socketConnection);
+      console.log('Connecting to WebSocket server...');
+      webSocketManager.connect(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}`, token);
 
       return () => {
-        socketConnection.disconnect();
+        webSocketManager.disconnect();
       };
     }
-  }, [isAuthenticated, token, eventCallbacks.size]);
-
-  const sendMessage = (type: string, payload?: any) => {
-    if (socket) {
-      socket.emit('message', { type, payload });
-    }
-  };
-
-  const on = useCallback((event: string, callback: (data: any) => void) => {
-    console.log('registered callback for ', event);
-    eventCallbacks.set(event, callback);
-    console.log(eventCallbacks.size);
-    setCallbacks(callbacks + 1);
-  }, []);
-
-  const off = useCallback((event: string) => {
-    eventCallbacks.delete(event);
-    setCallbacks(callbacks - 1);
-  }, []);
+  }, [isAuthenticated, token]);
 
   return (
-    <SocketContext.Provider value={{ socket, sendMessage, on, off }}>
+    <SocketContext.Provider
+      value={{
+        sendMessage: webSocketManager.sendMessage.bind(webSocketManager),
+        on: webSocketManager.on.bind(webSocketManager),
+        off: webSocketManager.off.bind(webSocketManager),
+      }}
+    >
       {children}
     </SocketContext.Provider>
   );
