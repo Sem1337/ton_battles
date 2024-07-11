@@ -3,7 +3,6 @@ import { TopUpModal } from '../TopUpModal/TopUpModal';
 import { WithdrawModal } from '../WithdrawModal/WithdrawModal';
 import { useAuth } from '../../contexts/AuthContext';
 import { authFetch } from '../../utils/auth';
-import { webSocketClient } from '../../utils/WebSocketClient';
 import { useSocket } from '../../contexts/SocketContext';
 
 export const BalanceInfo = () => {
@@ -16,6 +15,7 @@ export const BalanceInfo = () => {
   const { sendMessage, on, off } = useSocket();
 
   useEffect(() => {
+    console.log('balance info use effect')
     const handleBalanceUpdate = (newBalance: number) => {
       setBalance(newBalance);
       setLoading(false);

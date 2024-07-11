@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { authFetch } from '../../utils/auth' // Adjust the import path if necessary
 import type { GameRoom, Player } from '../../types/types' // Import shared types
 import { useAuth } from '../../contexts/AuthContext'
-import { webSocketClient } from '../../utils/WebSocketClient'
 import { useSocket } from '../../contexts/SocketContext'
 
 interface GameRoomProps {
