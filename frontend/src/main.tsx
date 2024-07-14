@@ -10,6 +10,8 @@ import { SocketProvider } from './contexts/SocketContext.tsx'
 
 WebApp.ready();
 
+// Call expand to make the app full screen
+WebApp.expand();
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
