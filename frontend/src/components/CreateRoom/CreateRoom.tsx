@@ -11,6 +11,7 @@ const CreateGame = () => {
   const navigate = useNavigate();
 
   const handleCreateGameRoom = async () => {
+    console.log(minBet, maxBet, maxPlayers);
     const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/gamerooms`, token, {
       method: 'POST',
       body: JSON.stringify({ minBet, maxBet, maxPlayers }),
