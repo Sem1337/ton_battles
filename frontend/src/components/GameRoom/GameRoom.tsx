@@ -4,7 +4,7 @@ import type { GameRoom, Player } from '../../types/types' // Import shared types
 import Modal from 'react-modal'; // Import react-modal
 import { useAuth } from '../../contexts/AuthContext'
 import { useSocket } from '../../contexts/SocketContext'
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 
 const customStyles = {
@@ -15,6 +15,10 @@ const customStyles = {
     bottom: 'auto',
     marginRight: '-50%',
     transform: 'translate(-50%, -50%)',
+    width: '80%', // Ensure the modal is not too wide on mobile
+    maxWidth: '500px', // Add a maximum width
+    padding: '20px', // Add padding for better spacing
+    boxSizing: 'border-box' as const,// Ensure padding is included in the width calculation
   },
 };
 
@@ -27,6 +31,7 @@ const GameRoomComponent = () => {
   const [totalBank, setTotalBank] = useState<number | null>(null);
   const { token } = useAuth(); // Get the token from AuthContext
   const { sendMessage, on, off, joinRoom, leaveRoom } = useSocket();
+  const navigate = useNavigate();
 
   const fetchGameRoomDetails = async () => {
     const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/gamerooms/${roomId}`, token)
@@ -95,6 +100,7 @@ const GameRoomComponent = () => {
     } catch (error) {
       console.error('Error leaving game room', error);
     }
+    navigate(-1); // Navigates to the previous page
   };
 
   return (
