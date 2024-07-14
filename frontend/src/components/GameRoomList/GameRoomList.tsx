@@ -43,9 +43,9 @@ export const GameRoomList: React.FC<GameRoomListProps> = ({ onClose, onJoinGameR
     <div>
       <h2>Game Rooms</h2>
       <button onClick={onClose}>Close</button>
-      <div style={{maxHeight: '400px', overflowY: 'scroll'}}>
+      <div style={{ maxHeight: '400px', overflowY: 'scroll' }}>
         {gameRooms.map(room => (
-          <div key={room.id} onClick={() => joinGameRoom(room.id)} style={{border: '1px solid black', padding: '10px', margin: '5px', cursor: 'pointer'}}>
+          <div key={room.id} onClick={() => joinGameRoom(room.id)} style={{ border: '1px solid black', padding: '10px', margin: '5px', cursor: 'pointer' }}>
             <p>Min Bet: {room.minBet}</p>
             <p>Max Bet: {room.maxBet}</p>
             <p>Players: {room.players.length}/{room.maxPlayers}</p>
@@ -53,5 +53,7 @@ export const GameRoomList: React.FC<GameRoomListProps> = ({ onClose, onJoinGameR
         ))}
       </div>
     </div>
-  )
-}
+  );
+};
+
+export default GameRoomList;

@@ -4,10 +4,8 @@ import type { GameRoom, Player } from '../../types/types' // Import shared types
 import Modal from 'react-modal'; // Import react-modal
 import { useAuth } from '../../contexts/AuthContext'
 import { useSocket } from '../../contexts/SocketContext'
+import { useParams } from 'react-router-dom';
 
-interface GameRoomProps {
-  roomId: string
-}
 
 const customStyles = {
   content: {
@@ -20,7 +18,8 @@ const customStyles = {
   },
 };
 
-export const GameRoomComponent: React.FC<GameRoomProps> = ({ roomId }) => {
+const GameRoomComponent = () => {
+  const { roomId } = useParams<{ roomId: string }>();
   const [betSize, setBetSize] = useState(0)
   const [players, setPlayers] = useState<Player[]>([])
   const [timer, setTimer] = useState(60)
@@ -53,7 +52,7 @@ export const GameRoomComponent: React.FC<GameRoomProps> = ({ roomId }) => {
   }, [roomId])
 
   useEffect(() => {
-    joinRoom(roomId);
+    joinRoom(roomId!);
     const handleBetMade = (playersData: Player[]) => {
       console.log(playersData);
       setPlayers(playersData);
@@ -70,7 +69,7 @@ export const GameRoomComponent: React.FC<GameRoomProps> = ({ roomId }) => {
     return () => {
       off('BET_MADE');
       off('GAME_COMPLETED');
-      leaveRoom(roomId);
+      leaveRoom(roomId!);
     };
   }, [on, off]);
 
@@ -103,7 +102,7 @@ export const GameRoomComponent: React.FC<GameRoomProps> = ({ roomId }) => {
       <h2>Game Room {roomId}</h2>
       <div>Time left: {timer} seconds</div>
       <div>
-      <label htmlFor="betSize">Bet Size:</label>
+        <label htmlFor="betSize">Bet Size:</label>
         <input
           type="number"
           id="betSize"
@@ -136,5 +135,9 @@ export const GameRoomComponent: React.FC<GameRoomProps> = ({ roomId }) => {
         </Modal>
       )}
     </div>
-  )
-}
+  );
+};
+
+Modal.setAppElement('#root'); // To avoid screen readers issues
+
+export default GameRoomComponent;

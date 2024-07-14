@@ -1,55 +1,22 @@
-import './App.css'
-import { Header } from './components/Header/Header'
-import { AddressInfo } from './components/AddressInfo/AddressInfo'
-import { WalletInfo } from './components/WalletInfo/WalletInfo'
-import { SendTx } from './components/SendTx/SendTx'
-import { BalanceInfo } from './components/BalanceInfo/BalanceInfo';
-import { GameRoomList } from './components/GameRoomList/GameRoomList'
-import { CreateRoom } from './components/CreateRoom/CreateRoom'
-import { GameRoomComponent } from './components/GameRoom/GameRoom' // Adjust the import path if necessary
-import { useState } from 'react'
+import { Routes, Route } from 'react-router-dom';
+import Home from './components/Home/Home';
+import GameRoomComponent from './components/GameRoom/GameRoom';
+import GameRoomList from './components/GameRoomList/GameRoomList';
+import CreateGame from './components/CreateRoom/CreateRoom';
+import Header from './components/Header/Header';
 
-
-function App() {
-  const [showGameRoomList, setShowGameRoomList] = useState(false)
-  const [showCreateRoom, setShowCreateRoom] = useState(false)
-  const [currentGameRoomId, setCurrentGameRoomId] = useState<string | null>(null) // State for current game room ID
-
-  const handleJoinGameRoom = (roomId: string) => {
-    setCurrentGameRoomId(roomId)
-    setShowGameRoomList(false)
-    setShowCreateRoom(false)
-  }
-
+const App = () => {
   return (
-    <>
-    <Header />
-    <div style={{height: '140px'}}>
-      <AddressInfo />
-      <WalletInfo />
+    <div>
+      <Header />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/gameroom/:roomId" element={<GameRoomComponent />} />
+        <Route path="/gamelist" element={<GameRoomList onClose={() => {}} onJoinGameRoom={() => {}} />} />
+        <Route path="/create-game" element={<CreateGame />} />
+      </Routes>
     </div>
-    <BalanceInfo />
-    <SendTx/>
-      <div style={{marginTop: '20px', textAlign: 'center'}}>
-        <button onClick={() => setShowGameRoomList(true)}>Battles List</button>
-        <button onClick={() => setShowCreateRoom(true)}>Create Room</button>
-      </div>
-      {showGameRoomList && (
-        <GameRoomList 
-          onClose={() => setShowGameRoomList(false)}
-          onJoinGameRoom={handleJoinGameRoom} // Pass the handleJoinGameRoom function
-        />
-      )}
-      {showCreateRoom && (
-        <CreateRoom
-          onClose={() => setShowCreateRoom(false)}
-          onCreateGameRoom={handleJoinGameRoom}
-       />)}
-      {currentGameRoomId && <GameRoomComponent roomId={currentGameRoomId} />} {/* Render GameRoomComponent when a game room is joined */}
-    </>
-  )
-}
+  );
+};
 
-
-
-export default App
+export default App;
