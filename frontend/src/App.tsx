@@ -10,7 +10,7 @@ const App = () => {
     <div>
       <Header />
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="ton_battles/" element={<Home />} />
         <Route path="/gameroom/:roomId" element={<GameRoomComponent />} />
         <Route path="/gamelist" element={<GameRoomList onClose={() => {}} onJoinGameRoom={() => {}} />} />
         <Route path="/create-game" element={<CreateGame />} />
