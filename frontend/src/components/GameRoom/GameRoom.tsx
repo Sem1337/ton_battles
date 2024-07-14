@@ -1,12 +1,24 @@
 import React, { useState, useEffect } from 'react'
 import { authFetch } from '../../utils/auth' // Adjust the import path if necessary
 import type { GameRoom, Player } from '../../types/types' // Import shared types
+import Modal from 'react-modal'; // Import react-modal
 import { useAuth } from '../../contexts/AuthContext'
 import { useSocket } from '../../contexts/SocketContext'
 
 interface GameRoomProps {
   roomId: string
 }
+
+const customStyles = {
+  content: {
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    transform: 'translate(-50%, -50%)',
+  },
+};
 
 export const GameRoomComponent: React.FC<GameRoomProps> = ({ roomId }) => {
   const [betSize, setBetSize] = useState(0)
@@ -111,12 +123,17 @@ export const GameRoomComponent: React.FC<GameRoomProps> = ({ roomId }) => {
         </ul>
       </div>
       {winner && totalBank !== null && (
-        <div className="popup">
+        <Modal
+          isOpen={true}
+          onRequestClose={() => { setWinner(null); setTotalBank(null); }}
+          style={customStyles}
+          contentLabel="Game Completed"
+        >
           <h2>Game Completed</h2>
           <p>Winner: {winner.name} (Bet: {winner.bet})</p>
           <p>Total Bank: {totalBank}</p>
           <button onClick={() => { setWinner(null); setTotalBank(null); }}>Close</button>
-        </div>
+        </Modal>
       )}
     </div>
   )
