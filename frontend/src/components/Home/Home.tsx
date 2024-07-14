@@ -10,6 +10,7 @@ const Home: React.FC = () => {
     navigate(`/gameroom/${roomId}`);
   };
 
+  console.log("Home component rendered");
   return (
     <div>
       <h1>Welcome to the Game</h1>
