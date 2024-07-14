@@ -19,6 +19,7 @@ export class GameRoomService {
         total_bank: 0,
       })
       gameRoom.currentGame = game;
+      await game.save();
       await gameRoom.save();
 
       // Add the creator as the first player
@@ -38,6 +39,7 @@ export class GameRoomService {
 
   static async startGameLoop(gameRoomId: string) {
     try {
+      console.log('starting game loop in gameRoom', gameRoomId);
       // Wait for 60 seconds before starting the next game loop
       await new Promise(resolve => setTimeout(resolve, 60000));
       while (true) {
@@ -63,9 +65,11 @@ export class GameRoomService {
 
   static async completeGame(gameRoomId: string) {
     try {
+      console.log('completing game in gameRoom', gameRoomId);
       const gameRoom = await GameRoom.findByPk(gameRoomId, {
         include: [
-          { model: Player, as: 'players' }
+          { model: Player, as: 'players' },
+          { model: Game, as: 'currentGame' }
         ]
       });
       if (!gameRoom) {
@@ -96,11 +100,10 @@ export class GameRoomService {
       // Notify players
       const notification = {
         type: 'GAME_COMPLETED',
-        winner: { id: winner.id, name: winner.name, bet: winner.bet },
-        totalBank: game.total_bank,
+        payload: {winner: { id: winner.id, name: winner.name, bet: winner.bet }, totalBank : game.total_bank}
       };
       const io = getSocketInstance();
-      io.to(gameRoomId).emit('GAME_COMPLETED', notification);
+      io.to(gameRoomId).emit('message', notification);
 
       console.log(`The winner is ${winner.name} with a bet of ${winner.bet}. The total bank of ${game.total_bank} has been credited to their balance.`);
     } catch (error) {

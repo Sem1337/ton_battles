@@ -12,6 +12,8 @@ export const GameRoomComponent: React.FC<GameRoomProps> = ({ roomId }) => {
   const [betSize, setBetSize] = useState(0)
   const [players, setPlayers] = useState<Player[]>([])
   const [timer, setTimer] = useState(60)
+  const [winner, setWinner] = useState<{ id: string, name: string, bet: number } | null>(null);
+  const [totalBank, setTotalBank] = useState<number | null>(null);
   const { token } = useAuth(); // Get the token from AuthContext
   const { sendMessage, on, off, joinRoom, leaveRoom } = useSocket();
 
@@ -45,8 +47,9 @@ export const GameRoomComponent: React.FC<GameRoomProps> = ({ roomId }) => {
       setPlayers(playersData);
     };
 
-    const handleGameCompleted = async () => {
-      await fetchGameRoomDetails(); // Fetch updated game room details
+    const handleGameCompleted = (data: { winner: { id: string, name: string, bet: number }, totalBank: number }) => {
+      setWinner(data.winner);
+      setTotalBank(data.totalBank);
     };
 
     on('BET_MADE', handleBetMade);
@@ -107,6 +110,14 @@ export const GameRoomComponent: React.FC<GameRoomProps> = ({ roomId }) => {
           ))}
         </ul>
       </div>
+      {winner && totalBank !== null && (
+        <div className="popup">
+          <h2>Game Completed</h2>
+          <p>Winner: {winner.name} (Bet: {winner.bet})</p>
+          <p>Total Bank: {totalBank}</p>
+          <button onClick={() => { setWinner(null); setTotalBank(null); }}>Close</button>
+        </div>
+      )}
     </div>
   )
 }
