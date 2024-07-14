@@ -1,6 +1,5 @@
 import { Request, Response } from 'express'
 import { GameRoomService } from '../services/GameRoomService.js'
-import { getSocketInstance } from '../utils/socket.js'
 
 export class GameRoomController {
   static async createGameRoom(req: Request, res: Response) {
@@ -31,8 +30,6 @@ export class GameRoomController {
         res.status(400).json({ error: 'User ID is required' });
       }
       const gameRoom = await GameRoomService.joinGameRoom(roomId, userId)
-      const io = getSocketInstance();
-      io.to(roomId).emit('PLAYER_JOINED', { userId, roomId }); // Notify other players
       res.status(200).json(gameRoom)
     } catch (error) {
         if (error instanceof Error) {
@@ -80,8 +77,6 @@ export class GameRoomController {
         res.status(400).json({ error: 'User ID is required' });
       }
       const updatedRoom = await GameRoomService.makeBet(roomId, userId, betSize)
-      const io = getSocketInstance();
-      io.to(roomId).emit('BET_MADE', { userId, roomId, betSize }); // Notify other players
       res.status(200).json(updatedRoom)
     } catch (error) {
         if (error instanceof Error) {

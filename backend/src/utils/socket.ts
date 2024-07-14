@@ -51,16 +51,22 @@ export const initializeSocket = (server: HttpServer) => {
       
       try {
         switch (type) {
+          case 'join':
+            socket.join(payload);
+            console.log(`Socket ${socket.id} joined room ${payload}`);
+            break;
+          case 'leave':
+            socket.leave(payload);
+            console.log(`Socket ${socket.id} left room ${payload}`);
+            break;
           case 'MAKE_BET':
             const { roomId, betSize } = payload;
             await GameRoomService.makeBet(roomId, socket.data.user.userId, betSize);
-            io.to(roomId).emit('message', { type: 'BET_MADE', payload: { userId: socket.data.user.userId, roomId, betSize } });
             break;
         
           case 'LEAVE_ROOM':
             const { roomId: leaveRoomId } = payload;
             await GameRoomService.leaveGameRoom(leaveRoomId, socket.data.user.userId);
-            io.to(leaveRoomId).emit('message', { type: 'PLAYER_LEFT', payload: { userId: socket.data.user.userId, roomId: leaveRoomId } });
             break;
         
           case 'GET_BALANCE':
