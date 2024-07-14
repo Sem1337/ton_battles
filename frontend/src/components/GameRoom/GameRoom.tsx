@@ -19,7 +19,11 @@ const customStyles = {
     maxWidth: '500px', // Add a maximum width
     padding: '20px', // Add padding for better spacing
     boxSizing: 'border-box' as const,// Ensure padding is included in the width calculation
-    display: 'block'
+    backgroundColor: '#fff', // Set background color
+    color: '#000', // Set text color
+  },
+  overlay: {
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Set overlay background color
   },
 };
 

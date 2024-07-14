@@ -9,6 +9,11 @@ const customModalStyles = {
     bottom: 'auto',
     marginRight: '-50%',
     transform: 'translate(-50%, -50%)',
+    backgroundColor: '#fff', // Set background color
+    color: '#000', // Set text color
+  },
+  overlay: {
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Set overlay background color
   },
 };
 
