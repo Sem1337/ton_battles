@@ -40,8 +40,9 @@ export const GameRoomComponent: React.FC<GameRoomProps> = ({ roomId }) => {
 
   useEffect(() => {
     joinRoom(roomId);
-    const handleBetMade = (data: { players: Player[] }) => {
-      setPlayers(data.players);
+    const handleBetMade = (playersData: Player[]) => {
+      console.log(playersData);
+      setPlayers(playersData);
     };
 
     const handleGameCompleted = async () => {
