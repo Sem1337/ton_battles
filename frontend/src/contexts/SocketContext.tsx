@@ -6,6 +6,8 @@ interface SocketContextType {
   sendMessage: (type: string, payload?: any) => void;
   on: (event: string, callback: (data: any) => void) => void;
   off: (event: string) => void;
+  joinRoom: (roomId: string) => void;
+  leaveRoom: (roomId: string) => void;
 }
 
 const SocketContext = createContext<SocketContextType | undefined>(undefined);
@@ -36,12 +38,22 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     }
   }, [isAuthenticated, token]);
 
+  const joinRoom = (roomId: string) => {
+    webSocketManager.sendMessage('join', roomId);
+  };
+
+  const leaveRoom = (roomId: string) => {
+    webSocketManager.sendMessage('leave', roomId);
+  };
+
   return (
     <SocketContext.Provider
       value={{
         sendMessage: webSocketManager.sendMessage.bind(webSocketManager),
         on: webSocketManager.on.bind(webSocketManager),
         off: webSocketManager.off.bind(webSocketManager),
+        joinRoom,
+        leaveRoom
       }}
     >
       {children}

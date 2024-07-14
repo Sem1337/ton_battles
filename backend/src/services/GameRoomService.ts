@@ -65,7 +65,7 @@ export class GameRoomService {
     try {
       const gameRoom = await GameRoom.findByPk(gameRoomId, {
         include: [
-          { model: Player, as: 'players', include: [{ model: User, as: 'user' }] }
+          { model: Player, as: 'players' }
         ]
       });
       if (!gameRoom) {
@@ -87,7 +87,7 @@ export class GameRoomService {
       await game.save();
 
       // Update the winner's user balance
-      const winnerUser = winner.user;
+      const winnerUser = await User.findByPk(winner.userId);
       if (winnerUser) {
         winnerUser.balance += game.total_bank;
         await winnerUser.save();
@@ -144,7 +144,7 @@ export class GameRoomService {
     try {
       console.log(`${userId} user joins to ${roomId}`)
       const gameRoom = await GameRoom.findByPk(roomId, {
-        include: [{ model: Player, as: 'players', include: [{ model: User, as: 'user' }] }]
+        include: [{ model: Player, as: 'players', include: [{ model: User }] }]
       })
       console.log('game room fetched')
       if (!gameRoom || gameRoom.status === 'closed') {
@@ -153,19 +153,18 @@ export class GameRoomService {
       if (gameRoom.players.length >= gameRoom.maxPlayers) {
         throw new Error('Game room is full')
       }
-      const playersUser = await User.findByPk(userId);
-      if (!playersUser) {
-        throw new Error('User not found')
-      }
       const player = await Player.create({
         bet: 0,
         name: `Player${userId}`,
         gameRoomId: roomId,
+        userId: userId
       })
       console.log('player created')
-      player.user = playersUser
       gameRoom.players.push(player)
       await gameRoom.save()
+      const io = getSocketInstance();
+      io.to(roomId).emit('message', { type: 'PLAYER_JOINED', payload: gameRoom.players });
+
       console.log('success')
       return gameRoom
     } catch (error) {
@@ -218,7 +217,8 @@ export class GameRoomService {
         throw new Error('Game room not found')
       }
       console.log('players count: ', gameRoom.players.length)
-      const player = gameRoom.players.find(p => p.user.userId.toString() === userId)
+      console.log(gameRoom.players[0].toJSON())
+      const player = gameRoom.players.find(p => p.userId.toString() === userId.toString())
       if (!player) {
         throw new Error('Player not found in this game room')
       }
@@ -235,6 +235,10 @@ export class GameRoomService {
       await player.save()
       await game.save()
       await gameRoom.save()
+      // Notify clients of the bet made
+      const io = getSocketInstance();
+      io.to(roomId).emit('message', { type: 'BET_MADE', payload: gameRoom.players });
+
       return gameRoom
     } catch (error) {
       if (error instanceof Error) {
@@ -254,7 +258,7 @@ export class GameRoomService {
       if (!gameRoom) {
         throw new Error('Game room not found');
       }
-      const playerIndex = gameRoom.players.findIndex(p => p.user.userId.toString() === userId);
+      const playerIndex = gameRoom.players.findIndex(p => p.userId.toString() === userId);
       if (playerIndex === -1) {
         throw new Error('Player not found in this game room');
       }

@@ -4,10 +4,10 @@ import User from './user.js';
 
 class Player extends Model {
   public id!: string
-  public user!: User // Change userId to user of type User
   public bet!: number
   public name!: string
   public gameRoomId!: string
+  public userId!: number;
 }
 
 Player.init(
@@ -31,6 +31,10 @@ Player.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    }
   },
   {
     sequelize,
@@ -132,7 +136,7 @@ Player.belongsTo(GameRoom, { foreignKey: 'gameRoomId' });
 Game.belongsTo(GameRoom, { foreignKey: 'currentGame' });
 
 // Add association between Player and User
-Player.belongsTo(User, { as: 'user' });
-User.hasMany(Player, { foreignKey: 'user' });
+Player.belongsTo(User, { foreignKey: 'userId' });
+User.hasMany(Player, { foreignKey: 'userId' });
 
 export { GameRoom, Player, Game }

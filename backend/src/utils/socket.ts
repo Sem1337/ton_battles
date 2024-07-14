@@ -33,6 +33,16 @@ export const initializeSocket = (server: HttpServer) => {
   io.on('connection', (socket) => {
     console.log('A user connected', socket.data.user);
 
+    socket.on('join', (roomId) => {
+      socket.join(roomId);
+      console.log(`Socket ${socket.id} joined room ${roomId}`);
+    });
+
+    socket.on('leave', (roomId) => {
+      socket.leave(roomId);
+      console.log(`Socket ${socket.id} left room ${roomId}`);
+    });
+
 
     socket.on('message', async (data: { type: string, payload: any }) => {
       const { type, payload } = data;

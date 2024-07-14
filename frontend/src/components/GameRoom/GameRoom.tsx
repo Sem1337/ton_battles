@@ -13,7 +13,7 @@ export const GameRoomComponent: React.FC<GameRoomProps> = ({ roomId }) => {
   const [players, setPlayers] = useState<Player[]>([])
   const [timer, setTimer] = useState(60)
   const { token } = useAuth(); // Get the token from AuthContext
-  const { sendMessage, on, off } = useSocket();
+  const { sendMessage, on, off, joinRoom, leaveRoom } = useSocket();
 
   const fetchGameRoomDetails = async () => {
     const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/gamerooms/${roomId}`, token)
@@ -39,6 +39,7 @@ export const GameRoomComponent: React.FC<GameRoomProps> = ({ roomId }) => {
   }, [roomId])
 
   useEffect(() => {
+    joinRoom(roomId);
     const handleBetMade = (data: { players: Player[] }) => {
       setPlayers(data.players);
     };
@@ -53,6 +54,7 @@ export const GameRoomComponent: React.FC<GameRoomProps> = ({ roomId }) => {
     return () => {
       off('BET_MADE');
       off('GAME_COMPLETED');
+      leaveRoom(roomId);
     };
   }, [on, off]);
 
