@@ -4,6 +4,8 @@ import { GameRoomService } from '../services/GameRoomService.js'
 export class GameRoomController {
   static async createGameRoom(req: Request, res: Response) {
     const { minBet, maxBet, maxPlayers } = req.body
+    console.log(req.body);
+    console.log(minBet, maxBet, maxPlayers);
     const user = (req as any).user
     const userId = user?.userId // Extract user ID from the verified token
     if (!userId) {

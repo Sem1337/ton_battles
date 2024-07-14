@@ -14,6 +14,7 @@ const CreateGame = () => {
     console.log(minBet, maxBet, maxPlayers);
     const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/gamerooms`, token, {
       method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ minBet, maxBet, maxPlayers }),
     });
 
