@@ -261,7 +261,7 @@ export class GameRoomService {
       if (!gameRoom) {
         throw new Error('Game room not found');
       }
-      const playerIndex = gameRoom.players.findIndex(p => p.userId.toString() === userId);
+      const playerIndex = gameRoom.players.findIndex(p => p.userId.toString() === userId.toString());
       if (playerIndex === -1) {
         throw new Error('Player not found in this game room');
       }
