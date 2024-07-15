@@ -1,9 +1,18 @@
 import User from '../database/model/user.js';
+import Big from 'big.js';
 
-export const updateUserBalance = async (userId: number, amount: number) => {
-  const user = await User.findOne({ where: { userId } });
+export const updateUserBalanceWithTransaction = async (userId: number, amount: Big, transaction: any) => {
+  const user = await User.findByPk(userId);
   if (user) {
-    user.balance += amount;
+    user.balance = new Big(user.balance).plus(amount).toFixed(9);
+    await user.save({ transaction });
+  }
+};
+
+export const updateUserBalance = async (userId: number, amount: Big) => {
+  const user = await User.findByPk(userId);
+  if (user) {
+    user.balance = new Big(user.balance).plus(amount).toFixed(9);
     await user.save();
   }
 };

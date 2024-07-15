@@ -1,6 +1,22 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import Modal from 'react-modal';
 
+const customModalStyles = {
+    content: {
+      top: '50%',
+      left: '50%',
+      right: 'auto',
+      bottom: 'auto',
+      marginRight: '-50%',
+      transform: 'translate(-50%, -50%)',
+      backgroundColor: '#fff', // Set background color
+      color: '#000', // Set text color
+    },
+    overlay: {
+      backgroundColor: 'rgba(0, 0, 0, 0.5)', // Set overlay background color
+    },
+  };
+
 interface NotificationContextType {
   showNotification: (message: string) => void;
 }
@@ -36,16 +52,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
       <Modal
         isOpen={notification !== null}
         onRequestClose={closeNotification}
-        style={{
-          content: {
-            top: '50%',
-            left: '50%',
-            right: 'auto',
-            bottom: 'auto',
-            marginRight: '-50%',
-            transform: 'translate(-50%, -50%)',
-          },
-        }}
+        style={customModalStyles}
         contentLabel="Notification"
       >
         <h2>Notification</h2>

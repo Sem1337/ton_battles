@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { updateUserBalance, getUserBalance} from '../services/balanceService.js';
 import { createTransaction, confirmTransaction } from '../services/tonService.js';
+import Big from 'big.js'; // Import Big.js
 
 export const withdrawBalance = async (req: Request, res: Response) => {
   const { amount, walletAddress } = req.body;
@@ -20,7 +21,7 @@ export const withdrawBalance = async (req: Request, res: Response) => {
     const transaction = await createTransaction(amount, walletAddress);
     const confirmed = await confirmTransaction(transaction);
     if (confirmed) {
-      await updateUserBalance(userId, -amount);
+      await updateUserBalance(userId, new Big(-amount));
       return res.status(200).send({ success: true });
     } else {
       return res.status(400).send({ success: false, message: 'Transaction failed' });

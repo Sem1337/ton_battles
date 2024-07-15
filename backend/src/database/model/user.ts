@@ -3,7 +3,7 @@ import sequelize from '../db.js';
 
 class User extends Model {
   public userId!: number;
-  public balance!: number;
+  public balance!: string;
 
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -17,7 +17,7 @@ User.init(
       primaryKey: true,
     },
     balance: {
-      type: DataTypes.FLOAT,
+      type: DataTypes.STRING,
       allowNull: false,
       defaultValue: 0.0,
     }

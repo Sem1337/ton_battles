@@ -3,6 +3,7 @@ import { useAuth } from './AuthContext';
 import { webSocketManager } from '../utils/WebSocketManager';
 import { useNotification } from './NotificationContext';
 
+
 interface SocketContextType {
   sendMessage: (type: string, payload?: any) => void;
   on: (event: string, callback: (data: any) => void) => void;

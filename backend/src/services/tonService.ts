@@ -3,6 +3,7 @@ import { getHttpEndpoint } from "@orbs-network/ton-access";
 import dotenv from 'dotenv';
 import { updateUserBalance } from "./balanceService.js";
 //import { updateUserBalance } from "./balanceService.js";
+import Big from 'big.js'; // Import Big.js
 
 dotenv.config();
 
@@ -96,7 +97,7 @@ async function fetchAndProcessTransactions(toLT: string): Promise<void> {
           || !transaction.in_msg 
           || !transaction.in_msg.message
           || lastProcessedTxLt === lastCheckedLt) continue;
-      const txValue = fromNano(transaction.in_msg.value);
+      const txValue = new Big(fromNano(transaction.in_msg.value));
       console.log('amount: ',txValue);
       console.log('msg: ', transaction.in_msg.message);
       const data = transaction.in_msg.message.split('_');
@@ -105,7 +106,7 @@ async function fetchAndProcessTransactions(toLT: string): Promise<void> {
       const tag = data[0];
       const userId = parseInt(data[1]);
       if (tag === 'TONBTL' && !isNaN(userId)) {
-        updateUserBalance(userId, +txValue);
+        updateUserBalance(userId, txValue);
       }
       
     }

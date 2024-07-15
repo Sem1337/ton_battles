@@ -1,7 +1,9 @@
+import sequelize from '../database/db.js';
 import { GameRoom, Player, Game } from '../database/model/gameRoom.js'
 import User from '../database/model/user.js';
 import { getSocketInstance } from '../utils/socket.js';
-import { updateUserBalance } from './balanceService.js';
+import { updateUserBalance, updateUserBalanceWithTransaction } from './balanceService.js';
+import Big from 'big.js'; // Import Big.js
 
 export class GameRoomService {
   static gameRoomTimers: { [key: string]: number } = {}; // In-memory storage for remaining time
@@ -113,25 +115,16 @@ export class GameRoomService {
         game.winner_id = winner.id;
         game.winnerBetSize = winner.bet;
 
-
         // Update the winner's user balance
-        const winnerUser = await User.findByPk(winner.userId);
-        if (winnerUser) {
-          winnerUser.balance += game.total_bank;
-          await winnerUser.save();
-        }
-
+        await updateUserBalance(winner.userId, new Big(game.total_bank))
         console.log(`The winner is ${winner.name} with a bet of ${winner.bet}. The total bank of ${game.total_bank} has been credited to their balance.`);
       } else {
-        const onePlayer = await User.findByPk(gameRoom.players[0].userId);
-        if (onePlayer) {
-          if (game.total_bank > 0) {
-            onePlayer.balance += game.total_bank
-            await onePlayer.save()
-          }
-          console.log('sending NOTIFY');
-          io.to(gameRoomId).emit('message', { type: 'NOTIFY', payload: { message: 'Not enough players for battle. Bet returned to your balance' } });
+        if (new Big(game.total_bank).gt(0)) {
+          await updateUserBalance(gameRoom.players[0].userId, new Big(game.total_bank));
         }
+        console.log('sending NOTIFY');
+        io.to(gameRoomId).emit('message', { type: 'NOTIFY', payload: { message: 'Not enough players for battle. Bet returned to your balance' } });
+
       }
       // Notify players
       const gameResult = {
@@ -176,10 +169,12 @@ export class GameRoomService {
   }
 
   static async joinGameRoom(roomId: string, userId: string) {
+    const transaction = await sequelize.transaction();
     try {
       console.log(`${userId} user joins to ${roomId}`)
       const gameRoom = await GameRoom.findByPk(roomId, {
-        include: [{ model: Player, as: 'players', include: [{ model: User }] }]
+        include: [{ model: Player, as: 'players', include: [{ model: User }] }],
+        transaction
       })
       console.log('game room fetched')
       if (!gameRoom || gameRoom.status === 'closed') {
@@ -191,6 +186,7 @@ export class GameRoomService {
       if (existingPlayer) {
         console.log('Player already in the game room');
         io.to(roomId).emit('message', { type: 'PLAYER_JOINED', payload: { players: gameRoom.players, remainingTime: this.gameRoomTimers[roomId] } });
+        await transaction.commit();
         return gameRoom;
       }
       if (gameRoom.players.length >= gameRoom.maxPlayers) {
@@ -201,16 +197,18 @@ export class GameRoomService {
         name: `Player${userId}`,
         gameRoomId: roomId,
         userId: userId
-      })
+      }, { transaction })
       console.log('player created')
       gameRoom.players.push(player)
-      await gameRoom.save()
+      await gameRoom.save({ transaction })
 
       io.to(roomId).emit('message', { type: 'PLAYER_JOINED', payload: { players: gameRoom.players, remainingTime: this.gameRoomTimers[roomId] } });
 
       console.log('success')
+      await transaction.commit();
       return gameRoom
     } catch (error) {
+      await transaction.rollback();
       if (error instanceof Error) {
         console.log(error.message);
       }
@@ -251,10 +249,12 @@ export class GameRoomService {
   }
 
   static async makeBet(roomId: string, userId: string, betSize: number) {
+    const transaction = await sequelize.transaction();
     try {
       console.log(`${userId} bet ${betSize} TON in ${roomId}`)
       const gameRoom = await GameRoom.findByPk(roomId, {
         include: [{ model: Player, as: 'players' }, { model: Game, as: 'currentGame' }],
+        transaction
       })
       if (!gameRoom) {
         throw new Error('Game room not found')
@@ -269,15 +269,16 @@ export class GameRoomService {
       if (!game) {
         throw new Error('Game not found')
       }
-      if (player.bet + betSize < gameRoom.minBet || player.bet + betSize > gameRoom.maxBet || betSize < 0.1) {
-        throw new Error('Invalid bet size')
+      if (new Big(player.bet).plus(betSize).lt(gameRoom.minBet) || new Big(player.bet).plus(betSize).gt(gameRoom.maxBet) || new Big(betSize).lt(0.1)) {
+        throw new Error('Invalid bet size');
       }
-      updateUserBalance(+userId, -betSize);
-      player.bet += betSize
-      game.total_bank += betSize
-      await player.save()
-      await game.save()
-      await gameRoom.save()
+      await updateUserBalanceWithTransaction(+userId, new Big(-betSize), transaction); // Update balance using Big.js
+      player.bet = new Big(player.bet).plus(betSize).toFixed(9); // Update player's bet using Big.js
+      game.total_bank = new Big(game.total_bank).plus(betSize).toFixed(9); // Update game's total bank using Big.js
+      await player.save({ transaction });
+      await game.save({ transaction });
+      await gameRoom.save({ transaction });
+      await transaction.commit();
       // Notify clients of the bet made
       const io = getSocketInstance();
 
@@ -285,6 +286,7 @@ export class GameRoomService {
 
       return gameRoom
     } catch (error) {
+      await transaction.rollback();
       if (error instanceof Error) {
         console.log(error.message);
       }

@@ -4,7 +4,7 @@ import User from './user.js';
 
 class Player extends Model {
   public id!: string
-  public bet!: number
+  public bet!: string
   public name!: string
   public gameRoomId!: string
   public userId!: number;
@@ -19,7 +19,7 @@ Player.init(
       defaultValue: DataTypes.UUIDV4,
     },
     bet: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       defaultValue: 0,
       allowNull: false,
     },
@@ -39,15 +39,21 @@ Player.init(
   {
     sequelize,
     modelName: 'Player',
+    indexes: [
+      {
+        unique: true,
+        fields: ['gameRoomId', 'userId']
+      }
+    ]
   }
 )
 
 class Game extends Model {
   public gameId!: string
   public gameRoomId!: string
-  public total_bank!: number
+  public total_bank!: string
   public winner_id!: string
-  public winnerBetSize!: number
+  public winnerBetSize!: string
   public status!: 'active' | 'closed'
 }
 
@@ -64,7 +70,7 @@ Game.init(
       allowNull: false,
     },
     total_bank: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       allowNull: false,
     },
     winner_id: {
@@ -72,7 +78,7 @@ Game.init(
       allowNull: true,
     },
     winnerBetSize: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       allowNull: true,
     },
     status: {
@@ -89,8 +95,8 @@ Game.init(
 
 class GameRoom extends Model {
   public id!: string
-  public minBet!: number
-  public maxBet!: number
+  public minBet!: string
+  public maxBet!: string
   public maxPlayers!: number
   public status!: 'active' | 'closed'
   public currentGame!: Game
@@ -106,11 +112,11 @@ GameRoom.init(
       defaultValue: DataTypes.UUIDV4,
     },
     minBet: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       allowNull: false,
     },
     maxBet: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       allowNull: false,
     },
     maxPlayers: {
