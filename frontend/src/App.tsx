@@ -3,6 +3,7 @@ import Home from './components/Home/Home';
 import GameRoomComponent from './components/GameRoom/GameRoom';
 import CreateGame from './components/CreateRoom/CreateRoom';
 import Header from './components/Header/Header';
+import GameRoomList from './components/GameRoomList/GameRoomList';
 
 const App = () => {
   return (
@@ -11,8 +12,9 @@ const App = () => {
       <main className="flex-grow container mx-auto px-4 py-8">
         <Routes>
           <Route path="ton_battles/" element={<Home />} />
+          <Route path="/game-rooms" element={<GameRoomList />} />
           <Route path="/gameroom/:roomId" element={<GameRoomComponent />} />
-          <Route path="/create-game" element={<CreateGame />} />
+          <Route path="/create-room" element={<CreateGame />} />
         </Routes>
       </main>
       <footer className="bg-gray-800 text-white text-center py-4">

@@ -1,17 +1,14 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { authFetch } from '../../utils/auth' // Adjust the import path if necessary
 import GameRoomCard from './GameRoomCard';
 import type { GameRoom } from '../../types/types' // Import shared types
 import { useAuth } from '../../contexts/AuthContext'
+import { useNavigate } from 'react-router-dom';
 
-interface GameRoomListProps {
-  onClose: () => void
-  onJoinGameRoom: (roomId: string) => void // Add onJoinGameRoom prop
-}
-
-export const GameRoomList: React.FC<GameRoomListProps> = ({ onClose, onJoinGameRoom }) => {
+const GameRoomList = () => {
   const [gameRooms, setGameRooms] = useState<GameRoom[]>([])
   const { token } = useAuth(); // Get the token from AuthContext
+  const navigate = useNavigate(); // Get navigate function from useNavigate hook
 
   useEffect(() => {
     const fetchGameRooms = async () => {
@@ -32,7 +29,7 @@ export const GameRoomList: React.FC<GameRoomListProps> = ({ onClose, onJoinGameR
       method: 'POST'
     })
     if (response.ok) {
-      onJoinGameRoom(roomId) // Call onJoinGameRoom when a game room is joined
+      navigate(`/game-room/${roomId}`); // Call onJoinGameRoom when a game room is joined
     } else {
       // Handle error response
       console.error('Failed to join game room')
@@ -43,7 +40,7 @@ export const GameRoomList: React.FC<GameRoomListProps> = ({ onClose, onJoinGameR
     <div className="p-4">
       <h2 className="text-2xl font-bold mb-4">Game Rooms</h2>
       <button
-        onClick={onClose}
+        onClick={() => navigate('/')} // Navigate to home on close
         className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mb-4"
       >
         Close
