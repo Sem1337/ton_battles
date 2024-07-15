@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react'
-import { authFetch } from '../../utils/auth' // Adjust the import path if necessary
-import type { GameRoom, Player } from '../../types/types' // Import shared types
+import type { Player } from '../../types/types' // Import shared types
 import Modal from 'react-modal'; // Import react-modal
-import { useAuth } from '../../contexts/AuthContext'
 import { useSocket } from '../../contexts/SocketContext'
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -63,6 +61,7 @@ const GameRoomComponent = () => {
     const handleGameCompleted = (data: { winner: { id: string, name: string, bet: number }, totalBank: number }) => {
       setWinner(data.winner);
       setTotalBank(data.totalBank);
+      sendMessage('GET_BALANCE');
     };
 
     on('GAME_STARTED', handleGameStarted);

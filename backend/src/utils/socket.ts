@@ -69,6 +69,10 @@ export const initializeSocket = (server: HttpServer) => {
           case 'MAKE_BET': {
             const { roomId, betSize } = payload;
             await GameRoomService.makeBet(roomId, socket.data.user.userId, betSize);
+            const user = await User.findByPk(socket.data.user.userId);
+            if (user) {
+              socket.emit('message', { type: 'BALANCE_UPDATE', payload: user.balance });
+            }
             break;
           }
           case 'GET_BALANCE': {

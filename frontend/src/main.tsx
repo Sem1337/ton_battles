@@ -7,6 +7,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { TonConnectUIProvider } from '@tonconnect/ui-react'
 import { AuthProvider } from './contexts/AuthContext.tsx'; // Adjust import path
 import { SocketProvider } from './contexts/SocketContext.tsx'
+import { NotificationProvider } from './contexts/NotificationContext.tsx'
 
 WebApp.ready();
 
@@ -20,9 +21,11 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     >
       <AuthProvider>
         <SocketProvider>
-          <BrowserRouter>
-            <App />
-          </BrowserRouter>
+          <NotificationProvider>
+            <BrowserRouter>
+              <App />
+            </BrowserRouter>
+          </NotificationProvider>
         </SocketProvider>
       </AuthProvider>
     </TonConnectUIProvider>

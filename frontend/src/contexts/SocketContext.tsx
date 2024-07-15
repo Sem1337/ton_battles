@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import { webSocketManager } from '../utils/WebSocketManager';
+import { useNotification } from './NotificationContext';
 
 interface SocketContextType {
   sendMessage: (type: string, payload?: any) => void;
@@ -26,12 +27,17 @@ interface SocketProviderProps {
 
 export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const { isAuthenticated, token } = useAuth();
+  const { showNotification } = useNotification();
 
   useEffect(() => {
     if (isAuthenticated && token) {
       console.log('Connecting to WebSocket server...');
       webSocketManager.connect(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}`, token);
 
+      webSocketManager.on('NOTIFY', (data: { message: string }) => {
+        showNotification(data.message);
+      });
+      
       return () => {
         webSocketManager.disconnect();
       };

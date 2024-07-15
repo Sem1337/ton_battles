@@ -103,32 +103,41 @@ export class GameRoomService {
         console.log('no players, no winner');
         return gameRoom
       }
+      const io = getSocketInstance();
+      let winner = null
+      if (gameRoom.players.length > 1) {
+        // Determine the winner (example logic: player with the highest bet)
+        winner = gameRoom.players.reduce((max, player) => (player.bet > max.bet ? player : max), gameRoom.players[0]);
+        console.log('winner determined')
+        // Update the game's winner and status
+        game.winner_id = winner.id;
+        game.winnerBetSize = winner.bet;
 
-      // Determine the winner (example logic: player with the highest bet)
-      const winner = gameRoom.players.reduce((max, player) => (player.bet > max.bet ? player : max), gameRoom.players[0]);
-      console.log('winner determined')
-      // Update the game's winner and status
-      game.winner_id = winner.id;
-      game.winnerBetSize = winner.bet;
-      game.status = 'closed';
-      await game.save();
 
-      // Update the winner's user balance
-      const winnerUser = await User.findByPk(winner.userId);
-      if (winnerUser) {
-        winnerUser.balance += game.total_bank;
-        await winnerUser.save();
+        // Update the winner's user balance
+        const winnerUser = await User.findByPk(winner.userId);
+        if (winnerUser) {
+          winnerUser.balance += game.total_bank;
+          await winnerUser.save();
+        }
+
+        console.log(`The winner is ${winner.name} with a bet of ${winner.bet}. The total bank of ${game.total_bank} has been credited to their balance.`);
+      } else {
+        const onePlayer = await User.findByPk(gameRoom.players[0].userId);
+        if (onePlayer) {
+          onePlayer.balance += game.total_bank
+          await onePlayer.save()
+          io.to(gameRoomId).emit('NOTIFY', { message: 'Not enough players for battle. Bet returned to your balance' });
+        }
       }
-
       // Notify players
       const notification = {
         type: 'GAME_COMPLETED',
-        payload: { winner: { id: winner.id, name: winner.name, bet: winner.bet }, totalBank: game.total_bank }
+        payload: { winner: winner? { id: winner.id, name: winner.name, bet: winner.bet } : null, totalBank: game.total_bank }
       };
-      const io = getSocketInstance();
       io.to(gameRoomId).emit('message', notification);
-
-      console.log(`The winner is ${winner.name} with a bet of ${winner.bet}. The total bank of ${game.total_bank} has been credited to their balance.`);
+      game.status = 'closed';
+      await game.save();
       return gameRoom
     } catch (error) {
       if (error instanceof Error) {
@@ -193,7 +202,7 @@ export class GameRoomService {
       console.log('player created')
       gameRoom.players.push(player)
       await gameRoom.save()
-      
+
       io.to(roomId).emit('message', { type: 'PLAYER_JOINED', payload: { players: gameRoom.players, remainingTime: this.gameRoomTimers[roomId] } });
 
       console.log('success')
@@ -257,7 +266,7 @@ export class GameRoomService {
       if (!game) {
         throw new Error('Game not found')
       }
-      if (betSize < gameRoom.minBet || player.bet + betSize > gameRoom.maxBet) {
+      if (player.bet + betSize < gameRoom.minBet || player.bet + betSize > gameRoom.maxBet || betSize < 0.1) {
         throw new Error('Invalid bet size')
       }
       updateUserBalance(+userId, -betSize);
@@ -268,6 +277,7 @@ export class GameRoomService {
       await gameRoom.save()
       // Notify clients of the bet made
       const io = getSocketInstance();
+
       io.to(roomId).emit('message', { type: 'BET_MADE', payload: gameRoom.players });
 
       return gameRoom
