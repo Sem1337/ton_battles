@@ -8,7 +8,7 @@ interface WithdrawModalProps {
   onWithdraw: (amount: string, walletAddress: string) => void;
 }
 
-export const WithdrawModal = ({ isOpen, onClose, onWithdraw } : WithdrawModalProps) => {
+export const WithdrawModal = ({ isOpen, onClose, onWithdraw }: WithdrawModalProps) => {
   const [amount, setAmount] = useState('');
   const walletAddress = useTonAddress();
 
@@ -25,26 +25,30 @@ export const WithdrawModal = ({ isOpen, onClose, onWithdraw } : WithdrawModalPro
       className="modal-custom-style"
       overlayClassName="overlay-custom-style"
     >
-      <h2 className="text-2xl font-bold mb-4">Withdraw</h2>
-      <input
-        type="number"
-        value={amount}
-        onChange={(e) => setAmount(e.target.value)}
-        className="border p-2 w-full mb-4"
-        placeholder="Enter amount"
-      />
-      <button
-        onClick={handleConfirm}
-        className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mr-2"
-      >
-        Confirm
-      </button>
-      <button
-        onClick={onClose}
-        className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
-      >
-        Cancel
-      </button>
+      <div className="bg-white p-4 rounded shadow-lg w-full max-w-md mx-2">
+        <h2 className="text-2xl font-bold mb-4">Withdraw</h2>
+        <input
+          type="number"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          className="border p-2 w-full mb-4"
+          placeholder="Enter amount"
+        />
+        <div className="flex justify-end">
+          <button
+            onClick={handleConfirm}
+            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mr-2"
+          >
+            Confirm
+          </button>
+          <button
+            onClick={onClose}
+            className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
     </Modal>
   );
 };

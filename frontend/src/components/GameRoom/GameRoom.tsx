@@ -85,7 +85,7 @@ const GameRoomComponent = () => {
   };
 
   const leaveGameRoom = async () => {
-    navigate(-1); // Navigates to the previous page
+    navigate('/'); // Navigates to the previous page
   };
 
   return (
