@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { authFetch } from '../../utils/auth' // Adjust the import path if necessary
-
+import GameRoomCard from './GameRoomCard';
 import type { GameRoom } from '../../types/types' // Import shared types
 import { useAuth } from '../../contexts/AuthContext'
 
@@ -40,16 +40,17 @@ export const GameRoomList: React.FC<GameRoomListProps> = ({ onClose, onJoinGameR
   }
 
   return (
-    <div>
-      <h2>Game Rooms</h2>
-      <button onClick={onClose}>Close</button>
-      <div style={{ maxHeight: '400px', overflowY: 'scroll' }}>
+    <div className="p-4">
+      <h2 className="text-2xl font-bold mb-4">Game Rooms</h2>
+      <button
+        onClick={onClose}
+        className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mb-4"
+      >
+        Close
+      </button>
+      <div className="max-h-96 overflow-y-scroll">
         {gameRooms.map(room => (
-          <div key={room.id} onClick={() => joinGameRoom(room.id)} style={{ border: '1px solid black', padding: '10px', margin: '5px', cursor: 'pointer' }}>
-            <p>Min Bet: {room.minBet}</p>
-            <p>Max Bet: {room.maxBet}</p>
-            <p>Players: {room.players.length}/{room.maxPlayers}</p>
-          </div>
+          <GameRoomCard key={room.id} room={room} onJoin={joinGameRoom} />
         ))}
       </div>
     </div>

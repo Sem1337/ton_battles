@@ -6,6 +6,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { beginCell } from '@ton/core';
 import { WithdrawModal } from '../WithdrawModal/WithdrawModal';
 import { TopUpModal } from '../TopUpModal/TopUpModal';
+import { Link } from 'react-router-dom';
 
 
 export const Header: React.FC = () => {
@@ -19,9 +20,9 @@ export const Header: React.FC = () => {
     try {
       console.log('TONBTL_' + tgUserId.toString());
       const body = beginCell()
-                    .storeUint(0, 32) // write 32 zero bits to indicate that a text comment will follow
-                    .storeStringTail('TONBTL_' + tgUserId.toString()) // write our text comment
-                    .endCell();
+        .storeUint(0, 32) // write 32 zero bits to indicate that a text comment will follow
+        .storeStringTail('TONBTL_' + tgUserId.toString()) // write our text comment
+        .endCell();
       const transaction = {
         validUntil: Math.floor(Date.now() / 1000) + 60, // 60 sec
         messages: [
@@ -61,12 +62,26 @@ export const Header: React.FC = () => {
   };
 
   return (
-    <div>
-      <h1>Game Platform</h1>
-      <TonConnectButton />
-      <button onClick={() => setIsTopUpModalOpen(true)}>Top Up</button>
-      <button onClick={() => setIsWithdrawModalOpen(true)}>Withdraw</button>
-      <BalanceInfo />
+    <header className="bg-blue-600 text-white p-4">
+      <div className="container mx-auto flex justify-between items-center">
+        <h1 className="text-2xl font-bold">
+          <Link to="/">TON Battles</Link>
+        </h1>
+        <div className="flex items-center space-x-4">
+          <TonConnectButton />
+          <button
+            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+            onClick={() => setIsTopUpModalOpen(true)}>
+            Top Up
+          </button>
+          <button
+            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+            onClick={() => setIsWithdrawModalOpen(true)}>
+            Withdraw
+          </button>
+          <BalanceInfo />
+        </div>
+      </div>
 
       <TopUpModal
         isOpen={isTopUpModalOpen}
@@ -79,7 +94,7 @@ export const Header: React.FC = () => {
         onClose={() => setIsWithdrawModalOpen(false)}
         onWithdraw={handleWithdraw}
       />
-    </div>
+    </header>
   );
 };
 
