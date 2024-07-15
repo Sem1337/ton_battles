@@ -20,13 +20,13 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       manifestUrl="https://sem1337.github.io/ton_battles/tonconnect-manifest.json"
     >
       <AuthProvider>
-        <SocketProvider>
-          <NotificationProvider>
+        <NotificationProvider>
+          <SocketProvider>
             <BrowserRouter>
               <App />
             </BrowserRouter>
-          </NotificationProvider>
-        </SocketProvider>
+          </SocketProvider>
+        </NotificationProvider>
       </AuthProvider>
     </TonConnectUIProvider>
   </React.StrictMode>,
