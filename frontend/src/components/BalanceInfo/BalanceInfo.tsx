@@ -38,7 +38,7 @@ const BalanceInfo = () => {
 
   return (
     <div>
-      <h1>Your Balance</h1>
+      <h2 className="text-xl font-bold">Your Balance</h2>
       <p>{balance !== null ? `${balance} TON` : 'Balance not available'}</p>
     </div>
   );
