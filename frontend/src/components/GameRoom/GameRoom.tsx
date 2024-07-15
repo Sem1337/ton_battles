@@ -70,6 +70,7 @@ const GameRoomComponent = () => {
     on('GAME_COMPLETED', handleGameCompleted);
     fetchGameRoomDetails()
     return () => {
+      console.log('return from gameRoom');
       off('GAME_STARTED');
       off('BET_MADE');
       off('PLAYER_JOINED');

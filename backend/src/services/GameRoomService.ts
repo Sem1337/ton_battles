@@ -125,15 +125,18 @@ export class GameRoomService {
       } else {
         const onePlayer = await User.findByPk(gameRoom.players[0].userId);
         if (onePlayer) {
-          onePlayer.balance += game.total_bank
-          await onePlayer.save()
-          io.to(gameRoomId).emit('NOTIFY', { message: 'Not enough players for battle. Bet returned to your balance' });
+          if (game.total_bank > 0) {
+            onePlayer.balance += game.total_bank
+            await onePlayer.save()
+          }
+          console.log('sending NOTIFY');
+          io.to(gameRoomId).emit('message', { type: 'NOTIFY', payload: { message: 'Not enough players for battle. Bet returned to your balance' } });
         }
       }
       // Notify players
       const gameResult = {
         type: 'GAME_COMPLETED',
-        payload: { winner: winner? { id: winner.id, name: winner.name, bet: winner.bet } : null, totalBank: game.total_bank }
+        payload: { winner: winner ? { id: winner.id, name: winner.name, bet: winner.bet } : null, totalBank: game.total_bank }
       };
       io.to(gameRoomId).emit('message', gameResult);
       game.status = 'closed';
