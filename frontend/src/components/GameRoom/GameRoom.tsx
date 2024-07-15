@@ -42,18 +42,10 @@ const GameRoomComponent = () => {
   }
 
   useEffect(() => {
-
-    fetchGameRoomDetails()
-
+    joinRoom(roomId!);
     const interval = setInterval(() => {
       if (timer > 0) setTimer(prev => prev - 1)
     }, 1000)
-
-    return () => clearInterval(interval)
-  }, [roomId])
-
-  useEffect(() => {
-    joinRoom(roomId!);
     const handleBetMade = (playersData: Player[]) => {
       console.log(playersData);
       setPlayers(playersData);
@@ -77,12 +69,13 @@ const GameRoomComponent = () => {
     on('BET_MADE', handleBetMade);
     on('PLAYER_JOINED', handlePlayerJoined);
     on('GAME_COMPLETED', handleGameCompleted);
-
+    fetchGameRoomDetails()
     return () => {
       off('GAME_STARTED');
       off('BET_MADE');
       off('PLAYER_JOINED');
       off('GAME_COMPLETED');
+      clearInterval(interval)
       leaveRoom(roomId!);
     };
   }, [on, off]);

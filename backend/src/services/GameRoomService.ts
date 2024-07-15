@@ -63,7 +63,9 @@ export class GameRoomService {
           console.log(`Game room ${gameRoomId} closed due to no players`);
           break;
         } else {
-          gameRoom.players = [];
+          await Player.destroy({ where: { gameRoomId } });
+          gameRoom.players = []
+          console.log(gameRoom.toJSON());
           await gameRoom.save();
         }
 
