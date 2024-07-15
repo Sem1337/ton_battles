@@ -22,7 +22,7 @@ export const WithdrawModal = ({ isOpen, onClose, onWithdraw }: WithdrawModalProp
       isOpen={isOpen}
       onRequestClose={onClose}
       contentLabel="Withdraw"
-      className="modal-custom-style"
+      className="fixed inset-0 flex items-center justify-center z-50"
       overlayClassName="overlay-custom-style"
     >
       <div className="bg-white p-4 rounded shadow-lg w-full max-w-md mx-2">
