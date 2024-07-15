@@ -40,11 +40,6 @@ export class GameRoomService {
       const io = getSocketInstance();
       console.log('starting game loop in gameRoom', gameRoomId);
       while (true) {
-        const gameRoom = await GameRoom.findByPk(gameRoomId);
-        if (!gameRoom || gameRoom.status === 'closed') {
-          console.log(`Game loop stopped for room ${gameRoomId} because the room is closed.`);
-          break;
-        }
         // Initialize the remaining time for the game
         this.gameRoomTimers[gameRoomId] = 60;
         // Start the game
@@ -56,7 +51,11 @@ export class GameRoomService {
           this.gameRoomTimers[gameRoomId] -= 1;
         }
 
-        await this.completeGame(gameRoomId); // Complete the current game
+        const gameRoom = await this.completeGame(gameRoomId); // Complete the current game
+        if (!gameRoom || gameRoom.status === 'closed') {
+          console.log(`Game loop stopped for room ${gameRoomId} because the room is closed.`);
+          break;
+        }
         if (gameRoom.players.length === 0) {
           gameRoom.status = 'closed';
           await gameRoom.save();
@@ -96,6 +95,13 @@ export class GameRoomService {
         throw new Error('Current game not found');
       }
 
+      if (gameRoom.players.length == 0) {
+        game.status = 'closed';
+        await game.save();
+        console.log('no players, no winner');
+        return gameRoom
+      }
+
       // Determine the winner (example logic: player with the highest bet)
       const winner = gameRoom.players.reduce((max, player) => (player.bet > max.bet ? player : max), gameRoom.players[0]);
       console.log('winner determined')
@@ -121,6 +127,7 @@ export class GameRoomService {
       io.to(gameRoomId).emit('message', notification);
 
       console.log(`The winner is ${winner.name} with a bet of ${winner.bet}. The total bank of ${game.total_bank} has been credited to their balance.`);
+      return gameRoom
     } catch (error) {
       if (error instanceof Error) {
         console.log(error.message);

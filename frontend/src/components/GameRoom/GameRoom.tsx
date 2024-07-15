@@ -46,7 +46,7 @@ const GameRoomComponent = () => {
     fetchGameRoomDetails()
 
     const interval = setInterval(() => {
-      setTimer(prev => prev - 1)
+      if (timer > 0) setTimer(prev => prev - 1)
     }, 1000)
 
     return () => clearInterval(interval)
