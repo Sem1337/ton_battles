@@ -20,7 +20,7 @@ const CreateGame = () => {
 
     if (response.ok) {
       const data = await response.json();
-      navigate(`/gameroom/${data.id}`);
+      navigate(`/game-room/${data.id}`);
     } else {
       console.error('Failed to create game room');
     }
