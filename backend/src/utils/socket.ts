@@ -48,28 +48,30 @@ export const initializeSocket = (server: HttpServer) => {
       const { type, payload } = data;
 
       console.log(`received message of type ${type}`);
-      
+
       try {
         switch (type) {
-          case 'join':
+          case 'join': {
             socket.join(payload);
             console.log(`Socket ${socket.id} joined room ${payload}`);
             break;
-          case 'leave':
+          }
+          case 'leave': {
             socket.leave(payload);
             console.log(`Socket ${socket.id} left room ${payload}`);
             break;
-          case 'MAKE_BET':
+          }
+          case 'JOIN_GAME': {
+            const { roomId } = payload;
+            await GameRoomService.joinGameRoom(roomId, socket.data.user.userId);
+            break;
+          }
+          case 'MAKE_BET': {
             const { roomId, betSize } = payload;
             await GameRoomService.makeBet(roomId, socket.data.user.userId, betSize);
             break;
-        
-          case 'LEAVE_ROOM':
-            const { roomId: leaveRoomId } = payload;
-            await GameRoomService.leaveGameRoom(leaveRoomId, socket.data.user.userId);
-            break;
-        
-          case 'GET_BALANCE':
+          }
+          case 'GET_BALANCE': {
             const user = await User.findByPk(socket.data.user.userId);
             if (user) {
               socket.emit('message', { type: 'BALANCE_UPDATE', payload: user.balance });
@@ -77,7 +79,7 @@ export const initializeSocket = (server: HttpServer) => {
               socket.emit('message', { type: 'ERROR', payload: { message: 'User not found' } });
             }
             break;
-        
+          }
           default:
             socket.emit('message', { type: 'ERROR', payload: { message: 'Unknown message type' } });
         }

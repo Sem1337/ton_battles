@@ -4,7 +4,8 @@ import { getSocketInstance } from '../utils/socket.js';
 import { updateUserBalance } from './balanceService.js';
 
 export class GameRoomService {
-  static async createGameRoom(minBet: number, maxBet: number, maxPlayers: number, creatorId: string) {
+  static gameRoomTimers: { [key: string]: number } = {}; // In-memory storage for remaining time
+  static async createGameRoom(minBet: number, maxBet: number, maxPlayers: number) {
     try {
       console.log('creating game room: ', minBet, maxBet, maxPlayers);
       const gameRoom = await GameRoom.create({
@@ -22,9 +23,6 @@ export class GameRoomService {
       await game.save();
       await gameRoom.save();
 
-      // Add the creator as the first player
-      await this.joinGameRoom(gameRoom.id, creatorId);
-
       // Start the game loop
       this.startGameLoop(gameRoom.id);
 
@@ -39,21 +37,38 @@ export class GameRoomService {
 
   static async startGameLoop(gameRoomId: string) {
     try {
+      const io = getSocketInstance();
       console.log('starting game loop in gameRoom', gameRoomId);
-      // Wait for 60 seconds before starting the next game loop
-      await new Promise(resolve => setTimeout(resolve, 60000));
       while (true) {
         const gameRoom = await GameRoom.findByPk(gameRoomId);
         if (!gameRoom || gameRoom.status === 'closed') {
           console.log(`Game loop stopped for room ${gameRoomId} because the room is closed.`);
           break;
         }
+        // Initialize the remaining time for the game
+        this.gameRoomTimers[gameRoomId] = 60;
+        // Start the game
+        io.to(gameRoomId).emit('message', { type: 'GAME_STARTED' });
+
+        // Update the remaining time every second
+        while (this.gameRoomTimers[gameRoomId] > 0) {
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          this.gameRoomTimers[gameRoomId] -= 1;
+        }
 
         await this.completeGame(gameRoomId); // Complete the current game
-        await this.createNewGame(gameRoomId); // Create a new game
+        if (gameRoom.players.length === 0) {
+          gameRoom.status = 'closed';
+          await gameRoom.save();
+          delete this.gameRoomTimers[gameRoomId];
+          console.log(`Game room ${gameRoomId} closed due to no players`);
+          break;
+        } else {
+          gameRoom.players = [];
+          await gameRoom.save();
+        }
 
-        // Wait for 60 seconds before starting the next game loop
-        await new Promise(resolve => setTimeout(resolve, 60000));
+        await this.createNewGame(gameRoomId); // Create a new game
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -100,7 +115,7 @@ export class GameRoomService {
       // Notify players
       const notification = {
         type: 'GAME_COMPLETED',
-        payload: {winner: { id: winner.id, name: winner.name, bet: winner.bet }, totalBank : game.total_bank}
+        payload: { winner: { id: winner.id, name: winner.name, bet: winner.bet }, totalBank: game.total_bank }
       };
       const io = getSocketInstance();
       io.to(gameRoomId).emit('message', notification);
@@ -123,9 +138,6 @@ export class GameRoomService {
         throw new Error('Game room not found');
       }
 
-      // Reset players' bets
-      gameRoom.players.forEach(player => (player.bet = 0));
-
       // Create a new game
       const newGame = await Game.create({
         gameRoomId: gameRoomId,
@@ -133,7 +145,6 @@ export class GameRoomService {
       });
       gameRoom.currentGame = newGame;
 
-      await Promise.all(gameRoom.players.map(player => player.save()));
       await gameRoom.save();
     } catch (error) {
       if (error instanceof Error) {
@@ -153,6 +164,14 @@ export class GameRoomService {
       if (!gameRoom || gameRoom.status === 'closed') {
         throw new Error('Game room not found')
       }
+      const io = getSocketInstance();
+      // Check if player is already in the game room
+      const existingPlayer = gameRoom.players.find(player => player.userId.toString() === userId.toString());
+      if (existingPlayer) {
+        console.log('Player already in the game room');
+        io.to(roomId).emit('message', { type: 'PLAYER_JOINED', payload: { players: gameRoom.players, remainingTime: this.gameRoomTimers[roomId] } });
+        return gameRoom;
+      }
       if (gameRoom.players.length >= gameRoom.maxPlayers) {
         throw new Error('Game room is full')
       }
@@ -165,8 +184,8 @@ export class GameRoomService {
       console.log('player created')
       gameRoom.players.push(player)
       await gameRoom.save()
-      const io = getSocketInstance();
-      io.to(roomId).emit('message', { type: 'PLAYER_JOINED', payload: gameRoom.players });
+      
+      io.to(roomId).emit('message', { type: 'PLAYER_JOINED', payload: { players: gameRoom.players, remainingTime: this.gameRoomTimers[roomId] } });
 
       console.log('success')
       return gameRoom
@@ -248,41 +267,6 @@ export class GameRoomService {
         console.log(error.message);
       }
       throw new Error('Failed to make a bet')
-    }
-  }
-
-
-  static async leaveGameRoom(roomId: string, userId: string) {
-    try {
-      console.log(`${userId} user leaves ${roomId}`);
-      const gameRoom = await GameRoom.findByPk(roomId, {
-        include: [{ model: Player, as: 'players' }]
-      });
-      if (!gameRoom) {
-        throw new Error('Game room not found');
-      }
-      const playerIndex = gameRoom.players.findIndex(p => p.userId.toString() === userId.toString());
-      if (playerIndex === -1) {
-        throw new Error('Player not found in this game room');
-      }
-      await gameRoom.players[playerIndex].destroy();
-      gameRoom.players.splice(playerIndex, 1);
-      await gameRoom.save();
-
-      // Close the game room if no players are left
-      if (gameRoom.players.length === 0) {
-        gameRoom.status = 'closed';
-        await gameRoom.save();
-        console.log(`Game room ${roomId} closed due to no players`);
-      }
-
-      console.log('Player successfully left the game room');
-      return gameRoom;
-    } catch (error) {
-      if (error instanceof Error) {
-        console.log(error.message);
-      }
-      throw new Error('Failed to leave game room');
     }
   }
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { authFetch } from '../../utils/auth' // Adjust the import path if necessary
 import type { GameRoom, Player } from '../../types/types' // Import shared types
 import Modal from 'react-modal'; // Import react-modal
@@ -34,20 +34,11 @@ const GameRoomComponent = () => {
   const [timer, setTimer] = useState(60)
   const [winner, setWinner] = useState<{ id: string, name: string, bet: number } | null>(null);
   const [totalBank, setTotalBank] = useState<number | null>(null);
-  const { token } = useAuth(); // Get the token from AuthContext
   const { sendMessage, on, off, joinRoom, leaveRoom } = useSocket();
   const navigate = useNavigate();
 
   const fetchGameRoomDetails = async () => {
-    const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/gamerooms/${roomId}`, token)
-    if (response.ok) {
-      const data: GameRoom = await response.json()
-      setPlayers(data.players)
-      setTimer(60); // Reset timer to 60 seconds
-    } else {
-      // Handle error response
-      console.error('Failed to fetch game room details')
-    }
+    sendMessage('JOIN_GAME', { roomId });
   }
 
   useEffect(() => {
@@ -68,16 +59,29 @@ const GameRoomComponent = () => {
       setPlayers(playersData);
     };
 
+    const handleGameStarted = () => {
+      sendMessage('JOIN_GAME', { roomId });
+    };
+
+    const handlePlayerJoined = (data: { players: Player[], remainingTime: number }) => {
+      setPlayers(data.players);
+      setTimer(data.remainingTime);
+    };
+
     const handleGameCompleted = (data: { winner: { id: string, name: string, bet: number }, totalBank: number }) => {
       setWinner(data.winner);
       setTotalBank(data.totalBank);
     };
 
+    on('GAME_STARTED', handleGameStarted);
     on('BET_MADE', handleBetMade);
+    on('PLAYER_JOINED', handlePlayerJoined);
     on('GAME_COMPLETED', handleGameCompleted);
 
     return () => {
+      off('GAME_STARTED');
       off('BET_MADE');
+      off('PLAYER_JOINED');
       off('GAME_COMPLETED');
       leaveRoom(roomId!);
     };
@@ -88,23 +92,6 @@ const GameRoomComponent = () => {
   };
 
   const leaveGameRoom = async () => {
-    try {
-      const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/gamerooms/${roomId}/leave`, token, {
-        method: 'POST',
-      });
-      if (response.ok) {
-        const data: GameRoom = await response.json();
-        setPlayers(data.players);
-        if (data.status === 'closed') {
-          // Handle game room closure, e.g., navigate to a different page
-          alert('Game room has been closed due to no players.');
-        }
-      } else {
-        console.error('Failed to leave game room');
-      }
-    } catch (error) {
-      console.error('Error leaving game room', error);
-    }
     navigate(-1); // Navigates to the previous page
   };
 
