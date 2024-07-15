@@ -16,20 +16,18 @@ WebApp.expand();
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <TonConnectUIProvider
-      manifestUrl="https://sem1337.github.io/ton_battles/tonconnect-manifest.json"
-    >
-      <BrowserRouter basename="/ton_battles">
+    <BrowserRouter basename="/ton_battles">
+      <TonConnectUIProvider
+        manifestUrl="https://sem1337.github.io/ton_battles/tonconnect-manifest.json"
+      >
         <AuthProvider>
           <NotificationProvider>
             <SocketProvider>
-              <BrowserRouter>
-                <App />
-              </BrowserRouter>
+              <App />
             </SocketProvider>
           </NotificationProvider>
         </AuthProvider>
-      </BrowserRouter>
-    </TonConnectUIProvider>
+      </TonConnectUIProvider>
+    </BrowserRouter>
   </React.StrictMode>,
 )
