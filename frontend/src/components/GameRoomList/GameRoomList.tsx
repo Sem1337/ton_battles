@@ -40,7 +40,7 @@ const GameRoomList = () => {
     <div className="p-4">
       <h2 className="text-2xl font-bold mb-4">Game Rooms</h2>
       <button
-        onClick={() => navigate('ton_battles/')} // Navigate to home on close
+        onClick={() => navigate('/')} // Navigate to home on close
         className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mb-4"
       >
         Close

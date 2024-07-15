@@ -11,7 +11,7 @@ const App = () => {
       <Header />
       <main className="flex-grow container mx-auto px-4 py-8">
         <Routes>
-          <Route path="ton_battles/" element={<Home />} />
+          <Route path="/" element={<Home />} />
           <Route path="/game-rooms" element={<GameRoomList />} />
           <Route path="/gameroom/:roomId" element={<GameRoomComponent />} />
           <Route path="/create-room" element={<CreateGame />} />

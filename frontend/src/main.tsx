@@ -19,15 +19,17 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <TonConnectUIProvider
       manifestUrl="https://sem1337.github.io/ton_battles/tonconnect-manifest.json"
     >
-      <AuthProvider>
-        <NotificationProvider>
-          <SocketProvider>
-            <BrowserRouter>
-              <App />
-            </BrowserRouter>
-          </SocketProvider>
-        </NotificationProvider>
-      </AuthProvider>
+      <BrowserRouter basename="/ton_battles">
+        <AuthProvider>
+          <NotificationProvider>
+            <SocketProvider>
+              <BrowserRouter>
+                <App />
+              </BrowserRouter>
+            </SocketProvider>
+          </NotificationProvider>
+        </AuthProvider>
+      </BrowserRouter>
     </TonConnectUIProvider>
   </React.StrictMode>,
 )
