@@ -3,7 +3,7 @@ import { TonConnectButton, useTonConnectUI } from '@tonconnect/ui-react';
 import BalanceInfo from '../BalanceInfo/BalanceInfo'; // Adjust the import path if necessary
 import { authFetch } from '../../utils/auth';
 import { useAuth } from '../../contexts/AuthContext';
-import { beginCell } from '@ton/core';
+import { beginCell, toNano } from '@ton/core';
 import { WithdrawModal } from '../WithdrawModal/WithdrawModal';
 import { TopUpModal } from '../TopUpModal/TopUpModal';
 import { Link } from 'react-router-dom';
@@ -16,7 +16,7 @@ export const Header: React.FC = () => {
   const [tonConnectUI] = useTonConnectUI();
   const { tgUserId } = useAuth();
 
-  const handleTopUp = async (amount: number) => {
+  const handleTopUp = async (amount: string) => {
     try {
       console.log('TONBTL_' + tgUserId.toString());
       const body = beginCell()
@@ -28,7 +28,7 @@ export const Header: React.FC = () => {
         messages: [
           {
             address: 'UQCuzcR3-BXHkYHk7mN5ghbsUAX74mj-6BLn0wzvvXKHLXKx', // replace with your main wallet address
-            amount: (amount * 1000000000).toString(),
+            amount: toNano(amount).toString(),
             payload: body.toBoc().toString("base64")
           }
         ]
@@ -40,7 +40,7 @@ export const Header: React.FC = () => {
     setIsTopUpModalOpen(false);
   };
 
-  const handleWithdraw = async (amount: number, walletAddress: string) => {
+  const handleWithdraw = async (amount: string, walletAddress: string) => {
     try {
       console.log('amount: ', amount);
       console.log('address: ', walletAddress);

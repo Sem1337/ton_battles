@@ -2,53 +2,49 @@ import { useTonAddress } from '@tonconnect/ui-react';
 import { useState } from 'react';
 import Modal from 'react-modal';
 
-const customModalStyles = {
-  content: {
-    top: '50%',
-    left: '50%',
-    right: 'auto',
-    bottom: 'auto',
-    marginRight: '-50%',
-    transform: 'translate(-50%, -50%)',
-    backgroundColor: '#fff', // Set background color
-    color: '#000', // Set text color
-  },
-  overlay: {
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Set overlay background color
-  },
-};
-
 interface WithdrawModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onWithdraw: (amount: number, walletAddress: string) => void;
+  onWithdraw: (amount: string, walletAddress: string) => void;
 }
 
 export const WithdrawModal = ({ isOpen, onClose, onWithdraw } : WithdrawModalProps) => {
-  const [amount, setAmount] = useState<number>(0);
+  const [amount, setAmount] = useState('');
   const walletAddress = useTonAddress();
 
   const handleConfirm = () => {
     onWithdraw(amount, walletAddress);
-    setAmount(0); // Reset the amount
+    setAmount('');
   };
 
   return (
     <Modal
       isOpen={isOpen}
       onRequestClose={onClose}
-      style={customModalStyles}
       contentLabel="Withdraw"
+      className="modal-custom-style"
+      overlayClassName="overlay-custom-style"
     >
-      <h2>Withdraw</h2>
+      <h2 className="text-2xl font-bold mb-4">Withdraw</h2>
       <input
         type="number"
         value={amount}
-        onChange={(e) => setAmount(Number(e.target.value))}
+        onChange={(e) => setAmount(e.target.value)}
+        className="border p-2 w-full mb-4"
         placeholder="Enter amount"
       />
-      <button onClick={handleConfirm}>Confirm</button>
-      <button onClick={onClose}>Cancel</button>
+      <button
+        onClick={handleConfirm}
+        className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mr-2"
+      >
+        Confirm
+      </button>
+      <button
+        onClick={onClose}
+        className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+      >
+        Cancel
+      </button>
     </Modal>
   );
 };
