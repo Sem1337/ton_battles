@@ -131,11 +131,11 @@ export class GameRoomService {
         }
       }
       // Notify players
-      const notification = {
+      const gameResult = {
         type: 'GAME_COMPLETED',
         payload: { winner: winner? { id: winner.id, name: winner.name, bet: winner.bet } : null, totalBank: game.total_bank }
       };
-      io.to(gameRoomId).emit('message', notification);
+      io.to(gameRoomId).emit('message', gameResult);
       game.status = 'closed';
       await game.save();
       return gameRoom

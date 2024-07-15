@@ -35,9 +35,10 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
       webSocketManager.connect(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}`, token);
 
       webSocketManager.on('NOTIFY', (data: { message: string }) => {
+        console.log('received NOTIFY')
         showNotification(data.message);
       });
-      
+
       return () => {
         webSocketManager.disconnect();
       };
