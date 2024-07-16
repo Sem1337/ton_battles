@@ -12,6 +12,7 @@ const GameRoomCard = ({ room, onJoin }: GameRoomCardProps) => {
       onClick={() => onJoin(room.id)}
       className="border border-gray-400 p-4 mb-4 rounded cursor-pointer hover:bg-gray-100"
     >
+      <h3 className="text-lg font-bold">{room.roomName}</h3>
       <p className="font-semibold">Min Bet: {room.minBet}</p>
       <p className="font-semibold">Max Bet: {room.maxBet}</p>
       <p>Players: {room.players.length}/{room.maxPlayers}</p>

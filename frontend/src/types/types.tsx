@@ -14,6 +14,7 @@ export interface Player {
     status: 'active' | 'closed'
     currentGameId?: string
     players: Player[]
+    roomName: string; // Add this line
   }
   
   export interface Game {

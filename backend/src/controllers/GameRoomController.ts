@@ -3,7 +3,7 @@ import { GameRoomService } from '../services/GameRoomService.js'
 
 export class GameRoomController {
   static async createGameRoom(req: Request, res: Response) {
-    const { minBet, maxBet, maxPlayers } = req.body
+    const { minBet, maxBet, maxPlayers, roomName } = req.body
     console.log(req.body);
     console.log(minBet, maxBet, maxPlayers);
     const user = (req as any).user
@@ -12,7 +12,7 @@ export class GameRoomController {
       res.status(400).json({ error: 'User ID is required' });
     }
     try {
-      const gameRoom = await GameRoomService.createGameRoom(minBet, maxBet, maxPlayers)
+      const gameRoom = await GameRoomService.createGameRoom(minBet, maxBet, maxPlayers, roomName)
       res.status(201).json(gameRoom)
     } catch (error) {
         if (error instanceof Error) {

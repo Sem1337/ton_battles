@@ -101,6 +101,7 @@ class GameRoom extends Model {
   public status!: 'active' | 'closed'
   public currentGame!: Game
   public players!: Player[]
+  public roomName!: string; // Add this line
 }
 
 GameRoom.init(
@@ -126,6 +127,10 @@ GameRoom.init(
     status: {
       type: DataTypes.ENUM('active', 'closed'),
       defaultValue: 'active',
+      allowNull: false,
+    },
+    roomName: { // Add this field
+      type: DataTypes.STRING,
       allowNull: false,
     },
   },

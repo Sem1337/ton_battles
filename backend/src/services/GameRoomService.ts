@@ -7,13 +7,14 @@ import Big from 'big.js'; // Import Big.js
 
 export class GameRoomService {
   static gameRoomTimers: { [key: string]: number } = {}; // In-memory storage for remaining time
-  static async createGameRoom(minBet: number, maxBet: number, maxPlayers: number) {
+  static async createGameRoom(minBet: number, maxBet: number, maxPlayers: number, roomName: string) {
     try {
       console.log('creating game room: ', minBet, maxBet, maxPlayers);
       const gameRoom = await GameRoom.create({
         minBet,
         maxBet,
         maxPlayers,
+        roomName,
         status: 'active',
       })
       // Create initial game
