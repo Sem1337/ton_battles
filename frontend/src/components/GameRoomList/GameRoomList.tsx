@@ -69,7 +69,7 @@ const GameRoomList = () => {
           className="p-2 border rounded"
         />
         <select value={sort} onChange={handleSortChange} className="ml-2 p-2 border rounded">
-          <option value="name">Name</option>
+          <option value="roomName">Name</option>
           <option value="minBet">Min Bet</option>
           <option value="maxBet">Max Bet</option>
         </select>
