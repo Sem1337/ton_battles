@@ -4,7 +4,7 @@ import User from '../database/model/user.js';
 import { getSocketInstance } from '../utils/socket.js';
 import { updateUserBalance, updateUserBalanceWithTransaction } from './balanceService.js';
 import Big from 'big.js'; // Import Big.js
-import { Op, Order } from 'sequelize';
+import { col, Op, Order } from 'sequelize';
 
 export class GameRoomService {
   static gameRoomTimers: { [key: string]: number } = {}; // In-memory storage for remaining time
@@ -230,7 +230,7 @@ export class GameRoomService {
         },
         status: 'active',
         currentPlayers: {
-          [Op.lt]: sequelize.literal('maxPlayers')
+          [Op.lt]: col('maxPlayers')
         }
       };
       const order: Order = [[sort, 'ASC']];
@@ -239,7 +239,7 @@ export class GameRoomService {
         order,
         limit,
         offset,
-        include: [{ model: Player, as: 'players' }]
+        include: [{ model: Player, as: 'players', attributes: [] }]
       });
       return {
         data: gameRooms.rows,
