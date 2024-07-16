@@ -4,6 +4,7 @@ import User from '../database/model/user.js';
 import { getSocketInstance } from '../utils/socket.js';
 import { updateUserBalance, updateUserBalanceWithTransaction } from './balanceService.js';
 import Big from 'big.js'; // Import Big.js
+import { Op, Order } from 'sequelize';
 
 export class GameRoomService {
   static gameRoomTimers: { [key: string]: number } = {}; // In-memory storage for remaining time
@@ -217,13 +218,29 @@ export class GameRoomService {
     }
   }
 
-  static async getGameRooms() {
+  static async getGameRooms({ page = 1, limit = 10, sort = 'name', filter = '' }) {
     try {
-      const gameRooms = await GameRoom.findAll({
-        where: { status: 'active' }, // Only fetch active game rooms
+      const offset = (page - 1) * limit;
+      const where = {
+        roomName: {
+          [Op.like]: `%${filter}%`
+        },
+        status: 'active'
+      };
+      const order: Order = [[sort, 'ASC']];
+      const gameRooms = await GameRoom.findAndCountAll({
+        where,
+        order,
+        limit,
+        offset,
         include: [{ model: Player, as: 'players' }]
-      })
-      return gameRooms
+      });
+      return {
+        data: gameRooms.rows,
+        total: gameRooms.count,
+        page,
+        limit
+      };
     } catch (error) {
       if (error instanceof Error) {
         console.log(error.message);

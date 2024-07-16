@@ -7,22 +7,28 @@ import { useNavigate } from 'react-router-dom';
 
 const GameRoomList = () => {
   const [gameRooms, setGameRooms] = useState<GameRoom[]>([])
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [limit] = useState(10); // Adjust limit as needed
+  const [filter, setFilter] = useState('');
+  const [sort, setSort] = useState('name');
   const { token } = useAuth(); // Get the token from AuthContext
   const navigate = useNavigate(); // Get navigate function from useNavigate hook
 
   useEffect(() => {
     const fetchGameRooms = async () => {
-      const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/gamerooms`, token)
+      const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/gamerooms?page=${page}&limit=${limit}&sort=${sort}&filter=${filter}`, token)
       if (response.ok) {
-        const data: GameRoom[] = await response.json()
-        setGameRooms(data)
+        const data = await response.json()
+        setGameRooms(data.data)
+        setTotal(data.total)
       } else {
         // Handle error response
         console.error('Failed to fetch game rooms')
       }
     }
     fetchGameRooms()
-  }, [])
+  }, [page, limit, sort, filter])
 
   const joinGameRoom = async (roomId: string) => {
     const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/gamerooms/${roomId}/join`, token, {
@@ -36,19 +42,53 @@ const GameRoomList = () => {
     }
   }
 
+  const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFilter(e.target.value);
+    setPage(1); // Reset to first page when filtering
+  }
+
+  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSort(e.target.value);
+  }
+
   return (
     <div className="p-4">
       <h2 className="text-2xl font-bold mb-4">Game Rooms</h2>
-      <button
-        onClick={() => navigate('/')} // Navigate to home on close
-        className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mb-4"
-      >
-        Close
-      </button>
+      <div className="mb-4">
+        <input
+          type="text"
+          placeholder="Filter by name"
+          value={filter}
+          onChange={handleFilterChange}
+          className="p-2 border rounded"
+        />
+        <select value={sort} onChange={handleSortChange} className="ml-2 p-2 border rounded">
+          <option value="name">Name</option>
+          <option value="minBet">Min Bet</option>
+          <option value="maxBet">Max Bet</option>
+        </select>
+      </div>
       <div className="max-h-96 overflow-y-scroll">
         {gameRooms.map(room => (
           <GameRoomCard key={room.id} room={room} onJoin={joinGameRoom} />
         ))}
+      </div>
+      <div className="flex justify-between mt-4">
+        <button
+          onClick={() => setPage(prev => Math.max(prev - 1, 1))}
+          disabled={page === 1}
+          className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Previous
+        </button>
+        <span>Page {page}</span>
+        <button
+          onClick={() => setPage(prev => (prev * limit < total ? prev + 1 : prev))}
+          disabled={page * limit >= total}
+          className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Next
+        </button>
       </div>
     </div>
   );

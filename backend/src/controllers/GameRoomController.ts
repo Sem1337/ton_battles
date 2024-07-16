@@ -42,9 +42,10 @@ export class GameRoomController {
     }
   }
 
-  static async getGameRooms(_req: Request, res: Response) {
+  static async getGameRooms(req: Request, res: Response) {
+    const { page = 1, limit = 10, sort = 'name', filter = '' } = req.query;
     try {
-      const gameRooms = await GameRoomService.getGameRooms()
+      const gameRooms = await GameRoomService.getGameRooms({ page, limit, sort, filter })
       res.status(200).json(gameRooms)
     } catch (error) {
         if (error instanceof Error) {
