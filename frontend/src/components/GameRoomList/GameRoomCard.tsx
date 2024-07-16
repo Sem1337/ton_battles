@@ -15,7 +15,7 @@ const GameRoomCard = ({ room, onJoin }: GameRoomCardProps) => {
       <h3 className="text-lg font-bold">{room.roomName}</h3>
       <p className="font-semibold">Min Bet: {room.minBet}</p>
       <p className="font-semibold">Max Bet: {room.maxBet}</p>
-      <p>Players: {room.players.length}/{room.maxPlayers}</p>
+      <p>Players: {room.currentPlayers}/{room.maxPlayers}</p>
     </div>
   );
 };

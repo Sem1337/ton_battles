@@ -4,7 +4,7 @@ import User from '../database/model/user.js';
 import { getSocketInstance } from '../utils/socket.js';
 import { updateUserBalance, updateUserBalanceWithTransaction } from './balanceService.js';
 import Big from 'big.js'; // Import Big.js
-import { FindAttributeOptions, Op, Order } from 'sequelize';
+import { col, fn, Op, Order } from 'sequelize';
 
 export class GameRoomService {
   static gameRoomTimers: { [key: string]: number } = {}; // In-memory storage for remaining time
@@ -228,34 +228,28 @@ export class GameRoomService {
         status: 'active'
       };
       const order: Order = sort === 'currentPlayers' ? [[sequelize.literal('currentPlayers'), 'ASC']] : [[sort, 'ASC']];
-      const attributes: FindAttributeOptions | undefined = sort === 'currentPlayers'
-        ? {
-          include: [
-            [
-              sequelize.literal(`(
-              SELECT COUNT(*)
-              FROM Players AS Player
-              WHERE
-                Player.gameRoomId = GameRoom.id
-            )`),
-              'currentPlayers'
-            ]
-          ]
-        }
-        : undefined
       const gameRooms = await GameRoom.findAndCountAll({
         where,
         order,
         limit,
         offset,
+        attributes: {
+          include: [
+            [
+              fn('COUNT', col('players.id')),
+              'currentPlayers'
+            ]
+          ]
+        },
         include: [
           {
             model: Player,
             as: 'players',
-            attributes: []
+            attributes: [],
+            duplicating: false
           }
         ],
-        attributes
+        group: ['GameRoom.id']
       });
       return {
         data: gameRooms.rows,

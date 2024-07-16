@@ -15,6 +15,7 @@ export interface Player {
     currentGameId?: string
     players: Player[]
     roomName: string; // Add this line
+    currentPlayers: number
   }
   
   export interface Game {
