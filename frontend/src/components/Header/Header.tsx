@@ -63,12 +63,12 @@ export const Header: React.FC = () => {
 
   return (
     <header className="bg-blue-600 text-white p-4">
-      <div className="container mx-auto flex justify-between items-center">
+      <div className="container mx-auto flex flex-col md:flex-row justify-between items-center space-y-2 md:space-y-0">
         <h1 className="text-2xl font-bold">
           <Link to="/">TON Battles</Link>
         </h1>
-        <div className="flex items-center space-x-4">
-          <TonConnectButton />
+        <TonConnectButton />
+        <div className="flex space-x-2">
           <button
             className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
             onClick={() => setIsTopUpModalOpen(true)}>
@@ -79,21 +79,20 @@ export const Header: React.FC = () => {
             onClick={() => setIsWithdrawModalOpen(true)}>
             Withdraw
           </button>
-          <BalanceInfo />
         </div>
+        <BalanceInfo />
+        <TopUpModal
+          isOpen={isTopUpModalOpen}
+          onClose={() => setIsTopUpModalOpen(false)}
+          onTopUp={handleTopUp}
+        />
+
+        <WithdrawModal
+          isOpen={isWithdrawModalOpen}
+          onClose={() => setIsWithdrawModalOpen(false)}
+          onWithdraw={handleWithdraw}
+        />
       </div>
-
-      <TopUpModal
-        isOpen={isTopUpModalOpen}
-        onClose={() => setIsTopUpModalOpen(false)}
-        onTopUp={handleTopUp}
-      />
-
-      <WithdrawModal
-        isOpen={isWithdrawModalOpen}
-        onClose={() => setIsWithdrawModalOpen(false)}
-        onWithdraw={handleWithdraw}
-      />
     </header>
   );
 };
