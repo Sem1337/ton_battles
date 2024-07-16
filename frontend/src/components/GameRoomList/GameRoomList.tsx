@@ -79,6 +79,8 @@ const GameRoomList = () => {
           <option value="roomName">Name</option>
           <option value="minBet">Min Bet</option>
           <option value="maxBet">Max Bet</option>
+          <option value="maxPlayers">Max Players</option>
+          <option value="currentPlayers">Current Players</option>
         </select>
       </div>
       <div className="max-h-96 overflow-y-scroll">
