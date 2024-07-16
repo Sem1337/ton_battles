@@ -61,14 +61,21 @@ const GameRoomList = () => {
         Close
       </button>
       <div className="mb-4">
+        <label htmlFor="filterBy" className="ml-4">
+          Room name:
+        </label>
         <input
+          id="filterBy"
           type="text"
           placeholder="Filter by name"
           value={filter}
           onChange={handleFilterChange}
           className="p-2 border rounded"
         />
-        <select value={sort} onChange={handleSortChange} className="ml-2 p-2 border rounded">
+        <label htmlFor="sortBy" className="ml-4">
+          Sort by:
+        </label>
+        <select id="sortBy" value={sort} onChange={handleSortChange} className="ml-2 p-2 border rounded">
           <option value="roomName">Name</option>
           <option value="minBet">Min Bet</option>
           <option value="maxBet">Max Bet</option>
