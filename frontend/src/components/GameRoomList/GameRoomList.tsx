@@ -11,7 +11,7 @@ const GameRoomList = () => {
   const [total, setTotal] = useState(0);
   const [limit] = useState(10); // Adjust limit as needed
   const [filter, setFilter] = useState('');
-  const [sort, setSort] = useState('name');
+  const [sort, setSort] = useState('roomName');
   const { token } = useAuth(); // Get the token from AuthContext
   const navigate = useNavigate(); // Get navigate function from useNavigate hook
 

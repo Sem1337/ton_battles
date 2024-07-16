@@ -218,7 +218,7 @@ export class GameRoomService {
     }
   }
 
-  static async getGameRooms({ page = 1, limit = 10, sort = 'name', filter = '' }) {
+  static async getGameRooms({ page = 1, limit = 10, sort = 'roomName', filter = '' }) {
     try {
       const offset = (page - 1) * limit;
       const where = {

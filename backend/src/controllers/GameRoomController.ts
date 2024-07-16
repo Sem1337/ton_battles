@@ -43,7 +43,7 @@ export class GameRoomController {
   }
 
   static async getGameRooms(req: Request, res: Response) {
-    const { page = 1, limit = 10, sort = 'name', filter = '' } = req.query;
+    const { page = 1, limit = 10, sort = 'roomName', filter = '' } = req.query;
     try {
       const gameRooms = await GameRoomService.getGameRooms({ page, limit, sort, filter })
       res.status(200).json(gameRooms)
