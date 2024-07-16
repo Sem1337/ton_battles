@@ -4,7 +4,7 @@ import User from '../database/model/user.js';
 import { getSocketInstance } from '../utils/socket.js';
 import { updateUserBalance, updateUserBalanceWithTransaction } from './balanceService.js';
 import Big from 'big.js'; // Import Big.js
-import { col, fn, Op, Order } from 'sequelize';
+import { Op, Order } from 'sequelize';
 
 export class GameRoomService {
   static gameRoomTimers: { [key: string]: number } = {}; // In-memory storage for remaining time
@@ -69,6 +69,7 @@ export class GameRoomService {
         } else {
           await Player.destroy({ where: { gameRoomId } });
           gameRoom.players = []
+          gameRoom.currentPlayers = 0
           console.log(gameRoom.toJSON());
           await gameRoom.save();
         }
@@ -192,6 +193,7 @@ export class GameRoomService {
         return gameRoom;
       }
       if (gameRoom.players.length >= gameRoom.maxPlayers) {
+        io.to(roomId).emit('message', { type: 'NOTIFY', payload: { message: 'Room is already full!' } });
         throw new Error('Game room is full')
       }
       const player = await Player.create({
@@ -201,6 +203,7 @@ export class GameRoomService {
         userId: userId
       }, { transaction })
       console.log('player created')
+      gameRoom.currentPlayers++
       gameRoom.players.push(player)
       await gameRoom.save({ transaction })
 
@@ -225,31 +228,18 @@ export class GameRoomService {
         roomName: {
           [Op.like]: `%${filter}%`
         },
-        status: 'active'
+        status: 'active',
+        currentPlayers: {
+          [Op.lt]: sequelize.literal('maxPlayers')
+        }
       };
-      const order: Order = sort === 'currentPlayers' ? [[sequelize.literal('currentPlayers'), 'ASC']] : [[sort, 'ASC']];
+      const order: Order = [[sort, 'ASC']];
       const gameRooms = await GameRoom.findAndCountAll({
         where,
         order,
         limit,
         offset,
-        attributes: {
-          include: [
-            [
-              fn('COUNT', col('players.id')),
-              'currentPlayers'
-            ]
-          ]
-        },
-        include: [
-          {
-            model: Player,
-            as: 'players',
-            attributes: [],
-            duplicating: false
-          }
-        ],
-        group: ['GameRoom.id']
+        include: [{ model: Player, as: 'players' }]
       });
       return {
         data: gameRooms.rows,

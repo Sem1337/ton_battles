@@ -101,7 +101,8 @@ class GameRoom extends Model {
   public status!: 'active' | 'closed'
   public currentGame!: Game
   public players!: Player[]
-  public roomName!: string; // Add this line
+  public roomName!: string // Add this line
+  public currentPlayers!: number
 }
 
 GameRoom.init(
@@ -133,6 +134,11 @@ GameRoom.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    currentPlayers: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0
+    }
   },
   {
     sequelize,
