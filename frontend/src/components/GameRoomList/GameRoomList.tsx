@@ -61,11 +61,11 @@ const GameRoomList = () => {
         Close
       </button>
       <div className="mb-4">
-        <label htmlFor="filterBy" className="ml-4">
+        <label htmlFor="filter" className="mr-2">
           Room name:
         </label>
         <input
-          id="filterBy"
+          id="filter"
           type="text"
           placeholder="Filter by name"
           value={filter}
