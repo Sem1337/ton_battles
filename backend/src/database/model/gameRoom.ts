@@ -1,6 +1,6 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../db.js';
-import User from './user.js';
+import { User } from './user.js';
 
 class Player extends Model {
   public id!: string

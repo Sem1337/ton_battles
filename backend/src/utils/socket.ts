@@ -2,7 +2,7 @@ import { Server as HttpServer } from 'http';
 import { Server as SocketIOServer } from 'socket.io';
 import { authenticateWebSocket } from '../auth.js';
 import { GameRoomService } from '../services/GameRoomService.js';
-import User from '../database/model/user.js';
+import { User } from '../database/model/user.js';
 
 let io: SocketIOServer;
 

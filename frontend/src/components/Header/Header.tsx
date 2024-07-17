@@ -61,6 +61,21 @@ export const Header: React.FC = () => {
     setIsWithdrawModalOpen(false);
   };
 
+  const handleBuyPoints = async () => {
+    const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/buy_points`, token, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    const data = await response.json();
+    if (data.success) {
+      console.log('Check your Telegram for the payment invoice.');
+    } else {
+      console.log('Failed to initiate payment.');
+    }
+  };
+
   return (
     <header className="bg-blue-600 text-white p-4">
       <div className="container mx-auto flex flex-col md:flex-row justify-between items-center space-y-2 md:space-y-0">
@@ -81,6 +96,9 @@ export const Header: React.FC = () => {
           </button>
         </div>
         <BalanceInfo />
+        <button onClick={handleBuyPoints} className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+          Buy Points
+        </button>
         <TopUpModal
           isOpen={isTopUpModalOpen}
           onClose={() => setIsTopUpModalOpen(false)}

@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
-import User from './database/model/user.js';
+import { User } from './database/model/user.js';
 
 
 const BOT_TOKEN = process.env.BOT_TOKEN || 'your_bot_token_here';

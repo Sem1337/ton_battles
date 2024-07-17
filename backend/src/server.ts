@@ -4,11 +4,13 @@ import bodyParser from "body-parser";
 import userRouter from './routes/user.router.js';
 import gameRoomRouter from './routes/gameRoom.router.js';
 import balanceRouter from './routes/balance.router.js';
+import webhookRouter from './routes/webhook.router.js';
 import cookieParser from 'cookie-parser';
 import sequelize from './database/db.js';
 import { authenticateUser, verifyToken } from './auth.js';
 import { createServer } from 'http';
 import { initializeSocket } from './utils/socket.js';
+import './services/telegramBot.js'
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -33,6 +35,7 @@ app.use((req, res, next) => {
 app.use(userRouter);
 app.use(gameRoomRouter);
 app.use(balanceRouter);
+app.use(webhookRouter);
 
 app.post('/auth', authenticateUser);
 

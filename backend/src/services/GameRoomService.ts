@@ -1,6 +1,6 @@
 import sequelize from '../database/db.js';
 import { GameRoom, Player, Game } from '../database/model/gameRoom.js'
-import User from '../database/model/user.js';
+import { User } from '../database/model/user.js';
 import { getSocketInstance } from '../utils/socket.js';
 import { updateUserBalance, updateUserBalanceWithTransaction } from './balanceService.js';
 import Big from 'big.js'; // Import Big.js

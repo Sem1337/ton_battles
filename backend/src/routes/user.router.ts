@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express';
 import bodyParser from 'body-parser';
-import User from '../database/model/user.js';
+import { User } from '../database/model/user.js';
 
 const router = Router();
 const jsonParser = bodyParser.json();
