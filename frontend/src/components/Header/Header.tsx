@@ -70,7 +70,8 @@ export const Header: React.FC = () => {
     });
     const data = await response.json();
     if (data.success) {
-      console.log('Check your Telegram for the payment invoice.');
+      const invoiceResponse = await fetch(data.invoiceURL)
+      console.log(invoiceResponse.body);
     } else {
       console.log('Failed to initiate payment.');
     }

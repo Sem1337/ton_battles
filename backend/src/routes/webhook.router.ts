@@ -21,7 +21,7 @@ bot.command('buy', (ctx) => {
     description: 'Purchase points to use in the game',
     payload: `${ctx.from.id}`, // Using userId as payload
     currency: 'XTR',
-    prices: [{ label: 'Points', amount: 100 * 100 }], // 100 points for $1
+    prices: [{ label: 'Points', amount: 1 }], // 100 points for $1
     provider_token: '',
   };
 
@@ -33,7 +33,6 @@ bot.on('pre_checkout_query', async (ctx) => {
   await ctx.answerPreCheckoutQuery(true);
 });
 
-bot.launch();
 
 const router = Router();
 const jsonParser = bodyParser.json();
@@ -55,8 +54,9 @@ router.get('/buy_points', async (req: Request, res: Response) => {
       provider_token: '',
       prices: [{ label: 'Points', amount: 100 * 100 }], // 100 points for $1
     };
-    await bot.telegram.sendInvoice(userId,invoice);
-    res.json({ success: true });
+    const invres = await bot.telegram.createInvoiceLink(invoice);
+
+    return res.status(200).json({ success: true, invoiceURL: invres});
   } catch (error) {
     console.error('Error initiating payment:', error);
     return res.json({ success: false });
