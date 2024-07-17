@@ -10,7 +10,6 @@ import sequelize from './database/db.js';
 import { authenticateUser, verifyToken } from './auth.js';
 import { createServer } from 'http';
 import { initializeSocket } from './utils/socket.js';
-import './services/telegramBot.js'
 
 const app = express();
 const port = process.env.PORT || 8080;

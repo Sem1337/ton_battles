@@ -116,8 +116,9 @@ const GameRoomComponent = () => {
             setWinner(null);
             setTotalBank(null);
           }}
-          style={customStyles}
+          className="fixed inset-0 flex items-center justify-center z-50"
           contentLabel="Game Completed"
+          overlayClassName="overlay-custom-style"
         >
           <h2 className="text-xl font-bold mb-4">Game Completed</h2>
           <p className="mb-2">Winner: {winner.name} (Bet: {winner.bet})</p>
