@@ -71,14 +71,14 @@ export const initializeSocket = (server: HttpServer) => {
             await GameRoomService.makeBet(roomId, socket.data.user.userId, betSize);
             const user = await User.findByPk(socket.data.user.userId);
             if (user) {
-              socket.emit('message', { type: 'BALANCE_UPDATE', payload: user.balance });
+              socket.emit('message', { type: 'BALANCE_UPDATE', payload: { balance: user.balance, points: user.points } });
             }
             break;
           }
           case 'GET_BALANCE': {
             const user = await User.findByPk(socket.data.user.userId);
             if (user) {
-              socket.emit('message', { type: 'BALANCE_UPDATE', payload: user.balance });
+              socket.emit('message', { type: 'BALANCE_UPDATE', payload: { balance: user.balance, points: user.points } });
             } else {
               socket.emit('message', { type: 'ERROR', payload: { message: 'User not found' } });
             }

@@ -4,6 +4,7 @@ import sequelize from '../db.js';
 class User extends Model {
   public userId!: number;
   public balance!: string;
+  public points!: string; // Add this line
 
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -20,7 +21,13 @@ User.init(
       type: DataTypes.STRING,
       allowNull: false,
       defaultValue: 0.0,
-    }
+    },
+    points: {
+      type: DataTypes.STRING,
+      defaultValue: 0, // Set default value to 0
+      allowNull: false,
+    },
+
   },
   {
     sequelize,
