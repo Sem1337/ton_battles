@@ -5,26 +5,6 @@ import { useSocket } from '../../contexts/SocketContext'
 import { useNavigate, useParams } from 'react-router-dom';
 
 
-const customStyles = {
-  content: {
-    top: '50%',
-    left: '50%',
-    right: 'auto',
-    bottom: 'auto',
-    marginRight: '-50%',
-    transform: 'translate(-50%, -50%)',
-    width: '80%', // Ensure the modal is not too wide on mobile
-    maxWidth: '500px', // Add a maximum width
-    padding: '20px', // Add padding for better spacing
-    boxSizing: 'border-box' as const,// Ensure padding is included in the width calculation
-    backgroundColor: '#fff', // Set background color
-    color: '#000', // Set text color
-  },
-  overlay: {
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Set overlay background color
-  },
-};
-
 const GameRoomComponent = () => {
   const { roomId } = useParams<{ roomId: string }>();
   const [betSize, setBetSize] = useState('')
@@ -89,40 +69,68 @@ const GameRoomComponent = () => {
   };
 
   return (
-    <div>
-      <h2>Game Room {roomId}</h2>
-      <div>Time left: {timer} seconds</div>
-      <div>
-        <label htmlFor="betSize">Bet Size:</label>
-        <input
-          type="number"
-          id="betSize"
-          name="betSize"
-          value={betSize}
-          onChange={(e) => setBetSize(e.target.value)}
-        />
-        <button onClick={makeBet}>Make Bet</button>
-        <button onClick={leaveGameRoom}>Leave GameRoom</button>
+    <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center p-4">
+      <h2 className="text-3xl font-bold mb-4">Game Room {roomId}</h2>
+      <div className="text-lg mb-4">Time left: {timer} seconds</div>
+      <div className="flex flex-col items-center space-y-4 mb-4">
+        <div className="flex flex-col items-center space-y-2">
+          <label htmlFor="betSize" className="text-lg">Bet Size:</label>
+          <input
+            type="number"
+            id="betSize"
+            name="betSize"
+            value={betSize}
+            onChange={(e) => setBetSize(e.target.value)}
+            className="p-2 border rounded text-black"
+          />
+        </div>
+        <div className="flex space-x-4">
+          <button
+            onClick={makeBet}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          >
+            Make Bet
+          </button>
+          <button
+            onClick={leaveGameRoom}
+            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+          >
+            Leave GameRoom
+          </button>
+        </div>
       </div>
-      <div>
-        <h3>Players</h3>
-        <ul>
-          {players.map(player => (
-            <li key={player.id}>{player.name}: {player.bet}</li>
+      <div className="mb-4">
+        <h3 className="text-2xl font-semibold mb-2">Players</h3>
+        <ul className="list-disc list-inside">
+          {players.map((player) => (
+            <li key={player.id}>
+              {player.name}: {player.bet}
+            </li>
           ))}
         </ul>
       </div>
       {winner && totalBank !== null && (
         <Modal
           isOpen={true}
-          onRequestClose={() => { setWinner(null); setTotalBank(null); }}
+          onRequestClose={() => {
+            setWinner(null);
+            setTotalBank(null);
+          }}
           style={customStyles}
           contentLabel="Game Completed"
         >
-          <h2>Game Completed</h2>
-          <p>Winner: {winner.name} (Bet: {winner.bet})</p>
-          <p>Total Bank: {totalBank}</p>
-          <button onClick={() => { setWinner(null); setTotalBank(null); }}>Close</button>
+          <h2 className="text-xl font-bold mb-4">Game Completed</h2>
+          <p className="mb-2">Winner: {winner.name} (Bet: {winner.bet})</p>
+          <p className="mb-4">Total Bank: {totalBank}</p>
+          <button
+            onClick={() => {
+              setWinner(null);
+              setTotalBank(null);
+            }}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          >
+            Close
+          </button>
         </Modal>
       )}
     </div>
