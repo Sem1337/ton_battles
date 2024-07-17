@@ -52,7 +52,7 @@ router.get('/buy_points', async (req: Request, res: Response) => {
       payload: `${userId}`, // Using userId as payload
       currency: 'XTR',
       provider_token: '',
-      prices: [{ label: 'Points', amount: 100 * 100 }], // 100 points for $1
+      prices: [{ label: 'Points', amount: 1 }], // 100 points for $1
     };
     const invres = await bot.telegram.createInvoiceLink(invoice);
 
