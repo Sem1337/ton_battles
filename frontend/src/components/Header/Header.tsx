@@ -7,6 +7,7 @@ import { beginCell, toNano } from '@ton/core';
 import { WithdrawModal } from '../WithdrawModal/WithdrawModal';
 import { TopUpModal } from '../TopUpModal/TopUpModal';
 import { Link } from 'react-router-dom';
+import WebApp from '@twa-dev/sdk';
 
 
 export const Header: React.FC = () => {
@@ -70,7 +71,7 @@ export const Header: React.FC = () => {
     });
     const data = await response.json();
     if (data.success) {
-      window.open(data.invoiceURL, '_blank');
+      WebApp.openInvoice(data.invoiceURL);
       console.log('openned invoiceURL');
     } else {
       console.log('Failed to initiate payment.');
