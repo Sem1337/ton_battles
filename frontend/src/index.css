@@ -4,7 +4,7 @@
 @tailwind utilities;
 
 .loading-screen {
-  background-image: url('./test.jpeg');
+  background-image: url('/ton_battles/test.jpeg');
   background-size: cover;
   background-position: center;
   height: 100vh;
