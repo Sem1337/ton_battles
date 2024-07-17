@@ -27,7 +27,7 @@ const customStyles = {
 
 const GameRoomComponent = () => {
   const { roomId } = useParams<{ roomId: string }>();
-  const [betSize, setBetSize] = useState(0)
+  const [betSize, setBetSize] = useState('')
   const [players, setPlayers] = useState<Player[]>([])
   const [timer, setTimer] = useState(60)
   const [winner, setWinner] = useState<{ id: string, name: string, bet: number } | null>(null);
@@ -99,7 +99,7 @@ const GameRoomComponent = () => {
           id="betSize"
           name="betSize"
           value={betSize}
-          onChange={(e) => setBetSize(Number(e.target.value))}
+          onChange={(e) => setBetSize(e.target.value)}
         />
         <button onClick={makeBet}>Make Bet</button>
         <button onClick={leaveGameRoom}>Leave GameRoom</button>

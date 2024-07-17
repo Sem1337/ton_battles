@@ -116,6 +116,9 @@ GameRoom.init(
     minBet: {
       type: DataTypes.STRING,
       allowNull: false,
+      validate: {
+        min: 0.1,
+      },
     },
     maxBet: {
       type: DataTypes.STRING,
@@ -124,6 +127,9 @@ GameRoom.init(
     maxPlayers: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      validate: {
+        min: 2,
+      },
     },
     status: {
       type: DataTypes.ENUM('active', 'closed'),

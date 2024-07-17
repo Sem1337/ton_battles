@@ -8,8 +8,11 @@ import { col, Op, Order } from 'sequelize';
 
 export class GameRoomService {
   static gameRoomTimers: { [key: string]: number } = {}; // In-memory storage for remaining time
-  static async createGameRoom(minBet: number, maxBet: number, maxPlayers: number, roomName: string) {
+  static async createGameRoom(minBet: Big, maxBet: Big, maxPlayers: number, roomName: string) {
     try {
+      if (maxBet.lt(minBet)) {
+        throw new Error('Failed to create game room')
+      }
       console.log('creating game room: ', minBet, maxBet, maxPlayers);
       const gameRoom = await GameRoom.create({
         minBet,

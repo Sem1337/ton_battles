@@ -4,9 +4,9 @@ import { authFetch } from '../../utils/auth';
 import { useAuth } from '../../contexts/AuthContext';
 
 const CreateGame = () => {
-  const [minBet, setMinBet] = useState(0);
-  const [maxBet, setMaxBet] = useState(0);
-  const [maxPlayers, setMaxPlayers] = useState(0);
+  const [minBet, setMinBet] = useState('');
+  const [maxBet, setMaxBet] = useState('');
+  const [maxPlayers, setMaxPlayers] = useState('');
   const [roomName, setRoomName] = useState('');
   const { token } = useAuth();
   const navigate = useNavigate();
@@ -53,7 +53,7 @@ const CreateGame = () => {
             type="number"
             id="minBet"
             value={minBet}
-            onChange={(e) => setMinBet(Number(e.target.value))}
+            onChange={(e) => setMinBet(e.target.value)}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             required
           />
@@ -64,7 +64,7 @@ const CreateGame = () => {
             type="number"
             id="maxBet"
             value={maxBet}
-            onChange={(e) => setMaxBet(Number(e.target.value))}
+            onChange={(e) => setMaxBet(e.target.value)}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             required
           />
@@ -75,7 +75,7 @@ const CreateGame = () => {
             type="number"
             id="maxPlayers"
             value={maxPlayers}
-            onChange={(e) => setMaxPlayers(Number(e.target.value))}
+            onChange={(e) => setMaxPlayers(e.target.value)}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             required
           />

@@ -1,7 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useSocket } from '../../contexts/SocketContext';
 
 const Home: React.FC = () => {
+  const { sendMessage } = useSocket();
+  useEffect(() => {
+    console.log('balance info use effect')
+    sendMessage('GET_BALANCE');
+    return () => {
+    };
+  }, []);
   console.log("Home component rendered");
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
