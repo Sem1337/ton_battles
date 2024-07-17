@@ -70,8 +70,8 @@ export const Header: React.FC = () => {
     });
     const data = await response.json();
     if (data.success) {
-      const invoiceResponse = await fetch(data.invoiceURL)
-      console.log(invoiceResponse.body);
+      window.open(data.invoiceURL, '_blank');
+      console.log('openned invoiceURL');
     } else {
       console.log('Failed to initiate payment.');
     }
