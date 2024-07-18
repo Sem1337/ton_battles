@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import type { Player } from '../../types/types' // Import shared types
 import Modal from 'react-modal'; // Import react-modal
 import { useSocket } from '../../contexts/SocketContext'
 import { useNavigate, useParams } from 'react-router-dom';
+import PointsCounter from '../PointsCounter/PointsCounter';
 
 
 const GameRoomComponent = () => {
@@ -12,18 +13,22 @@ const GameRoomComponent = () => {
   const [timer, setTimer] = useState(60)
   const [winner, setWinner] = useState<{ id: string, name: string, bet: number } | null>(null);
   const [totalBank, setTotalBank] = useState<number | null>(null);
+  const [points, setPoints] = useState<number>(0);
   const { sendMessage, on, off, joinRoom, leaveRoom } = useSocket();
   const navigate = useNavigate();
 
   const fetchGameRoomDetails = async () => {
     sendMessage('JOIN_GAME', { roomId });
+    sendMessage('UPDATE_POINTS');
   }
 
   useEffect(() => {
+    console.log('GameRoom rendered');
     joinRoom(roomId!);
     const interval = setInterval(() => {
       if (timer > 0) setTimer(prev => prev - 1)
-    }, 1000)
+    }, 1000);
+
     const handleBetMade = (playersData: Player[]) => {
       console.log(playersData);
       setPlayers(playersData);
@@ -31,11 +36,16 @@ const GameRoomComponent = () => {
 
     const handleGameStarted = () => {
       sendMessage('JOIN_GAME', { roomId });
+      sendMessage('UPDATE_POINTS');
     };
 
     const handlePlayerJoined = (data: { players: Player[], remainingTime: number }) => {
       setPlayers(data.players);
       setTimer(data.remainingTime);
+    };
+
+    const handlePointsUpdated = (updatedPoints: number) => {
+      setPoints(updatedPoints);
     };
 
     const handleGameCompleted = (data: { winner: { id: string, name: string, bet: number }, totalBank: number }) => {
@@ -44,6 +54,7 @@ const GameRoomComponent = () => {
       sendMessage('GET_BALANCE');
     };
 
+    on('POINTS_UPDATED', handlePointsUpdated);
     on('GAME_STARTED', handleGameStarted);
     on('BET_MADE', handleBetMade);
     on('PLAYER_JOINED', handlePlayerJoined);
@@ -51,6 +62,7 @@ const GameRoomComponent = () => {
     fetchGameRoomDetails()
     return () => {
       console.log('return from gameRoom');
+      off('POINTS_UPDATED');
       off('GAME_STARTED');
       off('BET_MADE');
       off('PLAYER_JOINED');
@@ -60,17 +72,56 @@ const GameRoomComponent = () => {
     };
   }, [on, off]);
 
-  const makeBet = () => {
-    sendMessage('MAKE_BET', {roomId, betSize});
-  };
+  const makeBet = useCallback(() => {
+    sendMessage('MAKE_BET', { roomId, betSize });
+  }, [roomId, betSize, sendMessage]);
 
-  const leaveGameRoom = async () => {
+  const leaveGameRoom = useCallback(async () => {
     navigate('/'); // Navigates to the previous page
-  };
+  }, [navigate]);
+
+  const memoizedPlayersList = useMemo(() => (
+    <ul className="list-disc list-inside">
+      {players.map((player) => (
+        <li key={player.id}>
+          {player.name}: {player.bet}
+        </li>
+      ))}
+    </ul>
+  ), [players]);
+
+  const memoizedModal = useMemo(() => (
+    winner && totalBank !== null && (
+      <Modal
+        isOpen={true}
+        onRequestClose={() => {
+          setWinner(null);
+          setTotalBank(null);
+        }}
+        className="fixed inset-0 flex items-center justify-center z-50"
+        contentLabel="Game Completed"
+        overlayClassName="overlay-custom-style"
+      >
+        <h2 className="text-xl font-bold mb-4">Game Completed</h2>
+        <p className="mb-2">Winner: {winner.name} (Bet: {winner.bet})</p>
+        <p className="mb-4">Total Bank: {totalBank}</p>
+        <button
+          onClick={() => {
+            setWinner(null);
+            setTotalBank(null);
+          }}
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Close
+        </button>
+      </Modal>
+    )
+  ), [winner, totalBank]);
 
   return (
     <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center p-4">
       <h2 className="text-3xl font-bold mb-4">Game Room {roomId}</h2>
+      <PointsCounter points={points} />
       <div className="text-lg mb-4">Time left: {timer} seconds</div>
       <div className="flex flex-col items-center space-y-4 mb-4">
         <div className="flex flex-col items-center space-y-2">
@@ -101,39 +152,9 @@ const GameRoomComponent = () => {
       </div>
       <div className="mb-4">
         <h3 className="text-2xl font-semibold mb-2">Players</h3>
-        <ul className="list-disc list-inside">
-          {players.map((player) => (
-            <li key={player.id}>
-              {player.name}: {player.bet}
-            </li>
-          ))}
-        </ul>
+        {memoizedPlayersList}
       </div>
-      {winner && totalBank !== null && (
-        <Modal
-          isOpen={true}
-          onRequestClose={() => {
-            setWinner(null);
-            setTotalBank(null);
-          }}
-          className="fixed inset-0 flex items-center justify-center z-50"
-          contentLabel="Game Completed"
-          overlayClassName="overlay-custom-style"
-        >
-          <h2 className="text-xl font-bold mb-4">Game Completed</h2>
-          <p className="mb-2">Winner: {winner.name} (Bet: {winner.bet})</p>
-          <p className="mb-4">Total Bank: {totalBank}</p>
-          <button
-            onClick={() => {
-              setWinner(null);
-              setTotalBank(null);
-            }}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          >
-            Close
-          </button>
-        </Modal>
-      )}
+      {memoizedModal}
     </div>
   );
 };

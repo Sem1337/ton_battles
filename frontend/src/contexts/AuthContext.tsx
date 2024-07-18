@@ -47,10 +47,6 @@ export const AuthProvider = ({ children } : AuthProviderProps) => {
         localStorage.setItem('token', token!);
 
         console.log('User authenticated', result.initData);
-        response.headers.forEach(element => {
-          console.log(element);
-        });
-        console.log(response.headers)
         setTgUserId(result.userId);
         setIsAuthenticated(true);
         setToken(token);

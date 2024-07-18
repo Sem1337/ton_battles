@@ -5,7 +5,7 @@ import PointsCounter from '../PointsCounter/PointsCounter'
 
 const Home: React.FC = () => {
   const [points, setPoints] = useState<number>(0);
-  const { sendMessage, on } = useSocket();
+  const { sendMessage, on, off } = useSocket();
   useEffect(() => {
     console.log('balance info use effect')
     sendMessage('GET_BALANCE');
@@ -20,9 +20,14 @@ const Home: React.FC = () => {
       sendMessage('UPDATE_POINTS');
     };
 
+    if (points === 0) {
+      sendMessage('UPDATE_POINTS');
+    }
+
     const interval = setInterval(updatePoints, 10000); // Update every 10 seconds
 
     return () => {
+      off('POINTS_UPDATED');
       clearInterval(interval);
     };
 
