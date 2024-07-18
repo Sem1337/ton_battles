@@ -44,8 +44,8 @@ const GameRoomComponent = () => {
       setTimer(data.remainingTime);
     };
 
-    const handlePointsUpdated = (updatedPoints: number) => {
-      setPoints(updatedPoints);
+    const handlePointsUpdated = (data: { points: number }) => {
+      setPoints(data.points);
     };
 
     const handleGameCompleted = (data: { winner: { id: string, name: string, bet: number }, totalBank: number }) => {
