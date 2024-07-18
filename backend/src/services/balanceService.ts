@@ -17,6 +17,32 @@ export const updateUserBalance = async (userId: number, amount: Big) => {
   }
 };
 
+export const updatePoints = async (userId: string) => {
+  try {
+    const user = await User.findByPk(userId);
+    if (user) {
+
+
+
+      const currentTime = (Date.now() / 1000).toFixed(0);
+      const lastUpdateTime = (user.lastPointsUpdate.getTime() / 1000).toFixed(0);
+      const secondsElapsed = Math.min(+currentTime - +lastUpdateTime, 21600); // 6 hours max 
+      const pointsIncrease = user.productionLVL * secondsElapsed;
+
+      user.points = new Big(user.points).plus(pointsIncrease).toString();
+      user.lastPointsUpdate = new Date(+currentTime * 1000);
+
+      await user.save();
+
+      return user.points;
+    }
+  } catch (error) {
+    console.error(error);
+    throw new Error('An error occurred while updating points');
+  }
+  return 0;
+};
+
 export const updateUserPoints = async (userId: number, points: Big) => {
   const user = await User.findByPk(userId);
   if (user) {

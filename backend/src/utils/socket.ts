@@ -3,6 +3,7 @@ import { Server as SocketIOServer } from 'socket.io';
 import { authenticateWebSocket } from '../auth.js';
 import { GameRoomService } from '../services/GameRoomService.js';
 import { User } from '../database/model/user.js';
+import { updatePoints } from '../services/balanceService.js';
 
 let io: SocketIOServer;
 
@@ -59,6 +60,11 @@ export const initializeSocket = (server: HttpServer) => {
           case 'leave': {
             socket.leave(payload);
             console.log(`Socket ${socket.id} left room ${payload}`);
+            break;
+          }
+          case 'UPDATE_POINTS': {
+            const newPoints = await updatePoints(socket.data.user.userId);
+            socket.emit('message', { type: 'POINTS_UPDATED', payload: { points: newPoints } });
             break;
           }
           case 'JOIN_GAME': {

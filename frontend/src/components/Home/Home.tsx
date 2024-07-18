@@ -1,14 +1,31 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSocket } from '../../contexts/SocketContext';
+import PointsCounter from '../PointsCounter/PointsCounter'
 
 const Home: React.FC = () => {
-  const { sendMessage } = useSocket();
+  const [points, setPoints] = useState<number>(0);
+  const { sendMessage, on } = useSocket();
   useEffect(() => {
     console.log('balance info use effect')
     sendMessage('GET_BALANCE');
-    return () => {
+
+    const handlePointsUpdated = (data: { points: number }) => {
+      setPoints(data.points);
     };
+
+    on('POINTS_UPDATED', handlePointsUpdated);
+
+    const updatePoints = () => {
+      sendMessage('UPDATE_POINTS');
+    };
+
+    const interval = setInterval(updatePoints, 10000); // Update every 10 seconds
+
+    return () => {
+      clearInterval(interval);
+    };
+
   }, []);
   console.log("Home component rendered");
   return (
@@ -16,6 +33,7 @@ const Home: React.FC = () => {
       <div className="text-center mb-8">
         <h1 className="text-4xl font-bold mb-4 text-blue-600">Welcome to TON Battles</h1>
         <p className="text-lg mb-4">Join a game or create your own battle room and start playing!</p>
+        <PointsCounter points={points} />
       </div>
       <div className="flex space-x-4">
         <Link

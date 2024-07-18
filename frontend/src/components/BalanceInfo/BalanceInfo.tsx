@@ -3,7 +3,6 @@ import { useSocket } from '../../contexts/SocketContext';
 
 const BalanceInfo = () => {
   const [balance, setBalance] = useState<number>(0);
-  const [points, setPoints] = useState<number>(0); // Add points state
   const [loading, setLoading] = useState<boolean>(true);
   const [error] = useState<string | null>(null)
   const { sendMessage, on, off } = useSocket();
@@ -12,7 +11,6 @@ const BalanceInfo = () => {
     console.log('balance info use effect')
     const handleBalanceUpdate = (data: { balance: number; points: number }) => {
       setBalance(data.balance);
-      setPoints(data.points); // Set points state
       setLoading(false);
     };
 
@@ -42,7 +40,6 @@ const BalanceInfo = () => {
     <div>
       <h2 className="text-xl font-bold">Your Balance</h2>
       <p>{balance !== null ? `${balance} TON` : 'Balance not available'}</p>
-      <p>{points !== null ? `${points} Points` : 'Points not available'}</p>
     </div>
   );
 };
