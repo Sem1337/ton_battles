@@ -24,7 +24,7 @@ const Shop: React.FC = () => {
   useEffect(() => {
     const fetchShopItems = async () => {
       try {
-        const response = await authFetch('/shop/items',token);
+        const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/shop/items`,token);
         const data = await response.json();
         setShopItems(data);
       } catch (error) {
@@ -49,7 +49,7 @@ const Shop: React.FC = () => {
 
     setIsBuying(true);
     try {
-      const response = await authFetch('/buy',token, {
+      const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/buy`,token, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ itemId: selectedItem.itemId, costType }),
