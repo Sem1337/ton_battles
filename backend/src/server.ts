@@ -5,11 +5,13 @@ import userRouter from './routes/user.router.js';
 import gameRoomRouter from './routes/gameRoom.router.js';
 import balanceRouter from './routes/balance.router.js';
 import webhookRouter from './routes/webhook.router.js';
+import shopRouter from './routes/shop.router.js';
 import cookieParser from 'cookie-parser';
 import sequelize from './database/db.js';
 import { authenticateUser, verifyToken } from './auth.js';
 import { createServer } from 'http';
 import { initializeSocket } from './utils/socket.js';
+import ShopService from './services/ShopService.js';
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -35,6 +37,7 @@ app.use(userRouter);
 app.use(gameRoomRouter);
 app.use(balanceRouter);
 app.use(webhookRouter);
+app.use(shopRouter);
 
 app.post('/auth', authenticateUser);
 
@@ -48,6 +51,10 @@ sequelize.authenticate()
   .then(() => {
     console.log('Connection has been established successfully.');
     return sequelize.sync({ force: true }); // Set to true to drop and re-create tables during development
+  })
+  .then(() => {
+    console.log('seeding');
+    return ShopService.seedShopItems();
   })
   .then(() => {
     console.log('Database synced successfully.');

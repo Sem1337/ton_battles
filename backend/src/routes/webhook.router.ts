@@ -15,19 +15,6 @@ bot.use((ctx, next) => {
 
 bot.start((ctx) => ctx.reply('Welcome! Use /buy to purchase points.'));
 
-bot.command('buy', (ctx) => {
-  const invoice = {
-    title: 'Buy Points',
-    description: 'Purchase points to use in the game',
-    payload: `${ctx.from.id}`, // Using userId as payload
-    currency: 'XTR',
-    prices: [{ label: 'Points', amount: 1 }], // 100 points for $1
-    provider_token: '',
-  };
-
-  return ctx.replyWithInvoice(invoice);
-});
-
 // Handle pre-checkout queries
 bot.on('pre_checkout_query', async (ctx) => {
   await ctx.answerPreCheckoutQuery(true);
@@ -78,15 +65,15 @@ router.post('/webhook', jsonParser, async (req: Request, res: Response) => {
   if (!invoice || !invoice.payload) {
     return res.status(400).send('Invalid request');
   }
-
   try {
+    console.log('invoice: ', invoice.toJSON());
     const userId = invoice.payload; // Assuming payload contains userId
     const points = calculatePoints(invoice.total_amount); // Define how to calculate points from the amount
 
     console.log(`Successful payment of ${invoice.total_amount} from user ${userId}`);
 
     // Update user's points in your database
-    await updateUserPoints(+userId, new Big(points).div(100)); // Assuming 1 USD = 100 points
+    await updateUserPoints(+userId, points); // Assuming 1 USD = 100 points
 
     console.log('Webhook received:', req.body);
     return res.sendStatus(200);
@@ -97,8 +84,7 @@ router.post('/webhook', jsonParser, async (req: Request, res: Response) => {
 });
 
 const calculatePoints = (amount: string) => {
-  // Example conversion: 1 point per 100 cents
-  return new Big(amount).div(100);
+  return new Big(amount).mul(10000);
 };
 
 export default router;

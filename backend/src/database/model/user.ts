@@ -5,8 +5,9 @@ class User extends Model {
   public userId!: number;
   public balance!: string;
   public points!: string; // Add this line
+  public gems!: number;
   public productionLVL!: number;
-  public shield!: boolean;
+  public shield!: number;
   public lastPointsUpdate!: Date; // Add this line
 
   public readonly createdAt!: Date;
@@ -30,15 +31,27 @@ User.init(
       defaultValue: 0, // Set default value to 0
       allowNull: false,
     },
+    gems: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0, // Set default value to 0
+      allowNull: false,
+    },
     productionLVL: {
       type: DataTypes.INTEGER,
       defaultValue: 1, // Set default value to 0
       allowNull: false,
+      validate: {
+        min: 0,
+      }
     },
     shield: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false, // Set default value to 0
+      type: DataTypes.INTEGER,
+      defaultValue: 0, // Set default value to 0
       allowNull: false,
+      validate: {
+        min: 0,
+        max: 4
+      },
     },
     lastPointsUpdate: {
       type: DataTypes.DATE,
