@@ -3,6 +3,7 @@ import Modal from 'react-modal';
 import { useAuth } from '../../contexts/AuthContext';
 import { authFetch } from '../../utils/auth';
 import WebApp from '@twa-dev/sdk';
+import { useNavigate } from 'react-router-dom';
 
 interface ShopItem {
   itemId: number;
@@ -20,11 +21,12 @@ const Shop: React.FC = () => {
   const [isBuying, setIsBuying] = useState<boolean>(false);
   const [selectedItem, setSelectedItem] = useState<ShopItem | null>(null);
   const { token } = useAuth();
+  const navigate = useNavigate(); // Get navigate function from useNavigate hook
 
   useEffect(() => {
     const fetchShopItems = async () => {
       try {
-        const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/shop/items`,token);
+        const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/shop/items`, token);
         const data = await response.json();
         setShopItems(data);
       } catch (error) {
@@ -49,7 +51,7 @@ const Shop: React.FC = () => {
 
     setIsBuying(true);
     try {
-      const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/buy`,token, {
+      const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/buy`, token, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ itemId: selectedItem.itemId, costType }),
@@ -60,14 +62,14 @@ const Shop: React.FC = () => {
           case 'stars':
             WebApp.openInvoice(data.invoiceURL);
             break;
-        
+
           default:
             break;
         }
-        
+
         console.log('openned invoiceURL');
       } else {
-        console.log('Failed to initiate payment.');
+        console.log('Failed to proceed payment.', data.message);
       }
     } catch (error) {
       console.error('Error purchasing item:', error);
@@ -92,7 +94,15 @@ const Shop: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 p-4">
-      <h2 className="text-3xl font-bold text-center mb-4">Shop</h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-3xl font-bold text-center mb-4">Shop</h2>
+        <button
+          onClick={() => navigate('/')}
+          className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Close
+        </button>
+      </div>
       <div className="flex justify-center space-x-4 mb-8">
         <button onClick={() => setActiveTab('boosts')} className={`py-2 px-4 rounded ${activeTab === 'boosts' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>Boosts</button>
         <button onClick={() => setActiveTab('points')} className={`py-2 px-4 rounded ${activeTab === 'points' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>Points</button>
