@@ -43,6 +43,7 @@ class WebSocketManager {
 
   sendMessage(type: string, payload?: any) {
     if (this.socket) {
+      console.log('send message: ', type);
       this.socket.emit('message', { type, payload });
     }
   }

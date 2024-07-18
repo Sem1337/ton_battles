@@ -22,7 +22,7 @@ const Home: React.FC = () => {
 
     console.log('initial Points: ', points)
     if (points == 0) {
-      sendMessage('UPDATE_POINTS');
+      updatePoints();
     }
 
     const interval = setInterval(updatePoints, 10000); // Update every 10 seconds
