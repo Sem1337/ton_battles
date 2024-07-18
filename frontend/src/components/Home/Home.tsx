@@ -20,6 +20,7 @@ const Home: React.FC = () => {
       sendMessage('UPDATE_POINTS');
     };
 
+    console.log('initial Points: ', points)
     if (points === 0) {
       sendMessage('UPDATE_POINTS');
     }
