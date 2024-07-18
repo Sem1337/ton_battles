@@ -21,7 +21,7 @@ const Home: React.FC = () => {
     };
 
     console.log('initial Points: ', points)
-    if (points === 0) {
+    if (points == 0) {
       sendMessage('UPDATE_POINTS');
     }
 
