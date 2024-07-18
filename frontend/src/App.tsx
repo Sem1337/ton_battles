@@ -4,6 +4,7 @@ import GameRoomComponent from './components/GameRoom/GameRoom';
 import CreateGame from './components/CreateRoom/CreateRoom';
 import Header from './components/Header/Header';
 import GameRoomList from './components/GameRoomList/GameRoomList';
+import Shop from './components/Shop/Shop';
 
 const App = () => {
   return (
@@ -15,6 +16,7 @@ const App = () => {
           <Route path="/game-rooms" element={<GameRoomList />} />
           <Route path="/game-room/:roomId" element={<GameRoomComponent />} />
           <Route path="/create-room" element={<CreateGame />} />
+          <Route path="/shop" element={<Shop />} />
         </Routes>
       </main>
       <footer className="bg-gray-800 text-white text-center py-4">
