@@ -17,14 +17,10 @@ bot.start((ctx) => ctx.reply('Welcome! Use /buy to purchase points.'));
 
 // Handle pre-checkout queries
 bot.on('pre_checkout_query', async (ctx) => {
-  try {
-    await ctx.answerPreCheckoutQuery(true);
-  } catch (error) {
-    console.error('Error pre_checkout_query:', error);
-  }
+  await ctx.answerPreCheckoutQuery(true);
 });
 
-bot.launch();
+bot.createWebhook({ domain: `${process.env.BACKEND_DOMAIN}`, path: '/webhook' });
 
 const router = Router();
 const jsonParser = bodyParser.json();
@@ -56,34 +52,34 @@ router.get('/buy_points', async (req: Request, res: Response) => {
 });
 
 router.post('/webhook', jsonParser, async (req: Request, res: Response) => {
-  const { update_id, message, invoice } = req.body;
-  // Log the update_id for tracking
+  const { update_id, message, pre_checkout_query } = req.body;
   console.log('Received update with ID:', update_id);
-
-  // Process the message if it exists
+  if (pre_checkout_query) {
+    try {
+      console.log(pre_checkout_query.id);
+      const checkoutResponse = await bot.telegram.answerPreCheckoutQuery(pre_checkout_query.id, true);
+      return checkoutResponse;
+    } catch (error) {
+      return res.sendStatus(500);
+    }
+  }
   if (message) {
     console.log('Received message:', message);
-    // Here you could handle different types of messages, e.g., text, commands
-
   }
-  // Validate the incoming request (add your own validation logic)
-  if (!invoice || !invoice.payload) {
-    return res.status(400).send('Invalid request');
-  }
-  if (!message.successful_payment) {
+  const { successful_payment } = message
+  if (!successful_payment || !successful_payment.invoice_payload) {
+    console.log('not successful_payment or payload');
     return res.status(400).send('Not successful payment');
   }
   try {
-    console.log('invoice: ', invoice.toJSON());
-    const userId = invoice.payload; // Assuming payload contains userId
-    const points = calculatePoints(invoice.total_amount); // Define how to calculate points from the amount
+    const userId = successful_payment.invoice_payload; // Assuming payload contains userId
+    const points = calculatePoints(successful_payment.total_amount); // Define how to calculate points from the amount
 
-    console.log(`Successful payment of ${invoice.total_amount} from user ${userId}`);
+    console.log(`Successful payment of ${successful_payment.total_amount} from user ${userId}`);
 
     // Update user's points in your database
     await updateUserPoints(+userId, points); // Assuming 1 USD = 100 points
 
-    console.log('Webhook received:', req.body);
     return res.sendStatus(200);
   } catch (error) {
     console.error('Error processing webhook:', error);
