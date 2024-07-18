@@ -16,7 +16,6 @@ const BalanceInfo = () => {
 
     const handleConnected = () => {
       sendMessage('GET_BALANCE');
-      sendMessage('UPDATE_POINTS');
     };
 
     on('BALANCE_UPDATE', handleBalanceUpdate);

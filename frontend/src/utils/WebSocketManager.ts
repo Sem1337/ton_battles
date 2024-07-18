@@ -1,6 +1,6 @@
 import { io, Socket } from 'socket.io-client';
 
-type EventCallback = (data: any) => void;
+type EventCallback = (data?: any) => void;
 
 class WebSocketManager {
   private socket: Socket | null = null;
@@ -14,10 +14,18 @@ class WebSocketManager {
 
     this.socket.on('connect', () => {
       console.log('Connected to WebSocket server');
+      const callback = this.eventCallbacks.get('connect');
+      if (callback) {
+        callback();
+      }
     });
 
     this.socket.on('disconnect', () => {
       console.log('Disconnected from WebSocket server');
+      const callback = this.eventCallbacks.get('disconnect');
+      if (callback) {
+        callback();
+      }
     });
 
     this.socket.on('message', (data: { type: string, payload?: any }) => {

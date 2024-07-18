@@ -1,7 +1,6 @@
 import { createContext, useState, useContext, useEffect, ReactNode  } from 'react';
 import { authFetch } from '../utils/auth';
 import WebApp from '@twa-dev/sdk';
-import LoadingScreen from '../components/LoadingScreen/LoadingScreen'
 
 interface AuthContextProps {
   isAuthenticated: boolean;
@@ -64,10 +63,6 @@ export const AuthProvider = ({ children } : AuthProviderProps) => {
   useEffect(() => {
     authenticate();
   }, []);
-
-  if (!isAuthenticated) {
-    return <LoadingScreen />;
-  }
 
   return (
     <AuthContext.Provider value={{ isAuthenticated, authenticate, tgUserId, token }}>

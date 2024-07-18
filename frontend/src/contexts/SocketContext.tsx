@@ -1,7 +1,8 @@
-import React, { createContext, useContext, useEffect } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useAuth } from './AuthContext';
 import { webSocketManager } from '../utils/WebSocketManager';
 import { useNotification } from './NotificationContext';
+import LoadingScreen from '../components/LoadingScreen/LoadingScreen';
 
 
 interface SocketContextType {
@@ -29,6 +30,7 @@ interface SocketProviderProps {
 export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const { isAuthenticated, token } = useAuth();
   const { showNotification } = useNotification();
+  const [isConnected, setIsConnected] = useState<boolean>(false);
 
   useEffect(() => {
     if (isAuthenticated && token) {
@@ -40,7 +42,20 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
         showNotification(data.message);
       });
 
+      const handleConnected = () => {
+        setIsConnected(true);
+      };
+
+      const handleDisconnect = () => {
+        setIsConnected(false);
+      };
+  
+      webSocketManager.on('connect', handleConnected);
+      webSocketManager.on('disconnect', handleDisconnect);
+
       return () => {
+        webSocketManager.off('connect');
+        webSocketManager.off('disconnect');
         webSocketManager.disconnect();
       };
     }
@@ -53,6 +68,10 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const leaveRoom = (roomId: string) => {
     webSocketManager.sendMessage('leave', roomId);
   };
+
+  if (!isConnected) {
+    return <LoadingScreen />;
+  }
 
   return (
     <SocketContext.Provider
