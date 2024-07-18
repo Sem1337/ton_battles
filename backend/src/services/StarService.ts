@@ -4,7 +4,7 @@ import { ShopItem } from '../database/model/ShopItems.js'; // Assuming you have 
 
 class StarService {
   static async buyItem(_user: User, _item: ShopItem) {
-
+  
   }
 }
 
