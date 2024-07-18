@@ -17,9 +17,14 @@ bot.start((ctx) => ctx.reply('Welcome! Use /buy to purchase points.'));
 
 // Handle pre-checkout queries
 bot.on('pre_checkout_query', async (ctx) => {
-  await ctx.answerPreCheckoutQuery(true);
+  try {
+    await ctx.answerPreCheckoutQuery(true);
+  } catch (error) {
+    console.error('Error pre_checkout_query:', error);
+  }
 });
 
+bot.launch();
 
 const router = Router();
 const jsonParser = bodyParser.json();
@@ -43,7 +48,7 @@ router.get('/buy_points', async (req: Request, res: Response) => {
     };
     const invres = await bot.telegram.createInvoiceLink(invoice);
 
-    return res.status(200).json({ success: true, invoiceURL: invres});
+    return res.status(200).json({ success: true, invoiceURL: invres });
   } catch (error) {
     console.error('Error initiating payment:', error);
     return res.json({ success: false });
@@ -64,6 +69,9 @@ router.post('/webhook', jsonParser, async (req: Request, res: Response) => {
   // Validate the incoming request (add your own validation logic)
   if (!invoice || !invoice.payload) {
     return res.status(400).send('Invalid request');
+  }
+  if (!message.successful_payment) {
+    return res.status(400).send('Not successful payment');
   }
   try {
     console.log('invoice: ', invoice.toJSON());
