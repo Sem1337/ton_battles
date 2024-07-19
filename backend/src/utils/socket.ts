@@ -22,6 +22,7 @@ export const initializeSocket = (server: HttpServer) => {
       try {
         const decoded = authenticateWebSocket(token as string);
         socket.data.user = decoded;
+        console.log('decoded jwtToken in websocket', socket.data.user);
         next();
       } catch (err) {
         next(new Error('Authentication error'));
