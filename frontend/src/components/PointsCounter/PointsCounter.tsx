@@ -27,14 +27,16 @@ const PointsCounter: React.FC = () => {
       updatePoints();
     }
 
-    const interval = setInterval(() => {setPoints(prev => prev + productionSpeed);}, 1000); // Update every second
+    const pointsIncrementInterval = setInterval(() => {
+      setPoints(prevPoints => prevPoints + productionSpeed);
+    }, 1000); // Increment points by productionSpeed every second
 
     return () => {
-      clearInterval(interval);
+      clearInterval(pointsIncrementInterval);
       off('POINTS_UPDATED');
     };
 
-  }, []);
+  }, [productionSpeed]);
 
   return (
     <div className="flex items-center justify-center bg-gray-100 p-4 rounded shadow-md">
