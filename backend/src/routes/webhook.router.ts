@@ -1,10 +1,9 @@
 import { Request, Response, Router } from 'express';
-import { updateUserPoints } from '../services/balanceService.js'; // Adjust import path as needed
-import Big from 'big.js';
 import bodyParser from 'body-parser';
 import { Telegraf } from 'telegraf';
+import { StarService } from '../services/StarService.js';
 
-const bot = new Telegraf(process.env.BOT_TOKEN || '');
+export const bot = new Telegraf(process.env.BOT_TOKEN || '');
 
 // Middleware to log every request
 bot.use((ctx, next) => {
@@ -37,7 +36,7 @@ router.get('/buy_points', async (req: Request, res: Response) => {
     const invoice = {
       title: 'Buy Points',
       description: 'Purchase points to use in the game',
-      payload: `${userId}`, // Using userId as payload
+      payload: `{userId:${userId}}`, // Using userId as payload
       currency: 'XTR',
       provider_token: '',
       prices: [{ label: 'Points', amount: 1 }], // 100 points for $1
@@ -54,41 +53,29 @@ router.get('/buy_points', async (req: Request, res: Response) => {
 router.post('/webhook', jsonParser, async (req: Request, res: Response) => {
   const { update_id, message, pre_checkout_query } = req.body;
   console.log('Received update with ID:', update_id);
-  if (pre_checkout_query) {
-    try {
+  try {
+    if (pre_checkout_query) {
+
       console.log(pre_checkout_query.id);
       const checkoutResponse = await bot.telegram.answerPreCheckoutQuery(pre_checkout_query.id, true);
       return checkoutResponse;
-    } catch (error) {
-      return res.sendStatus(500);
+
     }
-  }
-  if (message) {
-    console.log('Received message:', message);
-  }
-  const { successful_payment } = message
-  if (!successful_payment || !successful_payment.invoice_payload) {
-    console.log('not successful_payment or payload');
-    return res.status(400).send('Not successful payment');
-  }
-  try {
-    const userId = successful_payment.invoice_payload; // Assuming payload contains userId
-    const points = calculatePoints(successful_payment.total_amount); // Define how to calculate points from the amount
+    if (message) {
+      console.log('Received message:', message);
+    }
+    const { successful_payment } = message
+    if (!successful_payment || !successful_payment.invoice_payload) {
+      console.log('not successful_payment or payload');
+      return res.status(400).send('Not successful payment');
+    }
 
-    console.log(`Successful payment of ${successful_payment.total_amount} from user ${userId}`);
-
-    // Update user's points in your database
-    await updateUserPoints(+userId, points); // Assuming 1 USD = 100 points
-
-    return res.sendStatus(200);
+    StarService.handlePurchase(successful_payment);
+    return res.status(200);
   } catch (error) {
     console.error('Error processing webhook:', error);
     return res.sendStatus(500);
   }
 });
-
-const calculatePoints = (amount: string) => {
-  return new Big(amount).mul(10000);
-};
 
 export default router;

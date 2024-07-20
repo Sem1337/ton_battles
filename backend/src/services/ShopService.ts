@@ -1,28 +1,33 @@
 import { ShopItem, ShopItemId } from '../database/model/ShopItems.js'; // Assuming you have a ShopItems model
 import { updateUserGems, updateUserPoints, userLvlUpProduction, userLvlUpShield } from './balanceService.js';
 import Big from 'big.js';
+import { StarService } from './StarService.js';
+import { bot } from '../routes/webhook.router.js';
 
 
 type CostType = 'points' | 'gems' | 'stars' | 'TON';
 
 class ShopService {
 
-  static async proceedPayment(userId: string, costType: CostType, cost: Big): Promise<boolean> {
+  static async proceedPayment(userId: string, costType: CostType, itemId: ShopItemId, cost: Big): Promise<any> {
     switch (costType) {
       case 'stars':
-        return false;
+        const invoice = StarService.generateShopInvoice(userId, itemId, cost.toFixed(0));
+        return { success: true, message: 'Waiting for payment', invoice };
       case 'gems':
         await updateUserGems(+userId, cost.neg());
-        return true;
+        await ShopService.giveGoods(userId, itemId);
+        return { success: true, message: 'Payment success' };
       case 'points':
         await updateUserPoints(+userId, cost.neg());
-        return true;
+        await ShopService.giveGoods(userId, itemId);
+        return { success: true, message: 'Payment success' };
       case 'TON':
-        return false;
+        return { success: false };
       default:
         break;
     }
-    return false;
+    return { success: false, message: 'Invalid costType' };
   }
 
   static async giveGoods(userId: string, itemId: ShopItemId) {
@@ -62,7 +67,7 @@ class ShopService {
     try {
       const item = await ShopItem.findByPk(itemId);
       if (!item) {
-        return { success: false, message: 'User or item not found' };
+        return { success: false, message: 'Item not found' };
       }
 
       // Validate costType
@@ -73,11 +78,15 @@ class ShopService {
 
       // Check if the user has enough resources
       const cost = new Big(item[costType]);
-      const successPayment = await ShopService.proceedPayment(userId, costType, cost);
-      if (!successPayment) {
-        return { success: false, message: 'Payment failed' };
+      const { successPayment, message, invoice} = await ShopService.proceedPayment(userId, costType, itemId, cost);
+      if (!successPayment && !invoice) {
+        return { success: false, message};
       }
-      await ShopService.giveGoods(userId, itemId);
+      if (invoice) {
+        const invoiceURL = await bot.telegram.createInvoiceLink(invoice);
+        return {success: true, invoiceURL};
+      }
+
 
       return { success: true };
     } catch (error) {
@@ -91,12 +100,12 @@ class ShopService {
     try {
       // Check if there are any shop items in the database
       const itemCount = await ShopItem.count();
-  
+
       if (itemCount > 0) {
         console.log('Shop items already exist. Skipping seeding.');
         return;
       }
-  
+
       // Add shop items
       await ShopItem.bulkCreate([
         {
@@ -164,7 +173,7 @@ class ShopService {
           TON: 0.01,
         },
       ]);
-  
+
       console.log('Shop items have been added.');
     } catch (error) {
       console.error('Unable to seed shop items:', error);

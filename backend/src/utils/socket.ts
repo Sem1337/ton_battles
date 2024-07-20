@@ -7,6 +7,8 @@ import { updatePoints } from '../services/balanceService.js';
 
 let io: SocketIOServer;
 
+export const userSocketMap = new Map();
+
 export const initializeSocket = (server: HttpServer) => {
   io = new SocketIOServer(server, {
     cors: {
@@ -34,7 +36,9 @@ export const initializeSocket = (server: HttpServer) => {
 
   io.on('connection', (socket) => {
     console.log('A user connected', socket.data.user);
-
+    // Store the user's socket ID
+    const userId = socket.data.user.userId;
+    userSocketMap.set(userId, socket.id);
     socket.on('join', (roomId) => {
       socket.join(roomId);
       console.log(`Socket ${socket.id} joined room ${roomId}`);
@@ -105,6 +109,7 @@ export const initializeSocket = (server: HttpServer) => {
 
     socket.on('disconnect', () => {
       console.log('A user disconnected', socket.data.user);
+      userSocketMap.delete(userId);
     });
 
     socket.emit('message', { type: 'CONNECTED' });

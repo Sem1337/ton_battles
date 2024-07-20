@@ -24,7 +24,11 @@ class ShopController {
 
       const result = await ShopService.buyItem(userId, itemId, costType);
       if (result.success) {
-        return res.status(200).json({ message: 'Purchase successful!' });
+        if (result.invoiceURL) {
+          return res.status(200).json({ success: true, invoiceURL: result.invoiceURL });
+        } else {
+          return res.status(200).json({ message: 'Purchase successful!' });
+        }
       } else {
         return res.status(400).json({ message: result.message });
       }
