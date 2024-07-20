@@ -35,6 +35,9 @@ User.init(
       type: DataTypes.INTEGER,
       defaultValue: 0, // Set default value to 0
       allowNull: false,
+      validate: {
+        min: 0,
+      }
     },
     productionLVL: {
       type: DataTypes.INTEGER,

@@ -1,10 +1,14 @@
 import { User } from '../database/model/user.js';
 import Big from 'big.js';
 
-export const updateUserBalanceWithTransaction = async (userId: number, amount: Big, transaction: any) => {
+export const updateUserBalanceWithTransaction = async (userId: number, amount: Big, transaction?: any) => {
   const user = await User.findByPk(userId);
   if (user) {
-    user.balance = new Big(user.balance).plus(amount).toFixed(9);
+    const newBalance = new Big(user.balance).plus(amount);
+    if (newBalance.lt(0)) {
+      throw new Error('Insufficient balance');
+    }
+    user.balance = newBalance.toFixed(9);
     await user.save({ transaction });
   }
 };
@@ -12,7 +16,11 @@ export const updateUserBalanceWithTransaction = async (userId: number, amount: B
 export const updateUserBalance = async (userId: number, amount: Big) => {
   const user = await User.findByPk(userId);
   if (user) {
-    user.balance = new Big(user.balance).plus(amount).toFixed(9);
+    const newBalance = new Big(user.balance).plus(amount);
+    if (newBalance.lt(0)) {
+      throw new Error('Insufficient balance');
+    }
+    user.balance = newBalance.toFixed(9);
     await user.save();
   }
 };
@@ -41,35 +49,43 @@ export const updatePoints = async (userId: string) => {
 };
 
 
-export const updateUserPoints = async (userId: number, points: Big) => {
+export const updateUserPoints = async (userId: number, points: Big, transaction?: any) => {
   const user = await User.findByPk(userId);
   if (user) {
-    user.points = new Big(user.points).plus(points).toFixed(6);
-    await user.save();
+    const newBalance = new Big(user.points).plus(points);
+    if (newBalance.lt(0)) {
+      throw new Error('Insufficient balance');
+    }
+    user.points = newBalance.toFixed(0);
+    await user.save({transaction});
   }
 };
 
-export const updateUserGems = async (userId: number, gems: Big) => {
+export const updateUserGems = async (userId: number, gems: Big, transaction?: any) => {
   const user = await User.findByPk(userId);
   if (user) {
-    user.gems = new Big(user.points).plus(gems).toNumber();
-    await user.save();
+    const newBalance = new Big(user.gems).plus(gems);
+    if (newBalance.lt(0)) {
+      throw new Error('Insufficient balance');
+    }
+    user.gems = newBalance.toNumber();
+    await user.save({transaction});
   }
 };
 
-export const userLvlUpProduction = async (userId: number) => {
+export const userLvlUpProduction = async (userId: number, transaction?: any) => {
   const user = await User.findByPk(userId);
   if (user) {
     user.productionLVL++;
-    await user.save();
+    await user.save({transaction});
   }
 };
 
-export const userLvlUpShield = async (userId: number) => {
+export const userLvlUpShield = async (userId: number, transaction?: any) => {
   const user = await User.findByPk(userId);
   if (user) {
     user.shield++;
-    await user.save();
+    await user.save({transaction});
   }
 };
 

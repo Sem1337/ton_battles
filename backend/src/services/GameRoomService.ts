@@ -11,7 +11,7 @@ export class GameRoomService {
   static async createGameRoom(gameType: 'points' | 'gems' | 'TON', minBet: string, maxBet: string, maxPlayers: number, roomName: string) {
     try {
       const maxBetValue = maxBet === 'Infinity' ? null : maxBet;
-      if (new Big(maxBetValue || Infinity).lt(minBet)) {
+      if (maxBetValue && new Big(maxBetValue).lt(minBet)) {
         throw new Error('Failed to create game room');
       }
       console.log('creating game room: ', gameType, minBet, maxBet, maxPlayers);
@@ -131,6 +131,7 @@ export class GameRoomService {
         if (new Big(game.total_bank).gt(0)) {
           await this.updateUserBalanceByGameType(gameRoom.players[0].userId, gameRoom.gameType, new Big(game.total_bank));
         }
+        console.log(`The winner is ${gameRoom.players[0].userId} with a bet of ${gameRoom.players[0].bet}. The total bank of ${game.total_bank} has been credited to their balance.`);
         console.log('sending NOTIFY');
         io.to(gameRoomId).emit('message', { type: 'NOTIFY', payload: { message: 'Not enough players for battle. Bet returned to your balance' } });
       }
@@ -338,10 +339,10 @@ export class GameRoomService {
 
     switch (gameType) {
       case 'points':
-        await updateUserPoints(+userId, amount);
+        await updateUserPoints(+userId, amount, transaction);
         break;
       case 'gems':
-        await updateUserGems(+userId, amount);
+        await updateUserGems(+userId, amount, transaction);
         break;
       case 'TON':
         await updateUserBalanceWithTransaction(+userId, amount, transaction);
