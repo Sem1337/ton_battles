@@ -83,6 +83,7 @@ export const initializeSocket = (server: HttpServer) => {
             const user = await User.findByPk(socket.data.user.userId);
             if (user) {
               socket.emit('message', { type: 'BALANCE_UPDATE', payload: { balance: user.balance, points: user.points } });
+              socket.emit('message', { type: 'POINTS_UPDATED', payload: { points: user.points, productionSpeed: user.productionLVL } });
             }
             break;
           }

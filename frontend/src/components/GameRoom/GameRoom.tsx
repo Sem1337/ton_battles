@@ -67,7 +67,6 @@ const GameRoomComponent = () => {
 
   const makeBet = useCallback(() => {
     sendMessage('MAKE_BET', { roomId, betSize });
-    sendMessage('UPDATE_POINTS');
   }, [roomId, betSize, sendMessage]);
 
   const leaveGameRoom = useCallback(async () => {
