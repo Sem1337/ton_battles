@@ -12,8 +12,8 @@ const PointsCounter: React.FC = () => {
     sendMessage('GET_BALANCE');
 
     const handlePointsUpdated = (data: { points: number, productionSpeed: number }) => {
-      setPoints(data.points);
-      setProductionSpeed(data.productionSpeed);
+      setPoints(Number(data.points));
+      setProductionSpeed(Number(data.productionSpeed));
     };
 
     on('POINTS_UPDATED', handlePointsUpdated);
