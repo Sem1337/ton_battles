@@ -69,7 +69,7 @@ export const initializeSocket = (server: HttpServer) => {
           }
           case 'UPDATE_POINTS': {
             const newPoints = await updatePoints(socket.data.user.userId);
-            socket.emit('message', { type: 'POINTS_UPDATED', payload: { points: newPoints } });
+            socket.emit('message', { type: 'POINTS_UPDATED', payload: { points: newPoints.points, productionSpeed: newPoints.productionSpeed } });
             break;
           }
           case 'JOIN_GAME': {
