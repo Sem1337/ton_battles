@@ -3,6 +3,7 @@ import { updateUserGems, updateUserPoints, userLvlUpProduction, userLvlUpShield 
 import Big from 'big.js';
 import { StarService } from './StarService.js';
 import { bot } from '../routes/webhook.router.js';
+import { sendMessageToUser } from './messageService.js';
 
 
 type CostType = 'points' | 'gems' | 'stars' | 'TON';
@@ -59,6 +60,10 @@ class ShopService {
       default:
         break;
     }
+    const item = await ShopItem.findByPk(itemId);
+    if (item) {
+      sendMessageToUser(userId, 'NOTIFY', { message: `Successfully purchased "${item?.name}"` });
+    }
   }
 
 
@@ -78,13 +83,14 @@ class ShopService {
 
       // Check if the user has enough resources
       const cost = new Big(item[costType]);
-      const { successPayment, message, invoice} = await ShopService.proceedPayment(userId, costType, itemId, cost);
+      const { successPayment, message, invoice } = await ShopService.proceedPayment(userId, costType, itemId, cost);
       if (!successPayment && !invoice) {
-        return { success: false, message};
+        return { success: false, message };
       }
       if (invoice) {
+        console.log(invoice);
         const invoiceURL = await bot.telegram.createInvoiceLink(invoice);
-        return {success: true, invoiceURL};
+        return { success: true, invoiceURL };
       }
 
 
@@ -111,6 +117,7 @@ class ShopService {
         {
           itemId: ShopItemId.PRODUCTION_SPEED_LVL_UP,
           name: 'Production Speed LVL Up',
+          type: 1,
           description: 'Increase your production speed.',
           points: 1000,
           gems: 10,
@@ -120,6 +127,7 @@ class ShopService {
         {
           itemId: ShopItemId.SHIELD_LVL_UP,
           name: 'Shield LVL Up',
+          type: 1,
           description: 'Increase your shield level.',
           gems: 20,
           stars: 2,
@@ -128,6 +136,7 @@ class ShopService {
         {
           itemId: ShopItemId.POINTS_100K,
           name: '100k Points',
+          type: 2,
           description: 'Buy 100k points',
           gems: 10,
           stars: 1,
@@ -136,6 +145,7 @@ class ShopService {
         {
           itemId: ShopItemId.POINTS_500K,
           name: '500k Points',
+          type: 2,
           description: 'Buy 500k points',
           gems: 50,
           stars: 1,
@@ -144,6 +154,7 @@ class ShopService {
         {
           itemId: ShopItemId.POINTS_1M,
           name: '1M Points',
+          type: 2,
           description: 'Buy 1M points',
           gems: 100,
           stars: 1,
@@ -152,6 +163,7 @@ class ShopService {
         {
           itemId: ShopItemId.POINTS_5M,
           name: '5M Points',
+          type: 2,
           description: 'Buy 5M points',
           gems: 500,
           stars: 1,
@@ -160,6 +172,7 @@ class ShopService {
         {
           itemId: ShopItemId.POINTS_25M,
           name: '25M Points',
+          type: 2,
           description: 'Buy 25M points',
           gems: 2500,
           stars: 1,
@@ -168,6 +181,7 @@ class ShopService {
         {
           itemId: ShopItemId.GEMS_1000,
           name: '1000 Gems',
+          type: 3,
           description: 'Buy 1000 gems.',
           stars: 1,
           TON: 0.01,

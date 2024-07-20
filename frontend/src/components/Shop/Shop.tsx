@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 interface ShopItem {
   itemId: number;
   name: string;
+  type: number;
   description: string;
   points: number | null;
   gems: number | null;
@@ -16,6 +17,7 @@ interface ShopItem {
 }
 
 const Shop: React.FC = () => {
+  const costTypes = ['points', 'gems', 'stars', 'TON'];
   const [activeTab, setActiveTab] = useState<'boosts' | 'points' | 'gems'>('boosts');
   const [shopItems, setShopItems] = useState<ShopItem[]>([]);
   const [isBuying, setIsBuying] = useState<boolean>(false);
@@ -82,11 +84,11 @@ const Shop: React.FC = () => {
   const filteredItems = shopItems.filter(item => {
     switch (activeTab) {
       case 'boosts':
-        return item.points !== null || item.gems !== null || item.stars !== null || item.TON !== null;
+        return item.type === 1;
       case 'points':
-        return item.name.includes('Points');
+        return item.type === 2;
       case 'gems':
-        return item.name.includes('Gems');
+        return item.type === 3;
       default:
         return false;
     }
@@ -129,12 +131,12 @@ const Shop: React.FC = () => {
             <p className="mb-4">{selectedItem.description}</p>
             <div className="mb-4">
               <p>Cost:</p>
-              {Object.entries(selectedItem).filter(([key, value]) => key !== 'itemId' && key !== 'name' && key !== 'description' && value !== null).map(([key, value]) => (
+              {Object.entries(selectedItem).filter(([key, value]) => key in costTypes && value !== null).map(([key, value]) => (
                 <p key={key}>{key}: {value}</p>
               ))}
             </div>
             <div className="flex space-x-4">
-              {Object.entries(selectedItem).filter(([key, value]) => key !== 'itemId' && key !== 'name' && key !== 'description' && value !== null).map(([key]) => (
+              {Object.entries(selectedItem).filter(([key, value]) => key in costTypes && value !== null).map(([key]) => (
                 <button
                   key={key}
                   onClick={() => handleBuy(key as keyof ShopItem)}

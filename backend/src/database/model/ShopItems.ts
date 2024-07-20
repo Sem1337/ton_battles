@@ -15,6 +15,7 @@ export enum ShopItemId {
 class ShopItem extends Model {
   public itemId!: number;
   public name!: string;
+  public type!: number;
   public description!: string;
   public points!: number | null;
   public gems!: number | null;
@@ -34,6 +35,10 @@ ShopItem.init(
     },
     name: {
       type: DataTypes.STRING,
+      allowNull: false,
+    },
+    type: {
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
     description: {
