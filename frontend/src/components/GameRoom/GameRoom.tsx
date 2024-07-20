@@ -13,13 +13,11 @@ const GameRoomComponent = () => {
   const [timer, setTimer] = useState(60)
   const [winner, setWinner] = useState<{ id: string, name: string, bet: number } | null>(null);
   const [totalBank, setTotalBank] = useState<number | null>(null);
-  const [points, setPoints] = useState<number>(0);
   const { sendMessage, on, off, joinRoom, leaveRoom } = useSocket();
   const navigate = useNavigate();
 
   const fetchGameRoomDetails = async () => {
     sendMessage('JOIN_GAME', { roomId });
-    sendMessage('UPDATE_POINTS');
   }
 
   useEffect(() => {
@@ -44,9 +42,6 @@ const GameRoomComponent = () => {
       setTimer(data.remainingTime);
     };
 
-    const handlePointsUpdated = (data: { points: number }) => {
-      setPoints(data.points);
-    };
 
     const handleGameCompleted = (data: { winner: { id: string, name: string, bet: number }, totalBank: number }) => {
       setWinner(data.winner);
@@ -54,7 +49,6 @@ const GameRoomComponent = () => {
       sendMessage('GET_BALANCE');
     };
 
-    on('POINTS_UPDATED', handlePointsUpdated);
     on('GAME_STARTED', handleGameStarted);
     on('BET_MADE', handleBetMade);
     on('PLAYER_JOINED', handlePlayerJoined);
@@ -62,7 +56,6 @@ const GameRoomComponent = () => {
     fetchGameRoomDetails()
     return () => {
       console.log('return from gameRoom');
-      off('POINTS_UPDATED');
       off('GAME_STARTED');
       off('BET_MADE');
       off('PLAYER_JOINED');
@@ -121,7 +114,7 @@ const GameRoomComponent = () => {
   return (
     <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center p-4">
       <h2 className="text-3xl font-bold mb-4">Game Room {roomId}</h2>
-      <PointsCounter points={points} />
+      <PointsCounter />
       <div className="text-lg mb-4">Time left: {timer} seconds</div>
       <div className="flex flex-col items-center space-y-4 mb-4">
         <div className="flex flex-col items-center space-y-2">

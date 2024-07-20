@@ -31,13 +31,13 @@ export const updatePoints = async (userId: string) => {
 
       await user.save();
 
-      return user.points;
+      return { points: user.points, productionSpeed: user.productionLVL };
     }
   } catch (error) {
     console.error(error);
     throw new Error('An error occurred while updating points');
   }
-  return 0;
+  return { points: 0, productionSpeed: 0 };
 };
 
 

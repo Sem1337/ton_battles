@@ -1,37 +1,13 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useSocket } from '../../contexts/SocketContext';
 import PointsCounter from '../PointsCounter/PointsCounter'
 
 const Home: React.FC = () => {
-  const [points, setPoints] = useState<number>(0);
-  const { sendMessage, on, off } = useSocket();
+  const { sendMessage } = useSocket();
   useEffect(() => {
     console.log('balance info use effect')
     sendMessage('GET_BALANCE');
-
-    const handlePointsUpdated = (data: { points: number }) => {
-      setPoints(data.points);
-    };
-
-    on('POINTS_UPDATED', handlePointsUpdated);
-
-    const updatePoints = () => {
-      sendMessage('UPDATE_POINTS');
-    };
-
-    console.log('initial Points: ', points)
-    if (points === 0) {
-      updatePoints();
-    }
-
-    const interval = setInterval(updatePoints, 10000); // Update every 10 seconds
-
-    return () => {
-      clearInterval(interval);
-      off('POINTS_UPDATED');
-    };
-
   }, []);
 
   const memoizedHeader = useMemo(() => (
@@ -67,7 +43,7 @@ const Home: React.FC = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
       {memoizedHeader}
-      <PointsCounter points={points} />
+      <PointsCounter />
       {memoizedLinks}
     </div>
   );

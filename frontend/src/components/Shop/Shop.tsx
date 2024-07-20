@@ -4,6 +4,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { authFetch } from '../../utils/auth';
 import WebApp from '@twa-dev/sdk';
 import { useNavigate } from 'react-router-dom';
+import { useSocket } from '../../contexts/SocketContext';
 
 interface ShopItem {
   itemId: number;
@@ -23,6 +24,7 @@ const Shop: React.FC = () => {
   const [isBuying, setIsBuying] = useState<boolean>(false);
   const [selectedItem, setSelectedItem] = useState<ShopItem | null>(null);
   const { token } = useAuth();
+  const { sendMessage } = useSocket();
   const navigate = useNavigate(); // Get navigate function from useNavigate hook
 
   useEffect(() => {
@@ -77,6 +79,7 @@ const Shop: React.FC = () => {
       console.error('Error purchasing item:', error);
     } finally {
       setIsBuying(false);
+      sendMessage('UPDATE_POINTS');
       closeModal();
     }
   };
