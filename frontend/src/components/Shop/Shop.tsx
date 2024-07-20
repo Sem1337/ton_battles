@@ -131,12 +131,12 @@ const Shop: React.FC = () => {
             <p className="mb-4">{selectedItem.description}</p>
             <div className="mb-4">
               <p>Cost:</p>
-              {Object.entries(selectedItem).filter(([key, value]) => key in costTypes && value !== null).map(([key, value]) => (
+              {Object.entries(selectedItem).filter(([key, value]) => costTypes.includes(key) && value !== null).map(([key, value]) => (
                 <p key={key}>{key}: {value}</p>
               ))}
             </div>
             <div className="flex space-x-4">
-              {Object.entries(selectedItem).filter(([key, value]) => key in costTypes && value !== null).map(([key]) => (
+              {Object.entries(selectedItem).filter(([key, value]) => costTypes.includes(key) && value !== null).map(([key]) => (
                 <button
                   key={key}
                   onClick={() => handleBuy(key as keyof ShopItem)}

@@ -31,13 +31,16 @@ export class StarService {
   }
 
   static async handlePurchase(successful_payment: any) {
+    console.log(String(successful_payment.invoice_payload).split('{'))
+    const userId = String(successful_payment.invoice_payload).split('{')[1].split(', ')[0].split(':')[1];
+    const itemId = parseInt(String(successful_payment.invoice_payload).split('{')[1].split(', ')[1].split(':')[1]);
 
-    const userId = String(successful_payment.invoice_payload).split(',')[0];
-    const itemId = parseInt(String(successful_payment.invoice_payload).split(',')[1]);
+    //const userId = String(successful_payment.invoice_payload).split(',')[0];
+    //const itemId = parseInt(String(successful_payment.invoice_payload).split(',')[1]);
     console.log(`Successful payment of ${successful_payment.total_amount} from user ${userId}`);
     if (!itemId) {
       const points = StarService.calculatePoints(successful_payment.total_amount);
-      await updateUserPoints(+userId, points);
+      await updateUserPoints(+userId, points); // Assuming 1 USD = 100 points
     } else {
       console.log(`user ${userId} successfully bought item: ${itemId}`);
       await ShopService.giveGoods(userId, itemId);

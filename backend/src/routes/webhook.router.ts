@@ -71,10 +71,10 @@ router.post('/webhook', jsonParser, async (req: Request, res: Response) => {
     }
 
     await StarService.handlePurchase(successful_payment);
-    return res.status(200);
+    return res.status(200).send();
   } catch (error) {
     console.error('Error processing webhook:', error);
-    return res.sendStatus(500);
+    return res.sendStatus(500).send();
   }
 });
 
