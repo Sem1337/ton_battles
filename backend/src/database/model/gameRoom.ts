@@ -95,6 +95,7 @@ Game.init(
 
 class GameRoom extends Model {
   public id!: string
+  public gameType!: 'points' | 'gems' | 'TON';
   public minBet!: string
   public maxBet!: string
   public maxPlayers!: number
@@ -113,6 +114,10 @@ GameRoom.init(
       primaryKey: true,
       defaultValue: DataTypes.UUIDV4,
     },
+    gameType: {
+      type: DataTypes.ENUM('points', 'gems', 'TON'),
+      allowNull: false,
+    },
     minBet: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -122,7 +127,7 @@ GameRoom.init(
     },
     maxBet: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     maxPlayers: {
       type: DataTypes.INTEGER,
