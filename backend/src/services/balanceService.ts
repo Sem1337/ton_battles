@@ -52,14 +52,14 @@ export const updatePoints = async (userId: string) => {
 
       await transaction.commit();
 
-      return { points: user.points, productionSpeed: user.productionLVL };
+      return user;
     }
   } catch (error) {
     await transaction.rollback();
     console.error(error);
     throw new Error('An error occurred while updating points');
   }
-  return { points: 0, productionSpeed: 0 };
+  return null;
 };
 
 export const updateUserPoints = async (userId: number, points: Big, transaction?: Transaction) => {

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSocket } from '../../contexts/SocketContext';
+import { User } from '../../types/types';
 
 const BalanceInfo = () => {
   const [balance, setBalance] = useState<number>(0);
@@ -9,8 +10,9 @@ const BalanceInfo = () => {
 
   useEffect(() => {
     console.log('balance info use effect')
-    const handleBalanceUpdate = (data: { balance: number; points: number }) => {
-      setBalance(data.balance);
+
+    const handleBalanceUpdate = (data: User) => {
+      setBalance(parseFloat(data.balance));
       setLoading(false);
     };
 
@@ -18,11 +20,11 @@ const BalanceInfo = () => {
       sendMessage('GET_BALANCE');
     };
 
-    on('BALANCE_UPDATE', handleBalanceUpdate);
+    on('USER_INFO', handleBalanceUpdate);
     on('CONNECTED', handleConnected);
 
     return () => {
-      off('BALANCE_UPDATE');
+      off('USER_INFO');
       off('CONNECTED');
     };
   }, [sendMessage, on, off]);

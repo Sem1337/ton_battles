@@ -25,4 +25,12 @@ export interface Player {
     winner_id: string
     winnerBetSize: number
   }
+
+  export interface User {
+    balance: string,
+    points: number,
+    gems: number,
+    productionSpeed: number,
+    shieldLVL: number,
+  }
   

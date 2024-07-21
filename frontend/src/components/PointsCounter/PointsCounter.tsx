@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSocket } from '../../contexts/SocketContext';
+import { User } from '../../types/types';
 
 const PointsCounter: React.FC = () => {
 
@@ -11,12 +12,12 @@ const PointsCounter: React.FC = () => {
     console.log('balance info use effect')
     sendMessage('GET_BALANCE');
 
-    const handlePointsUpdated = (data: { points: number, productionSpeed: number }) => {
+    const handlePointsUpdated = (data: User) => {
       setPoints(Number(data.points));
       setProductionSpeed(Number(data.productionSpeed));
     };
 
-    on('POINTS_UPDATED', handlePointsUpdated);
+    on('USER_INFO', handlePointsUpdated);
 
     const updatePoints = () => {
       sendMessage('UPDATE_POINTS');
@@ -33,7 +34,7 @@ const PointsCounter: React.FC = () => {
 
     return () => {
       clearInterval(pointsIncrementInterval);
-      off('POINTS_UPDATED');
+      off('USER_INFO');
     };
 
   }, [productionSpeed]);

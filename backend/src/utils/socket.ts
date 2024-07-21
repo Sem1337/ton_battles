@@ -4,6 +4,7 @@ import { authenticateWebSocket } from '../auth.js';
 import { GameRoomService } from '../services/GameRoomService.js';
 import { User } from '../database/model/user.js';
 import { updatePoints } from '../services/balanceService.js';
+import { sendUserInfo } from '../services/messageService.js';
 
 let io: SocketIOServer;
 
@@ -68,8 +69,12 @@ export const initializeSocket = (server: HttpServer) => {
             break;
           }
           case 'UPDATE_POINTS': {
-            const newPoints = await updatePoints(socket.data.user.userId);
-            socket.emit('message', { type: 'POINTS_UPDATED', payload: { points: newPoints.points, productionSpeed: newPoints.productionSpeed } });
+            const newUserData = await updatePoints(socket.data.user.userId);
+            if (newUserData) {
+              sendUserInfo(socket, newUserData)
+            } else {
+              socket.emit('message', { type: 'ERROR', payload: { message: 'User not found' } });
+            }
             break;
           }
           case 'JOIN_GAME': {
@@ -82,15 +87,14 @@ export const initializeSocket = (server: HttpServer) => {
             await GameRoomService.makeBet(roomId, socket.data.user.userId, betSize);
             const user = await User.findByPk(socket.data.user.userId);
             if (user) {
-              socket.emit('message', { type: 'BALANCE_UPDATE', payload: { balance: user.balance, points: user.points } });
-              socket.emit('message', { type: 'POINTS_UPDATED', payload: { points: user.points, productionSpeed: user.productionLVL } });
+              sendUserInfo(socket, user);
             }
             break;
           }
           case 'GET_BALANCE': {
             const user = await User.findByPk(socket.data.user.userId);
             if (user) {
-              socket.emit('message', { type: 'BALANCE_UPDATE', payload: { balance: user.balance, points: user.points } });
+              sendUserInfo(socket, user);
             } else {
               socket.emit('message', { type: 'ERROR', payload: { message: 'User not found' } });
             }
