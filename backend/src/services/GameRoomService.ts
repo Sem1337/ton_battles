@@ -227,7 +227,7 @@ export class GameRoomService {
     }
   }
 
-  static async getGameRooms({ page = 1, limit = 10, sort = 'roomName', filter = '' }) {
+  static async getGameRooms({ page = 1, limit = 10, sort = 'roomName', filter = '', gameType = 'points' }) {
     try {
       const offset = (page - 1) * limit;
       const where = {
@@ -237,7 +237,8 @@ export class GameRoomService {
         status: 'active',
         currentPlayers: {
           [Op.lt]: col('maxPlayers')
-        }
+        },
+        gameType: gameType
       };
       const order: Order = [[sort, 'ASC']];
       const gameRooms = await GameRoom.findAndCountAll({

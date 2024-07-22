@@ -12,12 +12,13 @@ const GameRoomList = () => {
   const [limit] = useState(10); // Adjust limit as needed
   const [filter, setFilter] = useState('');
   const [sort, setSort] = useState('roomName');
+  const [selectedTab, setSelectedTab] = useState<'points' | 'gems' | 'TON'>('points');
   const { token } = useAuth(); // Get the token from AuthContext
   const navigate = useNavigate(); // Get navigate function from useNavigate hook
 
   useEffect(() => {
     const fetchGameRooms = async () => {
-      const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/gamerooms?page=${page}&limit=${limit}&sort=${sort}&filter=${filter}`, token)
+      const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/gamerooms?page=${page}&limit=${limit}&sort=${sort}&filter=${filter}&gameType=${selectedTab}`, token)
       if (response.ok) {
         const data = await response.json()
         setGameRooms(data.data)
@@ -28,7 +29,7 @@ const GameRoomList = () => {
       }
     }
     fetchGameRooms()
-  }, [page, limit, sort, filter])
+  }, [page, limit, sort, filter, selectedTab])
 
   const joinGameRoom = async (roomId: string) => {
     const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/gamerooms/${roomId}/join`, token, {
@@ -82,6 +83,18 @@ const GameRoomList = () => {
           <option value="maxPlayers">Max Players</option>
           <option value="currentPlayers">Current Players</option>
         </select>
+      </div>
+      <div className="flex mb-4">
+        {['points', 'gems', 'TON'].map((type) => (
+          <button
+            key={type}
+            onClick={() => setSelectedTab(type as 'points' | 'gems' | 'TON')}
+            className={`px-4 py-2 mr-2 rounded ${selectedTab === type ? 'bg-blue-500 text-white' : 'bg-gray-200'
+              }`}
+          >
+            {type.charAt(0).toUpperCase() + type.slice(1)}
+          </button>
+        ))}
       </div>
       <div className="max-h-96 overflow-y-scroll">
         {gameRooms.map(room => (
