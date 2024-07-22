@@ -1,5 +1,6 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../db.js';
+import { Task } from './Task.js'
 
 class User extends Model {
   public userId!: number;
@@ -13,6 +14,11 @@ class User extends Model {
 
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
+  // Add association methods if using Sequelize
+  public addTask!: (task: Task) => Promise<void>;
+  public getTasks!: () => Promise<Task[]>;
+  public hasTask!: (taskId: string) => Promise<boolean>;
+  public completedTasks?: Task[]; // Add this line
 }
 
 User.init(
@@ -75,5 +81,8 @@ User.init(
     timestamps: true,
   }
 );
+
+User.belongsToMany(Task, { through: 'UserTasks', as: 'completedTasks' });
+Task.belongsToMany(User, { through: 'UserTasks' });
 
 export { User };
