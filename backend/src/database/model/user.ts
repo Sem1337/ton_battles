@@ -15,10 +15,7 @@ class User extends Model {
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
   // Add association methods if using Sequelize
-  public addTask!: (task: Task) => Promise<void>;
-  public getTasks!: () => Promise<Task[]>;
-  public hasTask!: (taskId: string) => Promise<boolean>;
-  public completedTasks?: Task[]; // Add this line
+  public completedTasks!: Task[]; // Add this line
 }
 
 User.init(

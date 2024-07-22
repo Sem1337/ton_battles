@@ -3,6 +3,7 @@ import Big from 'big.js';
 import { Task } from '../database/model/Task.js';
 import { User } from '../database/model/user.js';
 import { updateUserPoints } from './balanceService.js';
+import sequelize from '../database/db.js';
 
 class TaskService {
   static async getAllTasks(userId: number) {
@@ -17,22 +18,35 @@ class TaskService {
     }));
   }
 
-  static async completeTask(taskId: string, user: User) {
-    const task = await Task.findByPk(taskId);
-    if (!task) {
-      throw new Error('Task not found');
-    }
+  static async completeTask(taskId: string, userId: number) {
+    const transaction = await sequelize.transaction();
 
-    // Check if the user already completed the task to avoid duplicates
-    const hasTask = await user.hasTask(task.id);
-    if (hasTask) {
-      throw new Error('Task already completed');
-    }
+    try {
+      const task = await Task.findByPk(taskId, { transaction });
+      if (!task) {
+        throw new Error('Task not found');
+      }
 
-    // Mark the task as completed by the user
-    await user.addTask(task);
-    await user.save();
-    await updateUserPoints(user.userId, new Big(task.reward));
+      const user = await User.findByPk(userId, { transaction, lock: transaction.LOCK.UPDATE });
+
+      if (!user) {
+        throw new Error('User not found');
+      }
+      // Check if the user already completed the task to avoid duplicates
+      const hasTask = await (user as any).hasCompletedTask(task, { transaction });
+      if (hasTask) {
+        throw new Error('Task already completed');
+      }
+
+      // Mark the task as completed by the user
+      await (user as any).addCompletedTask(task, { transaction });
+      await updateUserPoints(user.userId, new Big(task.reward), transaction);
+
+      await transaction.commit();
+    } catch (error) {
+      await transaction.rollback();
+      throw error;
+    }
   }
 
 

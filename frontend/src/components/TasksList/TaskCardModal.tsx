@@ -26,6 +26,7 @@ const TaskCardModal: React.FC<TaskCardModalProps> = ({ task, onClose }) => {
       } else {
         console.error('Failed to mark task as completed');
       }
+      task.completed = true;
     } catch (error) {
       console.error('Error marking task as completed:', error);
     }
