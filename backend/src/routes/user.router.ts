@@ -1,6 +1,7 @@
 import { Request, Response, Router } from 'express';
 import bodyParser from 'body-parser';
 import { User } from '../database/model/user.js';
+import { getLeaderboard } from '../controllers/leaderboardController.js';
 
 const router = Router();
 const jsonParser = bodyParser.json();
@@ -66,5 +67,7 @@ router.get('/users/:id', async (req: Request, res: Response) => {
     }
   }
 });
+
+router.get('/leaderboard', getLeaderboard);
 
 export default router;

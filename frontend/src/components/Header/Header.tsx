@@ -6,6 +6,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { beginCell, toNano } from '@ton/core';
 import { WithdrawModal } from '../WithdrawModal/WithdrawModal';
 import { TopUpModal } from '../TopUpModal/TopUpModal';
+import LeaderboardModal from '../Leaderboard/Leaderboard';
 import { Link } from 'react-router-dom';
 import WebApp from '@twa-dev/sdk';
 
@@ -14,6 +15,7 @@ export const Header: React.FC = () => {
   const { token } = useAuth();
   const [isTopUpModalOpen, setIsTopUpModalOpen] = useState(false);
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
+  const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
   const [tonConnectUI] = useTonConnectUI();
   const { tgUserId } = useAuth();
 
@@ -101,6 +103,11 @@ export const Header: React.FC = () => {
         <button onClick={handleBuyPoints} className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
           Buy Points
         </button>
+        <button
+          className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
+          onClick={() => setIsLeaderboardOpen(true)}>
+          Leaderboard
+        </button>
         <TopUpModal
           isOpen={isTopUpModalOpen}
           onClose={() => setIsTopUpModalOpen(false)}
@@ -111,6 +118,10 @@ export const Header: React.FC = () => {
           isOpen={isWithdrawModalOpen}
           onClose={() => setIsWithdrawModalOpen(false)}
           onWithdraw={handleWithdraw}
+        />
+        <LeaderboardModal
+          isOpen={isLeaderboardOpen}
+          onClose={() => setIsLeaderboardOpen(false)}
         />
       </div>
     </header>

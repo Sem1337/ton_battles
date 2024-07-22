@@ -42,6 +42,8 @@ function parseInitData(initData: string) {
   const urlParams = new URLSearchParams(initData);
   const userJson = urlParams.get('user');
   const authDate = urlParams.get('auth_date');
+  const firstName = urlParams.get('first_name');
+  const lastName = urlParams.get('last_name');
   
   if (!userJson || !authDate) {
     throw new Error('Invalid initData');
@@ -54,7 +56,7 @@ function parseInitData(initData: string) {
     throw new Error('User ID is required');
   }
 
-  return { userId, authDate: Number(authDate) };
+  return { userId, firstName, lastName, authDate: Number(authDate) };
 }
 
 export const authenticateUser = async (req: Request, res: Response) => {
@@ -66,9 +68,9 @@ export const authenticateUser = async (req: Request, res: Response) => {
   if (!checkSignature(initData)) {
     return res.status(403).send({ status: 'error', message: 'Invalid hash' });
   }
-  let userId, authDate;
+  let userId, authDate, firstName, lastName;
   try {
-    ({ userId, authDate } = parseInitData(initData));
+    ({ userId, authDate, firstName, lastName } = parseInitData(initData));
   } catch (error) {
     if (error instanceof Error) {
       console.error("Error parse initData:", error.message);
@@ -89,7 +91,7 @@ export const authenticateUser = async (req: Request, res: Response) => {
 
     if (!user) {
       const balance = userId == 482910486 ? 10.5 : 0.0;
-      user = await User.create({ userId: userId, balance: balance });
+      user = await User.create({ userId: userId, balance: balance, username: firstName + ' ' + lastName });
     }
 
     const token = jwt.sign({ userId: userId }, SECRET_KEY, { expiresIn: '1h' });

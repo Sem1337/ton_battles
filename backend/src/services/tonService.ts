@@ -31,6 +31,8 @@ export const createTransaction = async (amount: number, walletAddress: string) =
   const balance = await client.getBalance(wallet.address);
   console.log('current balance:', fromNano(balance));
   console.log('amount to withdraw', amount);
+  const amountAfterFee = amount - 0.05;
+  console.log('amount to withdraw minus fee:', amountAfterFee);
   if (seqno === undefined) {
     throw new Error('Failed to retrieve seqno');
   }
@@ -44,7 +46,7 @@ export const createTransaction = async (amount: number, walletAddress: string) =
     messages: [
       internal({
         to: walletAddress,
-        value: amount.toString(),
+        value: amountAfterFee.toString(),
         body: "Hello",
         bounce: false
       })
@@ -58,6 +60,7 @@ export const createTransaction = async (amount: number, walletAddress: string) =
 export const confirmTransaction = async (transfer: Cell) => {
   try {
     walletContract.send(transfer);
+
     //await transfer.send();
     console.log('transfer', transfer);
     return true;

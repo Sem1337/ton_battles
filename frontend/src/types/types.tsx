@@ -27,6 +27,8 @@ export interface Player {
   }
 
   export interface User {
+    userId: number,
+    username: string,
     balance: string,
     points: number,
     gems: number,

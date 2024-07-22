@@ -3,6 +3,7 @@ import sequelize from '../db.js';
 
 class User extends Model {
   public userId!: number;
+  public username!: string;
   public balance!: string;
   public points!: string; // Add this line
   public gems!: number;
@@ -25,6 +26,11 @@ User.init(
       type: DataTypes.STRING,
       allowNull: false,
       defaultValue: 0.0,
+    },
+    username: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: 'username',
     },
     points: {
       type: DataTypes.STRING,
