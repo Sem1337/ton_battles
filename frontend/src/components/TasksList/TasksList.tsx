@@ -1,6 +1,6 @@
 // TasksList.tsx
 import React, { useState, useEffect } from 'react';
-import TaskCardModal from '../TaskCardModal/TaskCardModal';
+import TaskCardModal from './TaskCardModal';
 import { authFetch } from '../../utils/auth'; // Adjust the import path if necessary
 import { useAuth } from '../../contexts/AuthContext';
 import { Task } from '../../types/types'

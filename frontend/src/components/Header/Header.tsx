@@ -7,7 +7,7 @@ import { beginCell, toNano } from '@ton/core';
 import { WithdrawModal } from '../WithdrawModal/WithdrawModal';
 import { TopUpModal } from '../TopUpModal/TopUpModal';
 import LeaderboardModal from '../Leaderboard/Leaderboard';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import WebApp from '@twa-dev/sdk';
 
 
@@ -18,6 +18,7 @@ export const Header: React.FC = () => {
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
   const [tonConnectUI] = useTonConnectUI();
   const { tgUserId } = useAuth();
+  const navigate = useNavigate();
 
   const handleTopUp = async (amount: string) => {
     try {
@@ -107,6 +108,12 @@ export const Header: React.FC = () => {
           className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
           onClick={() => setIsLeaderboardOpen(true)}>
           Leaderboard
+        </button>
+        <button
+          onClick={() => navigate('/tasks')}
+          className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Tasks
         </button>
         <TopUpModal
           isOpen={isTopUpModalOpen}
