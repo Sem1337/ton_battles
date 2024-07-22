@@ -28,7 +28,7 @@ export const Header: React.FC = () => {
         validUntil: Math.floor(Date.now() / 1000) + 60, // 60 sec
         messages: [
           {
-            address: 'UQCuzcR3-BXHkYHk7mN5ghbsUAX74mj-6BLn0wzvvXKHLXKx', // replace with your main wallet address
+            address: 'UQCn0VvM7Rx7t3IJ38RBUnCFEpqUfOval4SJ2mV8HQOV79O3', // replace with your main wallet address
             amount: toNano(amount).toString(),
             payload: body.toBoc().toString("base64")
           }

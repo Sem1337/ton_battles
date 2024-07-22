@@ -43,9 +43,10 @@ export class GameRoomController {
   }
 
   static async getGameRooms(req: Request, res: Response) {
-    const { page = 1, limit = 10, sort = 'roomName', filter = '' } = req.query;
+    const { page = 1, limit = 10, sort = 'roomName', filter = '', gameType = 'points' } = req.query;
+    console.log('fetching games: ', gameType, sort, filter);
     try {
-      const gameRooms = await GameRoomService.getGameRooms({ page, limit, sort, filter })
+      const gameRooms = await GameRoomService.getGameRooms({ page, limit, sort, filter, gameType })
       res.status(200).json(gameRooms)
     } catch (error) {
         if (error instanceof Error) {
