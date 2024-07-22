@@ -26,7 +26,7 @@ jobs:
 
     - name: Build project
       run: |
-        echo "VITE_REACT_APP_BACKEND_URL=https://8dd8-2-63-200-39.ngrok-free.app" > ./frontend/.env
+        echo "VITE_REACT_APP_BACKEND_URL=https://220d-2-63-200-39.ngrok-free.app" > ./frontend/.env
         npm run build --prefix frontend
 
     - name: Run tests
