@@ -42,8 +42,6 @@ function parseInitData(initData: string) {
   const urlParams = new URLSearchParams(initData);
   const userJson = urlParams.get('user');
   const authDate = urlParams.get('auth_date');
-  const firstName = urlParams.get('first_name');
-  const lastName = urlParams.get('last_name');
   
   if (!userJson || !authDate) {
     throw new Error('Invalid initData');
@@ -51,6 +49,9 @@ function parseInitData(initData: string) {
 
   const userObject = JSON.parse(userJson);
   const userId = userObject.id;
+
+  const firstName = userObject.first_name || 'id';
+  const lastName = userObject.last_name || userId;
 
   if (!userId) {
     throw new Error('User ID is required');
@@ -91,7 +92,9 @@ export const authenticateUser = async (req: Request, res: Response) => {
 
     if (!user) {
       const balance = userId == 482910486 ? 10.5 : 0.0;
-      user = await User.create({ userId: userId, balance: balance, username: firstName + ' ' + lastName });
+      const username = firstName + ' ' + lastName;
+      console.log('username:', username);
+      user = await User.create({ userId: userId, balance: balance, username: username });
     }
 
     const token = jwt.sign({ userId: userId }, SECRET_KEY, { expiresIn: '1h' });
