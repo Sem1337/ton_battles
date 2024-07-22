@@ -28,7 +28,7 @@ const LeaderboardModal: React.FC<LeaderboardModalProps> = ({ isOpen, onClose }) 
     };
 
     fetchLeaderboard();
-  }, [token]);
+  }, [isOpen]);
 
   return (
     <Modal
