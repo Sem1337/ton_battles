@@ -7,6 +7,7 @@ import GameRoomList from './components/GameRoomList/GameRoomList';
 import Shop from './components/Shop/Shop';
 import TasksList from './components/TasksList/TasksList';
 import ReferralPage from './components/ReferralPage/ReferralPage';
+import { ToastContainer } from 'react-toastify';
 
 const App = () => {
   return (
@@ -26,6 +27,7 @@ const App = () => {
       <footer className="bg-gray-800 text-white text-center py-4">
         © 2024 TON Battles
       </footer>
+      <ToastContainer />
     </div>
   );
 };

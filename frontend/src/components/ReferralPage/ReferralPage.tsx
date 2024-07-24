@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { authFetch } from '../../utils/auth';
 import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const ReferralPage: React.FC = () => {
   const { token } = useAuth();
@@ -29,14 +30,14 @@ const ReferralPage: React.FC = () => {
 
   const handleCopy = () => {
     navigator.clipboard.writeText(referralLink).then(
-      () => alert('Referral link copied to clipboard!'),
-      (err) => console.log('Failed to copy referral link!', err)
+      () => toast.success('Referral link copied to clipboard!'),
+      (_err) => toast.error('Failed to copy referral link!')
     );
   };
 
   const handleShare = () => {
     const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(referralLink)}&text=${encodeURIComponent(
-      'Join me on TON Battles using this referral link!'
+      'Join me on TON Battles!'
     )}`;
     window.open(telegramUrl, '_blank');
   };
