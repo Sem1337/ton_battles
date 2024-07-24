@@ -1,9 +1,10 @@
 import { Cell, HttpApi, TonClient, WalletContractV4, fromNano, internal } from "@ton/ton";
 import { getHttpEndpoint } from "@orbs-network/ton-access";
 import dotenv from 'dotenv';
-import { updateUserBalance } from "./balanceService.js";
 //import { updateUserBalance } from "./balanceService.js";
 import Big from 'big.js'; // Import Big.js
+import jwt from 'jsonwebtoken';
+import ShopService from "./ShopService.js";
 
 dotenv.config();
 
@@ -20,7 +21,7 @@ const secretKey = Buffer.from(secretKeyHex, "hex");
 
 const wallet = WalletContractV4.create({ publicKey: publicKey, workchain: 0 });
 const endpoint = await getHttpEndpoint({ network: "mainnet" });
-const client = new TonClient({ endpoint, apiKey: process.env.TON_API_KEY});
+const client = new TonClient({ endpoint, apiKey: process.env.TON_API_KEY });
 const httpApi = new HttpApi(endpoint);
 const walletContract = client.open(wallet);
 
@@ -36,9 +37,9 @@ export const createTransaction = async (amount: number, walletAddress: string) =
   if (seqno === undefined) {
     throw new Error('Failed to retrieve seqno');
   }
- /* if (!TonWeb.default.utils.Address.isValid(walletAddress)) {
-    throw new Error('receiver wallet address is incorrect!');
-  }*/
+  /* if (!TonWeb.default.utils.Address.isValid(walletAddress)) {
+     throw new Error('receiver wallet address is incorrect!');
+   }*/
 
   const transfer = walletContract.createTransfer({
     seqno,
@@ -52,8 +53,8 @@ export const createTransaction = async (amount: number, walletAddress: string) =
       })
     ]
   });
-  
-  
+
+
   return transfer;
 };
 
@@ -74,19 +75,19 @@ export const confirmTransaction = async (transfer: Cell) => {
 // Function to fetch and process transactions since the last checked logical time
 async function fetchAndProcessTransactions(toLT: string): Promise<void> {
 
-  let lastProcessedTxLt : string | undefined = undefined;
-  let lastProcessedTxHash : string | undefined = undefined;
-  let firstProcessedTxLt : string | undefined = undefined;
+  let lastProcessedTxLt: string | undefined = undefined;
+  let lastProcessedTxHash: string | undefined = undefined;
+  let firstProcessedTxLt: string | undefined = undefined;
   const blockSize = 3;
   let response = undefined;
   do {
-    response = await httpApi.getTransactions(wallet.address, { limit: blockSize, lt: lastProcessedTxLt, hash: lastProcessedTxHash, to_lt: toLT, inclusive: true});
+    response = await httpApi.getTransactions(wallet.address, { limit: blockSize, lt: lastProcessedTxLt, hash: lastProcessedTxHash, to_lt: toLT, inclusive: true });
     if (!response || response.length == 0) break;
     const filteredTransactions = response;
     if (!firstProcessedTxLt) {
       firstProcessedTxLt = filteredTransactions[0].transaction_id.lt;
     }
-    let skipFirstTx : boolean = lastProcessedTxLt !== undefined;
+    let skipFirstTx: boolean = lastProcessedTxLt !== undefined;
 
     for (const transaction of filteredTransactions) {
       if (skipFirstTx) {
@@ -96,25 +97,55 @@ async function fetchAndProcessTransactions(toLT: string): Promise<void> {
       lastProcessedTxLt = transaction.transaction_id.lt;
       lastProcessedTxHash = transaction.transaction_id.hash;
       console.log('-----tx-----', transaction.transaction_id.lt);
-      if (transaction.out_msgs.length > 0 
-          || !transaction.in_msg 
-          || !transaction.in_msg.message
-          || lastProcessedTxLt === lastCheckedLt) continue;
-      const txValue = new Big(fromNano(transaction.in_msg.value));
-      console.log('amount: ',txValue);
-      console.log('msg: ', transaction.in_msg.message);
-      const data = transaction.in_msg.message.split('_');
-      if (data.length != 2) continue;
+      if (transaction.out_msgs.length > 0
+        || !transaction.in_msg
+        || !transaction.in_msg.message
+        || lastProcessedTxLt === lastCheckedLt) continue;
+      try {
+        const txValue = new Big(fromNano(transaction.in_msg.value));
+        console.log('amount: ', txValue);
+        console.log('msg: ', transaction.in_msg.message);
+        const data = transaction.in_msg.message.split('_');
+        if (data.length != 2) continue;
 
-      const tag = data[0];
-      const userId = parseInt(data[1]);
-      if (tag === 'TONBTL' && !isNaN(userId)) {
-        updateUserBalance(userId, txValue);
+        const tag = data[0];
+        const payloadEncrypted = data[1];
+        if (tag === 'TONBTL') {
+          const payloadDecrypted = jwt.verify(payloadEncrypted, process.env.JWT_SECRET_KEY || '');
+          console.log('Decoded Data:', payloadDecrypted);
+          if (typeof payloadDecrypted === 'string') {
+            throw new Error('Unexpected token format');
+          } else {
+            const userId = payloadDecrypted['userId'];
+            const itemId = payloadDecrypted['itemId'];
+            const cost = payloadDecrypted['cost'];
+            console.log(userId, itemId, cost);
+            if (userId) {
+              if (!itemId) {
+                throw new Error('Unexpected token format');
+              } else {
+                const expectedCost = new Big(cost);
+                if (expectedCost.eq(txValue)) {
+                  await ShopService.giveGoods(userId, itemId);
+                } else {
+                  console.log('wrong tx amount: ', txValue, expectedCost);
+                }
+              }
+            } else {
+              console.log('unknown user Id');
+            }
+          }
+        }
+      } catch (error) {
+        if (error instanceof Error) {
+          console.log(error.message)
+        } else {
+          console.log('An unknown error occurred')
+        }
       }
-      
     }
     console.log('it finished ', lastProcessedTxLt, toLT);
-  } while(response.length == blockSize);
+  } while (response.length == blockSize);
 
   console.log('last checked before:', lastCheckedLt);
   if (firstProcessedTxLt) {

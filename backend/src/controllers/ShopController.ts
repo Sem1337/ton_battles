@@ -26,6 +26,8 @@ class ShopController {
       if (result.success) {
         if (result.invoiceURL) {
           return res.status(200).json({ success: true, invoiceURL: result.invoiceURL });
+        } else if (result.txPayload) {
+          return res.status(200).json({success: true, txPayload: result.txPayload, cost: result.cost});
         } else {
           return res.status(200).json({ message: 'Purchase successful!' });
         }

@@ -5,6 +5,8 @@ import { authFetch } from '../../utils/auth';
 import WebApp from '@twa-dev/sdk';
 import { useNavigate } from 'react-router-dom';
 import { useSocket } from '../../contexts/SocketContext';
+import { beginCell, toNano } from '@ton/core';
+import { useTonConnectUI } from '@tonconnect/ui-react';
 
 interface ShopItem {
   itemId: number;
@@ -25,6 +27,7 @@ const Shop: React.FC = () => {
   const [selectedItem, setSelectedItem] = useState<ShopItem | null>(null);
   const { token } = useAuth();
   const { sendMessage } = useSocket();
+  const [tonConnectUI] = useTonConnectUI();
   const navigate = useNavigate(); // Get navigate function from useNavigate hook
 
   useEffect(() => {
@@ -49,6 +52,23 @@ const Shop: React.FC = () => {
     setSelectedItem(null);
   };
 
+  const proceedTonPayment = async (txPayload: string, cost: number) => {
+    const body = beginCell()
+      .storeUint(0, 32) // write 32 zero bits to indicate that a text comment will follow
+      .storeStringTail(txPayload) // write our text comment
+      .endCell();
+    const transaction = {
+      validUntil: Math.floor(Date.now() / 1000) + 60, // 60 sec
+      messages: [
+        {
+          address: 'UQCn0VvM7Rx7t3IJ38RBUnCFEpqUfOval4SJ2mV8HQOV79O3', // replace with your main wallet address
+          amount: toNano(cost).toString(),
+          payload: body.toBoc().toString("base64")
+        }
+      ]
+    };
+    await tonConnectUI.sendTransaction(transaction);
+  }
 
   const handleBuy = async (costType: keyof ShopItem) => {
     if (!selectedItem) return;
@@ -66,7 +86,12 @@ const Shop: React.FC = () => {
           case 'stars':
             WebApp.openInvoice(data.invoiceURL);
             break;
-
+          case 'TON': {
+            const txPayload = data.txPayload;
+            const cost = data.cost;
+            await proceedTonPayment(txPayload, cost);
+          }
+            break;
           default:
             break;
         }

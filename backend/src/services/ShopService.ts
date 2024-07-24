@@ -4,11 +4,17 @@ import Big from 'big.js';
 import { StarService } from './StarService.js';
 import { bot } from '../routes/webhook.router.js';
 import { sendMessageToUser } from './messageService.js';
+import jwt from 'jsonwebtoken';
 
 
 type CostType = 'points' | 'gems' | 'stars' | 'TON';
 
 class ShopService {
+
+  static generateTonInvoicePayload(userId: string, itemId: ShopItemId, cost: Big) {
+    const txPayload = 'TONBTL_' + jwt.sign({ userId: userId, cost: cost.toFixed(9), itemId: itemId }, process.env.JWT_SECRET_KEY || '', { expiresIn: '1h' });
+    return txPayload
+  }
 
   static async proceedPayment(userId: string, costType: CostType, itemId: ShopItemId, cost: Big): Promise<any> {
     switch (costType) {
@@ -24,7 +30,8 @@ class ShopService {
         await ShopService.giveGoods(userId, itemId);
         return { success: true, message: 'Payment success' };
       case 'TON':
-        return { success: false };
+        const txPayload = this.generateTonInvoicePayload(userId, itemId, cost);
+        return { success: true, txPayload };
       default:
         break;
     }
@@ -83,8 +90,8 @@ class ShopService {
 
       // Check if the user has enough resources
       const cost = new Big(item[costType]);
-      const { successPayment, message, invoice } = await ShopService.proceedPayment(userId, costType, itemId, cost);
-      if (!successPayment && !invoice) {
+      const { success, txPayload, message, invoice } = await ShopService.proceedPayment(userId, costType, itemId, cost);
+      if (!success && !invoice) {
         return { success: false, message };
       }
       if (invoice) {
@@ -93,8 +100,13 @@ class ShopService {
         return { success: true, invoiceURL };
       }
 
+      if (txPayload) {
+        console.log(txPayload);
+        return { success: true, txPayload, cost: cost.toFixed(9) };
+      }
 
-      return { success: true };
+
+      return { success };
     } catch (error) {
       console.error('Error in buyItem:', error);
       return { success: false, message: 'Internal server error' };
