@@ -6,6 +6,7 @@ import Header from './components/Header/Header';
 import GameRoomList from './components/GameRoomList/GameRoomList';
 import Shop from './components/Shop/Shop';
 import TasksList from './components/TasksList/TasksList';
+import ReferralPage from './components/ReferralPage/ReferralPage';
 
 const App = () => {
   return (
@@ -19,6 +20,7 @@ const App = () => {
           <Route path="/create-room" element={<CreateGame />} />
           <Route path="/shop" element={<Shop />} />
           <Route path="/tasks" element={<TasksList />} />
+          <Route path="/referral" element={<ReferralPage />} />
         </Routes>
       </main>
       <footer className="bg-gray-800 text-white text-center py-4">

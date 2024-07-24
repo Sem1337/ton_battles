@@ -2,6 +2,8 @@ import { Request, Response, Router } from 'express';
 import bodyParser from 'body-parser';
 import { Telegraf } from 'telegraf';
 import { StarService } from '../services/StarService.js';
+import jwt from 'jsonwebtoken';
+import { User } from '../database/model/user.js';
 
 export const bot = new Telegraf(process.env.BOT_TOKEN || '');
 
@@ -24,6 +26,34 @@ bot.createWebhook({ domain: `${process.env.BACKEND_DOMAIN}`, path: '/webhook' })
 const router = Router();
 const jsonParser = bodyParser.json();
 
+const handleStart = async (startPayload: string, message: any) => {
+  let referredBy: number | null = null;
+  const chatId = message.chat.id;
+  const username = message.from.first_name + ' ' + message.from.last_name;
+  if (startPayload) {
+    try {
+      const decoded: any = jwt.verify(startPayload, process.env.JWT_SECRET_KEY || '');
+      referredBy = decoded.userId;
+      await User.create({
+        id: message.from.id,
+        username,
+        referredBy,
+        points: '0',
+      });
+    } catch (error) {
+      return {
+        method: 'sendMessage',
+        chat_id: chatId,
+        text: 'Invalid referral link or user already registered.',
+      };
+    }
+  }
+  return {
+    method: 'sendMessage',
+    chat_id: chatId,
+    text: `Welcome ${username}!`,
+  };
+}
 
 router.get('/buy_points', async (req: Request, res: Response) => {
   const user = (req as any).user;
@@ -55,19 +85,24 @@ router.post('/webhook', jsonParser, async (req: Request, res: Response) => {
   console.log('Received update with ID:', update_id);
   try {
     if (pre_checkout_query) {
-
       console.log(pre_checkout_query.id);
       const checkoutResponse = await bot.telegram.answerPreCheckoutQuery(pre_checkout_query.id, true);
       return checkoutResponse;
 
     }
+    if (!message || !message.text) {
+      return res.sendStatus(200);
+    }
     if (message) {
       console.log('Received message:', message);
     }
-    const { successful_payment, entities, text} = message
+    const { successful_payment, entities, text } = message
     if (entities && entities[0].type === 'bot_command') {
-      if (text === '/start') {
-        return res.status(200).send('ok!');
+      if (text.startsWith('/start')) {
+        const startPayload = text.split(' ')[1]; // This contains the referral token
+        if (startPayload === '123') return res.status(200).send();
+        const result = await handleStart(startPayload, message);
+        return res.json(result).send();
       }
     }
 
@@ -83,5 +118,7 @@ router.post('/webhook', jsonParser, async (req: Request, res: Response) => {
     return res.sendStatus(500).send();
   }
 });
+
+
 
 export default router;

@@ -12,11 +12,11 @@ class User extends Model {
   public shield!: number;
   public lastPointsUpdate!: Date; // Add this line
   public referredBy?: number; // Add referredBy field
+  public referrals!: User[];
+  public completedTasks!: Task[]; // Add this line
 
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
-  // Add association methods if using Sequelize
-  public completedTasks!: Task[]; // Add this line
 }
 
 User.init(
@@ -83,6 +83,12 @@ User.init(
     timestamps: true,
   }
 );
+
+User.hasMany(User, {
+  sourceKey: 'userId',
+  foreignKey: 'referredBy',
+  as: 'referrals',
+});
 
 User.belongsToMany(Task, { through: 'UserTasks', as: 'completedTasks' });
 Task.belongsToMany(User, { through: 'UserTasks' });
