@@ -33,11 +33,12 @@ const handleStart = async (startPayload: string, message: any) => {
     try {
       referredBy = +startPayload;
       await User.create({
-        id: message.from.id,
+        userId: message.from.id,
         username,
         referredBy,
         points: '0',
       });
+      console.log('user created');
     } catch (error) {
       return {
         method: 'sendMessage',
