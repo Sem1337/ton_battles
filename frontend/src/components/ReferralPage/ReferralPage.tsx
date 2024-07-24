@@ -25,7 +25,21 @@ const ReferralPage: React.FC = () => {
     };
 
     fetchReferralData();
-  }, [token]);
+  }, []);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(referralLink).then(
+      () => alert('Referral link copied to clipboard!'),
+      (err) => console.log('Failed to copy referral link!', err)
+    );
+  };
+
+  const handleShare = () => {
+    const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(referralLink)}&text=${encodeURIComponent(
+      'Join me on TON Battles using this referral link!'
+    )}`;
+    window.open(telegramUrl, '_blank');
+  };
 
   return (
     <div className="p-4">
@@ -38,6 +52,18 @@ const ReferralPage: React.FC = () => {
           value={referralLink}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
         />
+        <button
+          onClick={handleCopy}
+          className="ml-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Copy
+        </button>
+        <button
+          onClick={handleShare}
+          className="ml-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Share
+        </button>
       </div>
       <div>
         <h3 className="text-xl font-semibold mb-2">Your Referrals</h3>

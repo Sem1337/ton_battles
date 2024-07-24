@@ -2,7 +2,6 @@ import { Request, Response, Router } from 'express';
 import bodyParser from 'body-parser';
 import { Telegraf } from 'telegraf';
 import { StarService } from '../services/StarService.js';
-import jwt from 'jsonwebtoken';
 import { User } from '../database/model/user.js';
 
 export const bot = new Telegraf(process.env.BOT_TOKEN || '');
@@ -32,8 +31,7 @@ const handleStart = async (startPayload: string, message: any) => {
   const username = message.from.first_name + ' ' + message.from.last_name;
   if (startPayload) {
     try {
-      const decoded: any = jwt.verify(startPayload, process.env.JWT_SECRET_KEY || '');
-      referredBy = decoded.userId;
+      referredBy = +startPayload;
       await User.create({
         id: message.from.id,
         username,
