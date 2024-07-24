@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Home from './components/Home/Home';
 import GameRoomComponent from './components/GameRoom/GameRoom';
 import CreateGame from './components/CreateRoom/CreateRoom';
@@ -22,6 +22,7 @@ const App = () => {
           <Route path="/shop" element={<Shop />} />
           <Route path="/tasks" element={<TasksList />} />
           <Route path="/referral" element={<ReferralPage />} />
+          <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </main>
       <footer className="bg-gray-800 text-white text-center py-4">

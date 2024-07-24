@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Page Not Found</title>
+    <meta http-equiv="refresh" content="0; URL=/" />
+    <script>
+      // This script will redirect to the index.html for GitHub Pages
+      var redirectTo = window.location.pathname.split('/').slice(0, -1).join('/') + '/index.html' + window.location.search + window.location.hash;
+      window.location.replace(redirectTo);
+    </script>
+  </head>
+  <body>
+    <p>Redirecting...</p>
+  </body>
+</html>
