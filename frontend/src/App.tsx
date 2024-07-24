@@ -7,12 +7,15 @@ import GameRoomList from './components/GameRoomList/GameRoomList';
 import Shop from './components/Shop/Shop';
 import TasksList from './components/TasksList/TasksList';
 import ReferralPage from './components/ReferralPage/ReferralPage';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { Toaster } from 'react-hot-toast';
 
 const App = () => {
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
+      <Toaster
+        position="top-center"
+        reverseOrder={false}
+      />
       <Header />
       <main className="flex-grow container mx-auto px-4 py-8">
         <Routes>
@@ -29,7 +32,6 @@ const App = () => {
       <footer className="bg-gray-800 text-white text-center py-4">
         © 2024 TON Battles
       </footer>
-      <ToastContainer />
     </div>
   );
 };
