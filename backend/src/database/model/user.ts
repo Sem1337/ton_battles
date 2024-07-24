@@ -11,6 +11,7 @@ class User extends Model {
   public productionLVL!: number;
   public shield!: number;
   public lastPointsUpdate!: Date; // Add this line
+  public referredBy?: number; // Add referredBy field
 
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -69,6 +70,10 @@ User.init(
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW, // Set default value to the current date
       allowNull: false,
+    },
+    referredBy: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
     },
 
   },

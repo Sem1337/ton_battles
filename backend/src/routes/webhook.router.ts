@@ -64,7 +64,13 @@ router.post('/webhook', jsonParser, async (req: Request, res: Response) => {
     if (message) {
       console.log('Received message:', message);
     }
-    const { successful_payment } = message
+    const { successful_payment, entities, text} = message
+    if (entities && entities[0].type === 'bot_command') {
+      if (text === '/start') {
+        return res.status(200).send('ok!');
+      }
+    }
+
     if (!successful_payment || !successful_payment.invoice_payload) {
       console.log('not successful_payment or payload');
       return res.status(400).send('Not successful payment');
