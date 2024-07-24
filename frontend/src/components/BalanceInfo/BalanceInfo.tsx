@@ -4,6 +4,7 @@ import { User } from '../../types/types';
 
 const BalanceInfo = () => {
   const [balance, setBalance] = useState<number>(0);
+  const [gems, setGems] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [error] = useState<string | null>(null)
   const { sendMessage, on, off } = useSocket();
@@ -13,6 +14,7 @@ const BalanceInfo = () => {
 
     const handleBalanceUpdate = (data: User) => {
       setBalance(parseFloat(data.balance));
+      setGems(data.gems);
       setLoading(false);
     };
 
@@ -41,6 +43,8 @@ const BalanceInfo = () => {
     <div>
       <h2 className="text-xl font-bold">Your Balance</h2>
       <p>{balance !== null ? `${balance} TON` : 'Balance not available'}</p>
+      <h2 className="text-xl font-bold">Your Gems</h2>
+      <p>{gems !== null ? `${gems} gems` : 'Balance not available'}</p>
     </div>
   );
 };
