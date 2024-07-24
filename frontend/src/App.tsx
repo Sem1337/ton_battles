@@ -8,6 +8,7 @@ import Shop from './components/Shop/Shop';
 import TasksList from './components/TasksList/TasksList';
 import ReferralPage from './components/ReferralPage/ReferralPage';
 import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
   return (
