@@ -1,12 +1,15 @@
 import { Request, Response } from 'express';
 import { User } from '../database/model/user.js';
-import { col, fn } from 'sequelize';
+import sequelize from 'sequelize';
 
 export const getLeaderboard = async (_req: Request, res: Response) => {
   try {
     const users = await User.findAll({
       limit: 50,
-      order: [[fn('CAST', col('points'), 'DECIMAL(65, 0)'), 'DESC']],
+      order: [
+        sequelize.cast(sequelize.col('points'), 'BIGINT'),
+        ['points', 'DESC']
+      ],
       attributes: ['userId', 'username', 'points']
     });
     res.json(users);

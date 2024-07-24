@@ -26,8 +26,9 @@ const LeaderboardModal: React.FC<LeaderboardModalProps> = ({ isOpen, onClose }) 
         console.error('Failed to fetch leaderboard');
       }
     };
-
-    fetchLeaderboard();
+    if (isOpen) {
+      fetchLeaderboard();
+    }
   }, [isOpen]);
 
   return (
