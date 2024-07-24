@@ -4,7 +4,7 @@ import { authenticateWebSocket } from '../auth.js';
 import { GameRoomService } from '../services/GameRoomService.js';
 import { User } from '../database/model/user.js';
 import { updatePoints } from '../services/balanceService.js';
-import { sendUserInfo } from '../services/messageService.js';
+import { sendUserInfoToSocket } from '../services/messageService.js';
 
 let io: SocketIOServer;
 
@@ -71,7 +71,7 @@ export const initializeSocket = (server: HttpServer) => {
           case 'UPDATE_POINTS': {
             const newUserData = await updatePoints(socket.data.user.userId);
             if (newUserData) {
-              sendUserInfo(socket, newUserData)
+              sendUserInfoToSocket(socket, newUserData)
             } else {
               socket.emit('message', { type: 'ERROR', payload: { message: 'User not found' } });
             }
@@ -87,14 +87,14 @@ export const initializeSocket = (server: HttpServer) => {
             await GameRoomService.makeBet(roomId, socket.data.user.userId, betSize);
             const user = await User.findByPk(socket.data.user.userId);
             if (user) {
-              sendUserInfo(socket, user);
+              sendUserInfoToSocket(socket, user);
             }
             break;
           }
           case 'GET_BALANCE': {
             const user = await User.findByPk(socket.data.user.userId);
             if (user) {
-              sendUserInfo(socket, user);
+              sendUserInfoToSocket(socket, user);
             } else {
               socket.emit('message', { type: 'ERROR', payload: { message: 'User not found' } });
             }

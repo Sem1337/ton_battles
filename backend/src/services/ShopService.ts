@@ -3,7 +3,7 @@ import { updateUserGems, updateUserPoints, userLvlUpProduction, userLvlUpShield 
 import Big from 'big.js';
 import { StarService } from './StarService.js';
 import { bot } from '../routes/webhook.router.js';
-import { sendMessageToUser } from './messageService.js';
+import { sendMessageToUser, sendUserInfo } from './messageService.js';
 import jwt from 'jsonwebtoken';
 
 
@@ -12,7 +12,7 @@ type CostType = 'points' | 'gems' | 'stars' | 'TON';
 class ShopService {
 
   static generateTonInvoicePayload(userId: string, itemId: ShopItemId, cost: Big) {
-    const txPayload = 'TONBTL_' + jwt.sign({ userId: userId, cost: cost.toFixed(9), itemId: itemId }, process.env.JWT_SECRET_KEY || '', { expiresIn: '1h' });
+    const txPayload = jwt.sign({tag: 'TONBTL', userId: userId, cost: cost.toFixed(9), itemId: itemId }, process.env.JWT_SECRET_KEY || '', { expiresIn: '1h' });
     return txPayload
   }
 
@@ -70,6 +70,7 @@ class ShopService {
     const item = await ShopItem.findByPk(itemId);
     if (item) {
       sendMessageToUser(userId, 'NOTIFY', { message: `Successfully purchased "${item?.name}"` });
+      sendUserInfo(+userId);
     }
   }
 

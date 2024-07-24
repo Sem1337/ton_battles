@@ -2,6 +2,12 @@ import { Transaction } from 'sequelize';
 import sequelize from '../database/db.js';
 import { User } from '../database/model/user.js';
 import Big from 'big.js';
+import jwt from 'jsonwebtoken';
+
+export const generateTonTopUpPayload = (userId: number) => {
+  const txPayload = jwt.sign({tag: 'TONBTL', userId: userId }, process.env.JWT_SECRET_KEY || '', { expiresIn: '1h' });
+  return txPayload
+}
 
 export const updateUserBalanceWithTransaction = async (userId: number, amount: Big, transaction?: Transaction) => {
   const user = await User.findByPk(userId, { transaction, lock: transaction?.LOCK.UPDATE });

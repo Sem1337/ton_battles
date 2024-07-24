@@ -17,27 +17,30 @@ export const Header: React.FC = () => {
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
   const [tonConnectUI] = useTonConnectUI();
-  const { tgUserId } = useAuth();
   const navigate = useNavigate();
 
   const handleTopUp = async (amount: string) => {
     try {
-      console.log('TONBTL_' + tgUserId.toString());
-      const body = beginCell()
-        .storeUint(0, 32) // write 32 zero bits to indicate that a text comment will follow
-        .storeStringTail('TONBTL_' + tgUserId.toString()) // write our text comment
-        .endCell();
-      const transaction = {
-        validUntil: Math.floor(Date.now() / 1000) + 60, // 60 sec
-        messages: [
-          {
-            address: 'UQCn0VvM7Rx7t3IJ38RBUnCFEpqUfOval4SJ2mV8HQOV79O3', // replace with your main wallet address
-            amount: toNano(amount).toString(),
-            payload: body.toBoc().toString("base64")
-          }
-        ]
-      };
-      await tonConnectUI.sendTransaction(transaction);
+      const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/topup`, token);
+      const data = await response.json();
+      const txPayload = data.txPayload;
+      if (txPayload) {
+        const body = beginCell()
+          .storeUint(0, 32) // write 32 zero bits to indicate that a text comment will follow
+          .storeStringTail(txPayload) // write our text comment
+          .endCell();
+        const transaction = {
+          validUntil: Math.floor(Date.now() / 1000) + 60, // 60 sec
+          messages: [
+            {
+              address: 'UQCn0VvM7Rx7t3IJ38RBUnCFEpqUfOval4SJ2mV8HQOV79O3', // replace with your main wallet address
+              amount: toNano(amount).toString(),
+              payload: body.toBoc().toString("base64")
+            }
+          ]
+        };
+        await tonConnectUI.sendTransaction(transaction);
+      }
     } catch (error) {
       console.error('Transaction error:', error);
     }

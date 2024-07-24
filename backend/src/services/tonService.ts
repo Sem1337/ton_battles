@@ -5,6 +5,8 @@ import dotenv from 'dotenv';
 import Big from 'big.js'; // Import Big.js
 import jwt from 'jsonwebtoken';
 import ShopService from "./ShopService.js";
+import { updateUserBalance } from "./balanceService.js";
+import { sendMessageToUser } from "./messageService.js";
 
 dotenv.config();
 
@@ -105,36 +107,35 @@ async function fetchAndProcessTransactions(toLT: string): Promise<void> {
         const txValue = new Big(fromNano(transaction.in_msg.value));
         console.log('amount: ', txValue);
         console.log('msg: ', transaction.in_msg.message);
-        const data = transaction.in_msg.message.split('_');
-        if (data.length != 2) continue;
+        const payloadEncrypted = transaction.in_msg.message
 
-        const tag = data[0];
-        const payloadEncrypted = data[1];
+        const payloadDecrypted = jwt.verify(payloadEncrypted, process.env.JWT_SECRET_KEY || '');
+        console.log('Decoded Data:', payloadDecrypted);
+        if (typeof payloadDecrypted === 'string') {
+          throw new Error('Unexpected token format');
+        }
+        const tag = payloadDecrypted['tag'];
         if (tag === 'TONBTL') {
-          const payloadDecrypted = jwt.verify(payloadEncrypted, process.env.JWT_SECRET_KEY || '');
-          console.log('Decoded Data:', payloadDecrypted);
-          if (typeof payloadDecrypted === 'string') {
-            throw new Error('Unexpected token format');
-          } else {
-            const userId = payloadDecrypted['userId'];
-            const itemId = payloadDecrypted['itemId'];
-            const cost = payloadDecrypted['cost'];
-            console.log(userId, itemId, cost);
-            if (userId) {
-              if (!itemId) {
-                throw new Error('Unexpected token format');
-              } else {
-                const expectedCost = new Big(cost);
-                if (expectedCost.eq(txValue)) {
-                  await ShopService.giveGoods(userId, itemId);
-                } else {
-                  console.log('wrong tx amount: ', txValue, expectedCost);
-                }
-              }
+          const userId = payloadDecrypted['userId'];
+          const itemId = payloadDecrypted['itemId'];
+          const cost = payloadDecrypted['cost'];
+          console.log(userId, itemId, cost);
+          if (userId) {
+            if (!itemId) {
+              await updateUserBalance(userId, txValue);
+              sendMessageToUser(userId, 'NOTIFY', { message: `Successful top up: ${txValue.toFixed(9)} TON` });
             } else {
-              console.log('unknown user Id');
+              const expectedCost = new Big(cost);
+              if (expectedCost.eq(txValue)) {
+                await ShopService.giveGoods(userId, itemId);
+              } else {
+                console.log('wrong tx amount: ', txValue, expectedCost);
+              }
             }
+          } else {
+            console.log('unknown user Id');
           }
+
         }
       } catch (error) {
         if (error instanceof Error) {

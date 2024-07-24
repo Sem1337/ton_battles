@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { updateUserBalance, getUserBalance} from '../services/balanceService.js';
+import { updateUserBalance, getUserBalance, generateTonTopUpPayload} from '../services/balanceService.js';
 import { createTransaction, confirmTransaction } from '../services/tonService.js';
 import Big from 'big.js'; // Import Big.js
 
@@ -29,4 +29,14 @@ export const withdrawBalance = async (req: Request, res: Response) => {
   } catch (error) {
     return res.status(500).send({ success: false, error });
   }
+};
+
+export const topUpBalance = async (req: Request, res: Response) => {
+  const user = (req as any).user;
+  const userId = user?.userId; // Extract user ID from the verified token
+  if (!userId) {
+    return res.status(400).json({ error: 'User ID is required' });
+  }
+  const txPayload = generateTonTopUpPayload(userId);
+  return res.status(200).json({txPayload});
 };
