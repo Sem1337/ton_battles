@@ -1,5 +1,5 @@
-// src/components/GameRoomCard.tsx
 import { GameRoom } from '../../types/types';
+import './GameRoomList.css';
 
 interface GameRoomCardProps {
   room: GameRoom;
@@ -8,14 +8,13 @@ interface GameRoomCardProps {
 
 const GameRoomCard = ({ room, onJoin }: GameRoomCardProps) => {
   return (
-    <div
-      onClick={() => onJoin(room.id)}
-      className="border border-gray-400 p-4 mb-4 rounded cursor-pointer hover:bg-gray-100"
-    >
-      <h3 className="text-lg font-bold">{room.roomName}</h3>
-      <p className="font-semibold">Min Bet: {room.minBet}</p>
-      <p className="font-semibold">Max Bet: {room.maxBet}</p>
-      <p>Players: {room.currentPlayers}/{room.maxPlayers}</p>
+    <div onClick={() => onJoin(room.id)} className="game-room-card">
+      <h3 className="room-name">{room.roomName}</h3>
+      <p className="room-detail">Min Bet: {room.minBet}</p>
+      <p className="room-detail">Max Bet: {room.maxBet}</p>
+      <p className="room-players">
+        Players: {room.currentPlayers}/{room.maxPlayers}
+      </p>
     </div>
   );
 };

@@ -2,6 +2,7 @@ import React, { useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useSocket } from '../../contexts/SocketContext';
 import PointsCounter from '../PointsCounter/PointsCounter'
+import './Home.css';
 
 const Home: React.FC = () => {
   const { sendMessage } = useSocket();
@@ -11,43 +12,31 @@ const Home: React.FC = () => {
   }, []);
 
   const memoizedHeader = useMemo(() => (
-    <div className="text-center mb-8">
-      <h1 className="text-4xl font-bold mb-4 text-blue-600">Welcome to TON Battles</h1>
-      <p className="text-lg mb-4">Join a game or create your own battle room and start playing!</p>
+    <div className="header">
+      <h1 className="title">Welcome to TON Battles</h1>
+      <p className="subtitle">Join a game or create your own battle room and start playing!</p>
     </div>
   ), []);
 
   const memoizedLinks = useMemo(() => (
-    <div className="flex space-x-4 mt-4">
-      <Link
-        to="/game-rooms"
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-      >
+    <div className="links">
+      <Link to="/game-rooms" className="link-button">
         View Available Games
       </Link>
-      <Link
-        to="/create-room"
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-      >
+      <Link to="/create-room" className="link-button">
         Create Game Room
       </Link>
-      <Link
-        to="/shop"
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-      >
+      <Link to="/shop" className="link-button">
         Shop
       </Link>
-      <Link
-          to="/referral"
-          className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded"
-        >
-          Referral Page
-        </Link>
+      <Link to="/referral" className="link-button">
+        Referral Page
+      </Link>
     </div>
   ), []);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+    <div className="home-container">
       {memoizedHeader}
       <PointsCounter />
       {memoizedLinks}

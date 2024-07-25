@@ -8,16 +8,17 @@ import Shop from './components/Shop/Shop';
 import TasksList from './components/TasksList/TasksList';
 import ReferralPage from './components/ReferralPage/ReferralPage';
 import { Toaster } from 'react-hot-toast';
+import './App.css';
 
 const App = () => {
   return (
-    <div className="flex flex-col min-h-screen bg-gray-100">
+    <div className="App">
       <Toaster
         position="top-center"
         reverseOrder={false}
       />
       <Header />
-      <main className="flex-grow container mx-auto px-4 py-8">
+      <main className="main-container">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/game-rooms" element={<GameRoomList />} />
@@ -29,7 +30,7 @@ const App = () => {
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </main>
-      <footer className="bg-gray-800 text-white text-center py-4">
+      <footer className="footer">
         © 2024 TON Battles
       </footer>
     </div>

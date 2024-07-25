@@ -1,0 +1,116 @@
+.game-room-list-container {
+  padding: 1rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.close-button {
+  background-color: #555;
+  color: white;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  transition: background-color 0.3s;
+}
+
+.close-button:hover {
+  background-color: #333;
+}
+
+.filter-sort-container {
+  margin-bottom: 1rem;
+}
+
+.filter-label,
+.sort-label {
+  margin-right: 0.5rem;
+}
+
+.filter-input,
+.sort-select {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  margin-right: 1rem;
+}
+
+.tab-buttons {
+  display: flex;
+  margin-bottom: 1rem;
+}
+
+.tab-button {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  margin-right: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.tab-button.active {
+  background-color: #1E90FF;
+  color: white;
+}
+
+.tab-button:not(.active):hover {
+  background-color: #eee;
+}
+
+.game-room-cards {
+  max-height: 24rem;
+  overflow-y: auto;
+}
+
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.pagination-button {
+  background-color: #555;
+  color: white;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.pagination-button:hover {
+  background-color: #333;
+}
+
+
+.game-room-card {
+  border: 1px solid #ccc;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.game-room-card:hover {
+  background-color: #f0f0f0;
+}
+
+.room-name {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.room-detail {
+  font-weight: 600;
+}
+
+.room-players {
+  margin-top: 0.5rem;
+}

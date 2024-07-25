@@ -1,12 +1,13 @@
-import { useState, useEffect } from 'react'
-import { authFetch } from '../../utils/auth' // Adjust the import path if necessary
+import { useState, useEffect } from 'react';
+import { authFetch } from '../../utils/auth'; // Adjust the import path if necessary
 import GameRoomCard from './GameRoomCard';
-import type { GameRoom } from '../../types/types' // Import shared types
-import { useAuth } from '../../contexts/AuthContext'
+import type { GameRoom } from '../../types/types'; // Import shared types
+import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import './GameRoomList.css';
 
 const GameRoomList = () => {
-  const [gameRooms, setGameRooms] = useState<GameRoom[]>([])
+  const [gameRooms, setGameRooms] = useState<GameRoom[]>([]);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [limit] = useState(10); // Adjust limit as needed
@@ -18,51 +19,54 @@ const GameRoomList = () => {
 
   useEffect(() => {
     const fetchGameRooms = async () => {
-      const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/gamerooms?page=${page}&limit=${limit}&sort=${sort}&filter=${filter}&gameType=${selectedTab}`, token)
+      const response = await authFetch(
+        `${import.meta.env.VITE_REACT_APP_BACKEND_URL}/gamerooms?page=${page}&limit=${limit}&sort=${sort}&filter=${filter}&gameType=${selectedTab}`,
+        token
+      );
       if (response.ok) {
-        const data = await response.json()
-        setGameRooms(data.data)
-        setTotal(data.total)
+        const data = await response.json();
+        setGameRooms(data.data);
+        setTotal(data.total);
       } else {
         // Handle error response
-        console.error('Failed to fetch game rooms')
+        console.error('Failed to fetch game rooms');
       }
-    }
-    fetchGameRooms()
-  }, [page, limit, sort, filter, selectedTab])
+    };
+    fetchGameRooms();
+  }, [page, limit, sort, filter, selectedTab]);
 
   const joinGameRoom = async (roomId: string) => {
     const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/gamerooms/${roomId}/join`, token, {
-      method: 'POST'
-    })
+      method: 'POST',
+    });
     if (response.ok) {
       navigate(`/game-room/${roomId}`); // Call onJoinGameRoom when a game room is joined
     } else {
       // Handle error response
-      console.error('Failed to join game room')
+      console.error('Failed to join game room');
     }
-  }
+  };
 
   const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFilter(e.target.value);
     setPage(1); // Reset to first page when filtering
-  }
+  };
 
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSort(e.target.value);
-  }
+  };
 
   return (
-    <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">Game Rooms</h2>
+    <div className="game-room-list-container">
+      <h2 className="title">Game Rooms</h2>
       <button
         onClick={() => navigate('/')} // Navigate to home on close
-        className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mb-4"
+        className="close-button"
       >
         Close
       </button>
-      <div className="mb-4">
-        <label htmlFor="filter" className="mr-2">
+      <div className="filter-sort-container">
+        <label htmlFor="filter" className="filter-label">
           Room name:
         </label>
         <input
@@ -71,12 +75,12 @@ const GameRoomList = () => {
           placeholder="Filter by name"
           value={filter}
           onChange={handleFilterChange}
-          className="p-2 border rounded"
+          className="filter-input"
         />
-        <label htmlFor="sortBy" className="ml-4">
+        <label htmlFor="sortBy" className="sort-label">
           Sort by:
         </label>
-        <select id="sortBy" value={sort} onChange={handleSortChange} className="ml-2 p-2 border rounded">
+        <select id="sortBy" value={sort} onChange={handleSortChange} className="sort-select">
           <option value="roomName">Name</option>
           <option value="minBet">Min Bet</option>
           <option value="maxBet">Max Bet</option>
@@ -84,36 +88,35 @@ const GameRoomList = () => {
           <option value="currentPlayers">Current Players</option>
         </select>
       </div>
-      <div className="flex mb-4">
+      <div className="tab-buttons">
         {['points', 'gems', 'TON'].map((type) => (
           <button
             key={type}
             onClick={() => setSelectedTab(type as 'points' | 'gems' | 'TON')}
-            className={`px-4 py-2 mr-2 rounded ${selectedTab === type ? 'bg-blue-500 text-white' : 'bg-gray-200'
-              }`}
+            className={`tab-button ${selectedTab === type ? 'active' : ''}`}
           >
             {type.charAt(0).toUpperCase() + type.slice(1)}
           </button>
         ))}
       </div>
-      <div className="max-h-96 overflow-y-scroll">
-        {gameRooms.map(room => (
+      <div className="game-room-cards">
+        {gameRooms.map((room) => (
           <GameRoomCard key={room.id} room={room} onJoin={joinGameRoom} />
         ))}
       </div>
-      <div className="flex justify-between mt-4">
+      <div className="pagination">
         <button
-          onClick={() => setPage(prev => Math.max(prev - 1, 1))}
+          onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
           disabled={page === 1}
-          className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+          className="pagination-button"
         >
           Previous
         </button>
         <span>Page {page}</span>
         <button
-          onClick={() => setPage(prev => (prev * limit < total ? prev + 1 : prev))}
+          onClick={() => setPage((prev) => (prev * limit < total ? prev + 1 : prev))}
           disabled={page * limit >= total}
-          className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+          className="pagination-button"
         >
           Next
         </button>
