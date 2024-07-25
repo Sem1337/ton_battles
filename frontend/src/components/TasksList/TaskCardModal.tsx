@@ -4,6 +4,7 @@ import Modal from 'react-modal';
 import { authFetch } from '../../utils/auth'; // Adjust the import path if necessary
 import { useAuth } from '../../contexts/AuthContext';
 import { Task } from '../../types/types';
+import './TasksList.css';
 
 Modal.setAppElement('#root');
 
@@ -41,18 +42,18 @@ const TaskCardModal: React.FC<TaskCardModalProps> = ({ task, onClose }) => {
     <Modal
       isOpen={true}
       onRequestClose={onClose}
-      className="fixed inset-0 flex items-center justify-center z-50 p-4"
-      overlayClassName="fixed inset-0 bg-black bg-opacity-50"
+      className="modal-content"
+      overlayClassName="modal-overlay"
     >
-      <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-4 relative">
-        <h2 className="text-2xl font-bold mb-4">{task.taskName}</h2>
-        <button onClick={onClose} className="absolute top-2 right-2 text-gray-600 hover:text-gray-900">
+      <div className="modal-body">
+        <button onClick={onClose} className="modal-close-button">
           &times;
         </button>
-        <p className="mb-4">{task.taskDescription}</p>
+        <h2 className="modal-title">{task.taskName}</h2>
+        <p className="modal-description">{task.taskDescription}</p>
         <button
           onClick={handleLinkClick}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          className="modal-button"
         >
           Go to Task
         </button>

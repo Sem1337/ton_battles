@@ -1,25 +1,15 @@
 import React, { useState } from 'react';
-import { TonConnectButton, useTonConnectUI } from '@tonconnect/ui-react';
+import { TonConnectButton } from '@tonconnect/ui-react';
 import BalanceInfo from '../BalanceInfo/BalanceInfo'; // Adjust the import path if necessary
-import { authFetch } from '../../utils/auth';
-import { useAuth } from '../../contexts/AuthContext';
-import { beginCell, toNano } from '@ton/core';
-import { WithdrawModal } from '../WithdrawModal/WithdrawModal';
-import { TopUpModal } from '../TopUpModal/TopUpModal';
 import LeaderboardModal from '../Leaderboard/Leaderboard';
 import { Link, useNavigate } from 'react-router-dom';
-import WebApp from '@twa-dev/sdk';
-
+import './Header.css';
 
 export const Header: React.FC = () => {
-  const { token } = useAuth();
-  const [isTopUpModalOpen, setIsTopUpModalOpen] = useState(false);
-  const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
-  const [tonConnectUI] = useTonConnectUI();
   const navigate = useNavigate();
 
-  const handleTopUp = async (amount: string) => {
+  /*const handleTopUp = async (amount: string) => {
     try {
       const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/topup`, token);
       const data = await response.json();
@@ -82,53 +72,27 @@ export const Header: React.FC = () => {
     } else {
       console.log('Failed to initiate payment.');
     }
-  };
+  };*/
 
   return (
-    <header className="bg-blue-600 text-white p-4">
-      <div className="container mx-auto flex flex-col md:flex-row justify-between items-center space-y-2 md:space-y-0">
-        <h1 className="text-2xl font-bold">
-          <Link to="/">TON Battles</Link>
+    <header className="header">
+      <div className="header-container">
+        <h1 className="header-title">
+          <Link to="/" className="header-link">TON Battles</Link>
         </h1>
         <TonConnectButton />
-        <div className="flex space-x-2">
-          <button
-            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-            onClick={() => setIsTopUpModalOpen(true)}>
-            Top Up
-          </button>
-          <button
-            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-            onClick={() => setIsWithdrawModalOpen(true)}>
-            Withdraw
-          </button>
-        </div>
         <BalanceInfo />
-        <button onClick={handleBuyPoints} className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
-          Buy Points
-        </button>
         <button
-          className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
+          className="header-button"
           onClick={() => setIsLeaderboardOpen(true)}>
           Leaderboard
         </button>
         <button
           onClick={() => navigate('/tasks')}
-          className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
+          className="header-button"
         >
           Tasks
         </button>
-        <TopUpModal
-          isOpen={isTopUpModalOpen}
-          onClose={() => setIsTopUpModalOpen(false)}
-          onTopUp={handleTopUp}
-        />
-
-        <WithdrawModal
-          isOpen={isWithdrawModalOpen}
-          onClose={() => setIsWithdrawModalOpen(false)}
-          onWithdraw={handleWithdraw}
-        />
         <LeaderboardModal
           isOpen={isLeaderboardOpen}
           onClose={() => setIsLeaderboardOpen(false)}

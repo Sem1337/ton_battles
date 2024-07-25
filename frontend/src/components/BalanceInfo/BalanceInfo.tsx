@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useSocket } from '../../contexts/SocketContext';
 import { User } from '../../types/types';
+import './BalanceInfo.css';
 
 const BalanceInfo = () => {
-  const [balance, setBalance] = useState<number>(0);
   const [gems, setGems] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [error] = useState<string | null>(null)
@@ -13,7 +13,7 @@ const BalanceInfo = () => {
     console.log('balance info use effect')
 
     const handleBalanceUpdate = (data: User) => {
-      setBalance(parseFloat(data.balance));
+      //setBalance(parseFloat(data.balance));
       setGems(data.gems);
       setLoading(false);
     };
@@ -40,11 +40,9 @@ const BalanceInfo = () => {
   }
 
   return (
-    <div>
-      <h2 className="text-xl font-bold">Your Balance</h2>
-      <p>{balance !== null ? `${balance} TON` : 'Balance not available'}</p>
-      <h2 className="text-xl font-bold">Your Gems</h2>
-      <p>{gems !== null ? `${gems} gems` : 'Balance not available'}</p>
+    <div className="balance-info">
+      <h2 className="balance-title">Your Gems</h2>
+      <p className="balance-amount">{gems !== null ? `${gems} gems` : 'Balance not available'}</p>
     </div>
   );
 };

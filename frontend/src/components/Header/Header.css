@@ -1,0 +1,53 @@
+.header {
+    background-color: #1E90FF;
+    color: white;
+    padding: 1rem;
+  }
+  
+  .header-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  @media (min-width: 768px) {
+    .header-container {
+      flex-direction: row;
+    }
+  }
+  
+  .header-title {
+    font-size: 2rem;
+    font-weight: bold;
+  }
+  
+  .header-link {
+    color: white;
+    text-decoration: none;
+  }
+  
+  .header-link:hover {
+    text-decoration: underline;
+  }
+  
+  .header-button {
+    background-color: #FFD700;
+    color: white;
+    font-weight: bold;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .header-button:hover {
+    background-color: #FFA500;
+  }
+  
+  .header-button:active {
+    background-color: #FF8C00;
+  }
+  

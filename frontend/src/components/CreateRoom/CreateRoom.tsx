@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authFetch } from '../../utils/auth';
 import { useAuth } from '../../contexts/AuthContext';
+import './CreateRoom.css';
 
 const CreateGame = () => {
   const [gameType, setGameType] = useState<'points' | 'gems' | 'TON'>('points');
@@ -53,91 +54,91 @@ const CreateGame = () => {
   };
 
   return (
-    <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">Create Game Room</h2>
-      <form onSubmit={handleCreateGameRoom} className="space-y-4">
-        <div>
-          <label htmlFor="gameType" className="block text-sm font-medium text-gray-700">Game Type</label>
+    <div className="create-room-container">
+      <h2 className="create-room-title">Create Game Room</h2>
+      <form onSubmit={handleCreateGameRoom} className="create-room-form">
+        <div className="form-group">
+          <label htmlFor="gameType" className="form-label">Game Type</label>
           <select
             id="gameType"
             value={gameType}
             onChange={(e) => setGameType(e.target.value as 'points' | 'gems' | 'TON')}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className="form-input"
           >
             <option value="points">Points</option>
             <option value="gems">Gems</option>
             <option value="TON">TON</option>
           </select>
         </div>
-        <div>
-          <label htmlFor="roomName" className="block text-sm font-medium text-gray-700">Room Name</label>
+        <div className="form-group">
+          <label htmlFor="roomName" className="form-label">Room Name</label>
           <input
             type="text"
             id="roomName"
             value={roomName}
             onChange={(e) => setRoomName(e.target.value)}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className="form-input"
             required
           />
         </div>
-        <div>
-          <label htmlFor="minBet" className="block text-sm font-medium text-gray-700">Minimum Bet</label>
+        <div className="form-group">
+          <label htmlFor="minBet" className="form-label">Minimum Bet</label>
           <input
             type="number"
             id="minBet"
             value={minBet !== '' ? minBet : ''}
             onChange={(e) => handleMinBetChange(e.target.value)}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className="form-input"
             required
             step={gameType === 'TON' ? 0.1 : 1}
             min={gameType === 'points' ? 10 : gameType === 'gems' ? 1 : 0.1}
           />
         </div>
-        <div>
-          <label htmlFor="maxBet" className="block text-sm font-medium text-gray-700">Maximum Bet</label>
+        <div className="form-group">
+          <label htmlFor="maxBet" className="form-label">Maximum Bet</label>
           <input
             type="number"
             id="maxBet"
             value={maxBet !== '' ? maxBet : ''}
             onChange={(e) => setMaxBet(parseFloat(e.target.value) || '')}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className="form-input"
             disabled={isUnlimited}
             required={!isUnlimited}
             step={gameType === 'TON' ? 0.1 : 1}
           />
-          <div className="mt-2">
-            <label className="flex items-center">
+          <div className="form-checkbox">
+            <label className="checkbox-label">
               <input
                 type="checkbox"
                 checked={isUnlimited}
                 onChange={() => setIsUnlimited(!isUnlimited)}
-                className="mr-2"
+                className="checkbox-input"
               />
               Unlimited Max Bet
             </label>
           </div>
         </div>
-        <div>
-          <label htmlFor="maxPlayers" className="block text-sm font-medium text-gray-700">Maximum Players</label>
+        <div className="form-group">
+          <label htmlFor="maxPlayers" className="form-label">Maximum Players</label>
           <input
             type="number"
             id="maxPlayers"
             value={maxPlayers !== '' ? maxPlayers : ''}
             onChange={(e) => setMaxPlayers(parseInt(e.target.value, 10) || '')}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className="form-input"
             required
           />
         </div>
         <button
           type="submit"
-          className="bg-blue-500 text-white py-2 px-4 rounded"
+          className="form-button create-room-button"
         >
           Create Room
         </button>
       </form>
       <button
         onClick={() => navigate('/')}
-        className="bg-gray-500 text-white py-2 px-4 rounded mt-4"
+        className="form-button cancel-button"
       >
         Cancel
       </button>

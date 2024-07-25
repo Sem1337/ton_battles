@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSocket } from '../../contexts/SocketContext';
 import { User } from '../../types/types';
+import './PointsCounter.css';
 
 const PointsCounter: React.FC = () => {
 
@@ -45,8 +46,8 @@ const PointsCounter: React.FC = () => {
   }, [productionSpeed]);
 
   return (
-    <div className="flex items-center justify-center bg-gray-100 p-4 rounded shadow-md">
-      <h2 className="text-xl font-bold">Points: {points}</h2>
+    <div className="points-counter">
+      <h2 className="points-counter-title">Points: {points}</h2>
     </div>
   );
 };

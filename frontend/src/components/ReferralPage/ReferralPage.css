@@ -1,0 +1,90 @@
+.referral-page {
+    padding: 1rem;
+  }
+  
+  .referral-title {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+  
+  .referral-link-section {
+    margin-bottom: 1rem;
+  }
+  
+  .referral-label {
+    display: block;
+    font-size: 1rem;
+    font-weight: medium;
+    margin-bottom: 0.5rem;
+  }
+  
+  .referral-input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 0.25rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .referral-button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 0.25rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-right: 0.5rem;
+  }
+  
+  .copy-button {
+    background-color: #1E90FF;
+    color: white;
+  }
+  
+  .copy-button:hover {
+    background-color: #1C86EE;
+  }
+  
+  .share-button {
+    background-color: #32CD32;
+    color: white;
+  }
+  
+  .share-button:hover {
+    background-color: #2E8B57;
+  }
+  
+  .referrals-section {
+    margin-bottom: 1rem;
+  }
+  
+  .referrals-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+  
+  .referrals-list {
+    list-style: disc inside;
+    padding: 0;
+  }
+  
+  .referral-item {
+    padding: 0.5rem 0;
+  }
+  
+  .back-button {
+    display: inline-block;
+    background-color: #555;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    text-decoration: none;
+    transition: background-color 0.3s;
+  }
+  
+  .back-button:hover {
+    background-color: #333;
+  }
+  

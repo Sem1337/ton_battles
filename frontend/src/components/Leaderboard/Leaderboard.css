@@ -1,0 +1,71 @@
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .modal-content {
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 32rem;
+    padding: 1rem;
+    position: relative;
+  }
+  
+  .modal-body {
+    padding: 1rem;
+  }
+  
+  .modal-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+  
+  .modal-close-button {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #666;
+    cursor: pointer;
+    transition: color 0.3s;
+  }
+  
+  .modal-close-button:hover {
+    color: #000;
+  }
+  
+  .modal-scroll {
+    max-height: 24rem;
+    overflow-y: auto;
+  }
+  
+  .leaderboard-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .leaderboard-item {
+    border-bottom: 1px solid #ccc;
+    padding: 0.5rem 0;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .leaderboard-rank {
+    font-weight: bold;
+  }
+  
+  .leaderboard-points {
+    color: #888;
+  }
+  

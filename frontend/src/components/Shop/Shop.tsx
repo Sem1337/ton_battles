@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSocket } from '../../contexts/SocketContext';
 import { beginCell, toNano } from '@ton/core';
 import { useTonConnectUI } from '@tonconnect/ui-react';
+import './Shop.css';
 
 interface ShopItem {
   itemId: number;
@@ -123,26 +124,41 @@ const Shop: React.FC = () => {
   });
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-3xl font-bold text-center mb-4">Shop</h2>
+    <div className="shop-container">
+      <div className="shop-header">
+        <h2 className="shop-title">Shop</h2>
         <button
           onClick={() => navigate('/')}
-          className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+          className="shop-button close-button"
         >
           Close
         </button>
       </div>
-      <div className="flex justify-center space-x-4 mb-8">
-        <button onClick={() => setActiveTab('boosts')} className={`py-2 px-4 rounded ${activeTab === 'boosts' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>Boosts</button>
-        <button onClick={() => setActiveTab('points')} className={`py-2 px-4 rounded ${activeTab === 'points' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>Points</button>
-        <button onClick={() => setActiveTab('gems')} className={`py-2 px-4 rounded ${activeTab === 'gems' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>Gems</button>
+      <div className="shop-tabs">
+        <button
+          onClick={() => setActiveTab('boosts')}
+          className={`shop-tab ${activeTab === 'boosts' ? 'active-tab' : ''}`}
+        >
+          Boosts
+        </button>
+        <button
+          onClick={() => setActiveTab('points')}
+          className={`shop-tab ${activeTab === 'points' ? 'active-tab' : ''}`}
+        >
+          Points
+        </button>
+        <button
+          onClick={() => setActiveTab('gems')}
+          className={`shop-tab ${activeTab === 'gems' ? 'active-tab' : ''}`}
+        >
+          Gems
+        </button>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      <div className="shop-items">
         {filteredItems.map(item => (
-          <div key={item.itemId} className="p-4 bg-white rounded shadow" onClick={() => openModal(item)}>
-            <h3 className="text-xl font-bold">{item.name}</h3>
-            <p>{item.description}</p>
+          <div key={item.itemId} className="shop-item" onClick={() => openModal(item)}>
+            <h3 className="item-title">{item.name}</h3>
+            <p className="item-description">{item.description}</p>
           </div>
         ))}
       </div>
@@ -151,35 +167,39 @@ const Shop: React.FC = () => {
           isOpen={true}
           onRequestClose={closeModal}
           contentLabel="Item Info"
-          className="fixed inset-0 flex items-center justify-center z-50"
-          overlayClassName="overlay-custom-style"
+          className="modal-content"
+          overlayClassName="modal-overlay"
         >
-          <div className="relative bg-white p-6 rounded shadow-lg max-w-md w-full">
+          <div className="modal-body">
             <button
               onClick={closeModal}
-              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+              className="modal-close-button"
             >
               &times;
             </button>
-            <h2 className="text-xl font-bold mb-4">{selectedItem.name}</h2>
-            <p className="mb-4">{selectedItem.description}</p>
-            <div className="mb-4">
+            <h2 className="modal-title">{selectedItem.name}</h2>
+            <p className="modal-description">{selectedItem.description}</p>
+            <div className="modal-cost">
               <p>Cost:</p>
-              {Object.entries(selectedItem).filter(([key, value]) => costTypes.includes(key) && value !== null).map(([key, value]) => (
-                <p key={key}>{key}: {value}</p>
-              ))}
+              {Object.entries(selectedItem)
+                .filter(([key, value]) => costTypes.includes(key) && value !== null)
+                .map(([key, value]) => (
+                  <p key={key}>{key}: {value}</p>
+                ))}
             </div>
-            <div className="flex space-x-4">
-              {Object.entries(selectedItem).filter(([key, value]) => costTypes.includes(key) && value !== null).map(([key]) => (
-                <button
-                  key={key}
-                  onClick={() => handleBuy(key as keyof ShopItem)}
-                  disabled={isBuying}
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                >
-                  {isBuying ? 'Processing...' : `Buy with ${key}`}
-                </button>
-              ))}
+            <div className="modal-buttons">
+              {Object.entries(selectedItem)
+                .filter(([key, value]) => costTypes.includes(key) && value !== null)
+                .map(([key]) => (
+                  <button
+                    key={key}
+                    onClick={() => handleBuy(key as keyof ShopItem)}
+                    disabled={isBuying}
+                    className="modal-button"
+                  >
+                    {isBuying ? 'Processing...' : `Buy with ${key}`}
+                  </button>
+                ))}
             </div>
           </div>
         </Modal>

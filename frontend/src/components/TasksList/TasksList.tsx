@@ -4,6 +4,7 @@ import TaskCardModal from './TaskCardModal';
 import { authFetch } from '../../utils/auth'; // Adjust the import path if necessary
 import { useAuth } from '../../contexts/AuthContext';
 import { Task } from '../../types/types'
+import './TasksList.css';
 
 
 const TasksList: React.FC = () => {
@@ -34,16 +35,16 @@ const TasksList: React.FC = () => {
   };
 
   return (
-    <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">Tasks</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div className="tasks-list">
+      <h2 className="tasks-title">Tasks</h2>
+      <div className="tasks-grid">
         {tasks.map(task => (
           <div
             key={task.id}
-            className={`p-4 border rounded shadow-sm cursor-pointer hover:bg-gray-100 ${task.completed ? 'opacity-50' : ''}`}
+            className={`task-card ${task.completed ? 'task-completed' : ''}`}
             onClick={() => handleCardClick(task)}
           >
-            <h3 className="text-xl font-semibold">{task.taskName}</h3>
+            <h3 className="task-card-title">{task.taskName}</h3>
             <p>Reward: {task.reward}</p>
           </div>
         ))}

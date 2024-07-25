@@ -1,0 +1,116 @@
+.tasks-list {
+    padding: 1rem;
+  }
+  
+  .tasks-title {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+  
+  .tasks-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  @media (min-width: 768px) {
+    .tasks-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .tasks-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  
+  .task-card {
+    padding: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 0.25rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .task-card:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .task-card.task-completed {
+    opacity: 0.5;
+  }
+  
+  .task-card-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+  
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .modal-content {
+    background-color: white;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    width: 100%;
+    max-width: 32rem;
+    position: relative;
+    text-align: center;
+  }
+  
+  .modal-body {
+    padding: 1rem;
+  }
+  
+  .modal-close-button {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #666;
+    cursor: pointer;
+    transition: color 0.3s;
+  }
+  
+  .modal-close-button:hover {
+    color: #000;
+  }
+  
+  .modal-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+  
+  .modal-description {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .modal-button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 0.25rem;
+    font-size: 1rem;
+    cursor: pointer;
+    background-color: #1e90ff;
+    color: white;
+    transition: background-color 0.3s;
+  }
+  
+  .modal-button:hover {
+    background-color: #1c86ee;
+  }
+    

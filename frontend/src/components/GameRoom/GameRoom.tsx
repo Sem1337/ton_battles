@@ -4,7 +4,7 @@ import Modal from 'react-modal'; // Import react-modal
 import { useSocket } from '../../contexts/SocketContext'
 import { useNavigate, useParams } from 'react-router-dom';
 import PointsCounter from '../PointsCounter/PointsCounter';
-
+import './GameRoom.css';
 
 const GameRoomComponent = () => {
   const { roomId } = useParams<{ roomId: string }>();
@@ -74,9 +74,9 @@ const GameRoomComponent = () => {
   }, [navigate]);
 
   const memoizedPlayersList = useMemo(() => (
-    <ul className="list-disc list-inside">
+    <ul className="players-list">
       {players.map((player) => (
-        <li key={player.id}>
+        <li key={player.id} className="player-item">
           {player.name}: {player.bet}
         </li>
       ))}
@@ -91,19 +91,19 @@ const GameRoomComponent = () => {
           setWinner(null);
           setTotalBank(null);
         }}
-        className="fixed inset-0 flex items-center justify-center z-50"
+        className="modal-content"
+        overlayClassName="modal-overlay"
         contentLabel="Game Completed"
-        overlayClassName="overlay-custom-style"
       >
-        <h2 className="text-xl font-bold mb-4">Game Completed</h2>
-        <p className="mb-2">Winner: {winner.name} (Bet: {winner.bet})</p>
-        <p className="mb-4">Total Bank: {totalBank}</p>
+        <h2 className="modal-title">Game Completed</h2>
+        <p className="modal-winner">Winner: {winner.name} (Bet: {winner.bet})</p>
+        <p className="modal-bank">Total Bank: {totalBank}</p>
         <button
           onClick={() => {
             setWinner(null);
             setTotalBank(null);
           }}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          className="modal-button"
         >
           Close
         </button>
@@ -112,39 +112,39 @@ const GameRoomComponent = () => {
   ), [winner, totalBank]);
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center p-4">
-      <h2 className="text-3xl font-bold mb-4">Game Room {roomId}</h2>
+    <div className="game-room-container">
+      <h2 className="game-room-title">Game Room {roomId}</h2>
       <PointsCounter />
-      <div className="text-lg mb-4">Time left: {timer} seconds</div>
-      <div className="flex flex-col items-center space-y-4 mb-4">
-        <div className="flex flex-col items-center space-y-2">
-          <label htmlFor="betSize" className="text-lg">Bet Size:</label>
+      <div className="timer">Time left: {timer} seconds</div>
+      <div className="bet-section">
+        <div className="bet-input-group">
+          <label htmlFor="betSize" className="bet-label">Bet Size:</label>
           <input
             type="number"
             id="betSize"
             name="betSize"
             value={betSize}
             onChange={(e) => setBetSize(e.target.value)}
-            className="p-2 border rounded text-black"
+            className="bet-input"
           />
         </div>
-        <div className="flex space-x-4">
+        <div className="bet-buttons">
           <button
             onClick={makeBet}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            className="bet-button"
           >
             Make Bet
           </button>
           <button
             onClick={leaveGameRoom}
-            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+            className="leave-button"
           >
             Leave GameRoom
           </button>
         </div>
       </div>
-      <div className="mb-4">
-        <h3 className="text-2xl font-semibold mb-2">Players</h3>
+      <div className="players-section">
+        <h3 className="players-title">Players</h3>
         {memoizedPlayersList}
       </div>
       {memoizedModal}

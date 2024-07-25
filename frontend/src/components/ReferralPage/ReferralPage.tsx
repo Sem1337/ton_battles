@@ -3,6 +3,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { authFetch } from '../../utils/auth';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import './ReferralPage.css';
 
 const ReferralPage: React.FC = () => {
   const { token } = useAuth();
@@ -43,34 +44,34 @@ const ReferralPage: React.FC = () => {
   };
 
   return (
-    <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">Referral Page</h2>
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">Your Referral Link:</label>
+    <div className="referral-page">
+      <h2 className="referral-title">Referral Page</h2>
+      <div className="referral-link-section">
+        <label className="referral-label">Your Referral Link:</label>
         <input
           type="text"
           readOnly
           value={referralLink}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          className="referral-input"
         />
         <button
           onClick={handleCopy}
-          className="ml-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          className="referral-button copy-button"
         >
           Copy
         </button>
         <button
           onClick={handleShare}
-          className="ml-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+          className="referral-button share-button"
         >
           Share
         </button>
       </div>
-      <div>
-        <h3 className="text-xl font-semibold mb-2">Your Referrals</h3>
-        <ul className="list-disc list-inside">
+      <div className="referrals-section">
+        <h3 className="referrals-title">Your Referrals</h3>
+        <ul className="referrals-list">
           {referrals.map((referral, index) => (
-            <li key={index}>
+            <li key={index} className="referral-item">
               {referral.username} - {referral.date}
             </li>
           ))}
@@ -78,7 +79,7 @@ const ReferralPage: React.FC = () => {
       </div>
       <Link
         to="/"
-        className="mt-4 inline-block bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+        className="back-button"
       >
         Back to Home
       </Link>
