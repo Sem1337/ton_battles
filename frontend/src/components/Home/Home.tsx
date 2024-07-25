@@ -9,27 +9,27 @@ const Home: React.FC = () => {
   useEffect(() => {
     console.log('balance info use effect');
     sendMessage('GET_BALANCE');
-  }, []);
+  }, [sendMessage]);
 
   const memoizedHeader = useMemo(() => (
-    <div className="header">
-      <h1 className="title">Welcome to TON Battles</h1>
-      <p className="subtitle">Join a game or create your own battle room and start playing!</p>
+    <div className="home-header">
+      <h1 className="home-title">Welcome to TON Battles</h1>
+      <p className="home-subtitle">Join a game or create your own battle room and start playing!</p>
     </div>
   ), []);
 
   const memoizedLinks = useMemo(() => (
-    <div className="links">
-      <Link to="/game-rooms" className="link-button">
+    <div className="home-links">
+      <Link to="/game-rooms" className="home-button">
         View Available Games
       </Link>
-      <Link to="/create-room" className="link-button">
+      <Link to="/create-room" className="home-button">
         Create Game Room
       </Link>
-      <Link to="/shop" className="link-button">
+      <Link to="/shop" className="home-button">
         Shop
       </Link>
-      <Link to="/referral" className="link-button referral">
+      <Link to="/referral" className="home-button">
         Referral Page
       </Link>
     </div>
