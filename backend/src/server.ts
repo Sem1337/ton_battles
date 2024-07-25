@@ -20,7 +20,7 @@ const port = process.env.PORT || 8080;
 
 
 app.use(cors({
-  origin: 'https://sem1337.github.io', // Replace with your frontend URL
+  origin: ['https://sem1337.github.io', 'https://www.tonbattles.ru/'], // Replace with your frontend URL
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true
 }));

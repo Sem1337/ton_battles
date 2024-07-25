@@ -16,9 +16,9 @@ WebApp.expand();
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <BrowserRouter basename="/ton_battles">
+    <BrowserRouter basename="/">
       <TonConnectUIProvider
-        manifestUrl="https://sem1337.github.io/ton_battles/tonconnect-manifest.json"
+        manifestUrl="https://www.tonbattles.ru/tonconnect-manifest.json"
       >
         <AuthProvider>
           <NotificationProvider>
