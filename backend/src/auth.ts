@@ -97,17 +97,42 @@ export const authenticateUser = async (req: Request, res: Response) => {
       user = await User.create({ userId: userId, balance: balance, username: username });
     }
 
-    const token = jwt.sign({ userId: userId }, SECRET_KEY, { expiresIn: '1h' });
+    const token = jwt.sign({ userId: userId }, SECRET_KEY, { expiresIn: '30s' });
+    const refreshToken = jwt.sign({ userId }, SECRET_KEY, { expiresIn: '7d' });
     console.log('user auth: ', userId);
 
     res.setHeader('Access-Control-Expose-Headers', 'Authorization');
     res.setHeader('Authorization', `Bearer ${token}`);
-    return res.status(200).send({ status: 'ok', userId: user.userId, balance: user.balance });
+    return res.status(200).send({ status: 'ok', userId: user.userId, balance: user.balance, refreshToken });
   } catch (error) {
     console.error(error);
     return res.status(500).send({ status: 'error', message: 'Server error' });
   }
 
+};
+
+
+export const refreshToken = async (req: Request, res: Response) => {
+  const { token } = req.body;
+
+  if (!token) {
+    return res.status(400).send('Refresh token is required');
+  }
+
+  jwt.verify(token, SECRET_KEY, async (err : any, user : any) => {
+    if (err) {
+      return res.status(403).send('Invalid refresh token');
+    }
+
+    try {
+      const newToken = jwt.sign({ userId: user.userId }, SECRET_KEY, { expiresIn: '1h' });
+      return res.status(200).json({ token: newToken });
+    } catch (error) {
+      console.error('Error generating new token:', error);
+      return res.status(500).send('Server error');
+    }
+  });
+  return res.status(500).send('Server error');
 };
 
 // WebSocket authentication

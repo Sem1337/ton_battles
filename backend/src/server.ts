@@ -9,7 +9,7 @@ import shopRouter from './routes/shop.router.js';
 import taskRouter from './routes/task.router.js';
 import cookieParser from 'cookie-parser';
 import sequelize from './database/db.js';
-import { authenticateUser, verifyToken } from './auth.js';
+import { authenticateUser, refreshToken, verifyToken } from './auth.js';
 import { createServer } from 'http';
 import { initializeSocket } from './utils/socket.js';
 import ShopService from './services/ShopService.js';
@@ -43,6 +43,7 @@ app.use(shopRouter);
 app.use(taskRouter);
 
 app.post('/auth', authenticateUser);
+app.post('/refresh', refreshToken);
 
 app.get('/', (_req, res) => {
   res.send('Hello world');

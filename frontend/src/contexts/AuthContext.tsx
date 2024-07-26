@@ -1,10 +1,11 @@
 import { createContext, useState, useContext, useEffect, ReactNode  } from 'react';
-import { authFetch } from '../utils/auth';
+import { authFetch, fetchNewAuthToken } from '../utils/auth';
 import WebApp from '@twa-dev/sdk';
 
 interface AuthContextProps {
   isAuthenticated: boolean;
   authenticate: () => Promise<void>;
+  refreshAuthToken: () => Promise<string | null>;
   tgUserId: number;
   token: string | null;
 }
@@ -18,6 +19,7 @@ export const AuthProvider = ({ children } : AuthProviderProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [tgUserId, setTgUserId] = useState<number>(-1);
   const [token, setToken] = useState<string | null>(null);
+  const [refreshToken, setRefreshToken] = useState<string | null>(null);
 
   const authenticate = async () => {
     const initData = WebApp.initData;
@@ -43,12 +45,16 @@ export const AuthProvider = ({ children } : AuthProviderProps) => {
         // User is authenticated
         const authHeader = response.headers.get('Authorization');
         const token = authHeader && authHeader.split(' ')[1];
+        const refreshToken = result.refreshToken;
+
+        localStorage.setItem('refreshToken', refreshToken!);
         localStorage.setItem('token', token!);
 
         console.log('User authenticated', result.initData);
         setTgUserId(result.userId);
         setIsAuthenticated(true);
         setToken(token);
+        setRefreshToken(refreshToken);
       } else {
         // Authentication failed
         console.error('Authentication failed', result.message);
@@ -60,12 +66,21 @@ export const AuthProvider = ({ children } : AuthProviderProps) => {
     }
   };
 
+  const refreshAuthToken = async (): Promise<string | null> => {
+    const newToken = await fetchNewAuthToken(refreshToken);
+    if (newToken) {
+      setToken(newToken);
+      localStorage.setItem('token', newToken);
+    }
+    return newToken;
+  };
+
   useEffect(() => {
     authenticate();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, authenticate, tgUserId, token }}>
+    <AuthContext.Provider value={{ isAuthenticated, authenticate, refreshAuthToken, tgUserId, token }}>
       {children}
     </AuthContext.Provider>
   );
