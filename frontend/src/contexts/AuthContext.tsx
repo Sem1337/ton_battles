@@ -1,5 +1,5 @@
 import { createContext, useState, useContext, useEffect, ReactNode  } from 'react';
-import { authFetch, fetchNewAuthToken } from '../utils/auth';
+import { fetchNewAuthToken, useAuthFetch } from '../utils/auth';
 import WebApp from '@twa-dev/sdk';
 
 interface AuthContextProps {
@@ -20,6 +20,7 @@ export const AuthProvider = ({ children } : AuthProviderProps) => {
   const [tgUserId, setTgUserId] = useState<number>(-1);
   const [token, setToken] = useState<string | null>(null);
   const [refreshToken, setRefreshToken] = useState<string | null>(null);
+  const { authFetch } = useAuthFetch();
 
   const authenticate = async () => {
     const initData = WebApp.initData;
@@ -32,7 +33,7 @@ export const AuthProvider = ({ children } : AuthProviderProps) => {
     }
 
     try {
-      const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/auth`, token, {
+      const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/auth`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ initData }),
@@ -70,7 +71,6 @@ export const AuthProvider = ({ children } : AuthProviderProps) => {
     const newToken = await fetchNewAuthToken(refreshToken);
     if (newToken) {
       setToken(newToken);
-      localStorage.setItem('token', newToken);
     }
     return newToken;
   };

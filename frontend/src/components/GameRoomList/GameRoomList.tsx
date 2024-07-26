@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
-import { authFetch } from '../../utils/auth'; // Adjust the import path if necessary
 import GameRoomCard from './GameRoomCard';
 import type { GameRoom } from '../../types/types'; // Import shared types
-import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import './GameRoomList.css';
+import { useAuthFetch } from '../../utils/auth';
 
 const GameRoomList = () => {
   const [gameRooms, setGameRooms] = useState<GameRoom[]>([]);
@@ -14,15 +13,13 @@ const GameRoomList = () => {
   const [filter, setFilter] = useState('');
   const [sort, setSort] = useState('roomName');
   const [selectedTab, setSelectedTab] = useState<'points' | 'gems' | 'TON'>('points');
-  const { token } = useAuth(); // Get the token from AuthContext
   const navigate = useNavigate(); // Get navigate function from useNavigate hook
+  const { authFetch } = useAuthFetch();
 
   useEffect(() => {
     const fetchGameRooms = async () => {
       const response = await authFetch(
-        `${import.meta.env.VITE_REACT_APP_BACKEND_URL}/gamerooms?page=${page}&limit=${limit}&sort=${sort}&filter=${filter}&gameType=${selectedTab}`,
-        token
-      );
+        `${import.meta.env.VITE_REACT_APP_BACKEND_URL}/gamerooms?page=${page}&limit=${limit}&sort=${sort}&filter=${filter}&gameType=${selectedTab}`);
       if (response.ok) {
         const data = await response.json();
         setGameRooms(data.data);
@@ -36,7 +33,7 @@ const GameRoomList = () => {
   }, [page, limit, sort, filter, selectedTab]);
 
   const joinGameRoom = async (roomId: string) => {
-    const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/gamerooms/${roomId}/join`, token, {
+    const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/gamerooms/${roomId}/join`, {
       method: 'POST',
     });
     if (response.ok) {

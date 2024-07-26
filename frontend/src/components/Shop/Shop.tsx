@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
-import { useAuth } from '../../contexts/AuthContext';
-import { authFetch } from '../../utils/auth';
+import { useAuthFetch } from '../../utils/auth';
 import WebApp from '@twa-dev/sdk';
 import { useNavigate } from 'react-router-dom';
 import { useSocket } from '../../contexts/SocketContext';
@@ -26,15 +25,15 @@ const Shop: React.FC = () => {
   const [shopItems, setShopItems] = useState<ShopItem[]>([]);
   const [isBuying, setIsBuying] = useState<boolean>(false);
   const [selectedItem, setSelectedItem] = useState<ShopItem | null>(null);
-  const { token } = useAuth();
   const { sendMessage } = useSocket();
   const [tonConnectUI] = useTonConnectUI();
   const navigate = useNavigate(); // Get navigate function from useNavigate hook
+  const { authFetch } = useAuthFetch();
 
   useEffect(() => {
     const fetchShopItems = async () => {
       try {
-        const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/shop/items`, token);
+        const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/shop/items`);
         const data = await response.json();
         setShopItems(data);
       } catch (error) {
@@ -76,7 +75,7 @@ const Shop: React.FC = () => {
 
     setIsBuying(true);
     try {
-      const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/buy`, token, {
+      const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/buy`,{
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ itemId: selectedItem.itemId, costType }),

@@ -1,10 +1,9 @@
 // TaskCardModal.tsx
 import React from 'react';
 import Modal from 'react-modal';
-import { authFetch } from '../../utils/auth'; // Adjust the import path if necessary
-import { useAuth } from '../../contexts/AuthContext';
 import { Task } from '../../types/types';
 import './TasksList.css';
+import { useAuthFetch } from '../../utils/auth';
 
 Modal.setAppElement('#root');
 
@@ -14,11 +13,11 @@ interface TaskCardModalProps {
 }
 
 const TaskCardModal: React.FC<TaskCardModalProps> = ({ task, onClose }) => {
-  const { token } = useAuth();
+  const { authFetch } = useAuthFetch();
 
   const handleTaskCompletion = async () => {
     try {
-      const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/tasks/${task.id}/complete`, token, {
+      const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/tasks/${task.id}/complete`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       });

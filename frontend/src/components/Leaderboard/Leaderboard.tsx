@@ -1,10 +1,9 @@
 // LeaderboardModal.tsx
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
-import { authFetch } from '../../utils/auth'; // Adjust the import path if necessary
-import { useAuth } from '../../contexts/AuthContext';
 import { User } from '../../types/types';
 import './Leaderboard.css';
+import { useAuthFetch } from '../../utils/auth';
 
 Modal.setAppElement('#root');
 
@@ -15,11 +14,11 @@ interface LeaderboardModalProps {
 
 const LeaderboardModal: React.FC<LeaderboardModalProps> = ({ isOpen, onClose }) => {
   const [users, setUsers] = useState<User[]>([]);
-  const { token } = useAuth();
+  const { authFetch } = useAuthFetch();
 
   useEffect(() => {
     const fetchLeaderboard = async () => {
-      const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/leaderboard`, token);
+      const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/leaderboard`);
       if (response.ok) {
         const data = await response.json();
         setUsers(data);

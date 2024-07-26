@@ -1,20 +1,19 @@
 // TasksList.tsx
 import React, { useState, useEffect } from 'react';
 import TaskCardModal from './TaskCardModal';
-import { authFetch } from '../../utils/auth'; // Adjust the import path if necessary
-import { useAuth } from '../../contexts/AuthContext';
 import { Task } from '../../types/types'
 import './TasksList.css';
+import { useAuthFetch } from '../../utils/auth';
 
 
 const TasksList: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
-  const { token } = useAuth();
+  const { authFetch } = useAuthFetch();
 
   useEffect(() => {
     const fetchTasks = async () => {
-      const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/tasks`, token);
+      const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/tasks`);
       if (response.ok) {
         const data = await response.json();
         setTasks(data);
@@ -24,7 +23,7 @@ const TasksList: React.FC = () => {
     };
 
     fetchTasks();
-  }, [token]);
+  }, []);
 
   const handleCardClick = (task: Task) => {
     setSelectedTask(task);

@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { authFetch } from '../../utils/auth';
-import { useAuth } from '../../contexts/AuthContext';
 import './CreateRoom.css';
+import { useAuthFetch } from '../../utils/auth';
 
 const CreateGame = () => {
   const [gameType, setGameType] = useState<'points' | 'gems' | 'TON'>('points');
@@ -11,8 +10,8 @@ const CreateGame = () => {
   const [maxPlayers, setMaxPlayers] = useState<number | ''>('');
   const [roomName, setRoomName] = useState('');
   const [isUnlimited, setIsUnlimited] = useState(false);
-  const { token } = useAuth();
   const navigate = useNavigate();
+  const { authFetch } = useAuthFetch();
 
   const handleMinBetChange = (value: string) => {
     const numberValue = parseFloat(value);
@@ -39,7 +38,7 @@ const CreateGame = () => {
 
     console.log(minBetValue, maxBetValue, maxPlayers, roomName, gameType);
 
-    const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/gamerooms`, token, {
+    const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/gamerooms`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ gameType, minBet: minBetValue, maxBet: maxBetValue, maxPlayers, roomName }),
