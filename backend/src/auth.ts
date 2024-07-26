@@ -132,7 +132,8 @@ export const refreshToken = async (req: Request, res: Response) => {
       return res.status(500).send('Server error');
     }
   });
-  return res.status(500).send('Server error');
+
+  return;
 };
 
 // WebSocket authentication
