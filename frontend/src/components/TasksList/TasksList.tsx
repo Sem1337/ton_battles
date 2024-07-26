@@ -3,13 +3,13 @@ import React, { useState, useEffect } from 'react';
 import TaskCardModal from './TaskCardModal';
 import { Task } from '../../types/types'
 import './TasksList.css';
-import { useAuthFetch } from '../../utils/auth';
+import { useAuth } from '../../contexts/AuthContext';
 
 
 const TasksList: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
-  const { authFetch } = useAuthFetch();
+  const { authFetch } = useAuth();
 
   useEffect(() => {
     const fetchTasks = async () => {

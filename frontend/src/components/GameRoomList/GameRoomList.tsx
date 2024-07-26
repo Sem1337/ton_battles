@@ -3,7 +3,7 @@ import GameRoomCard from './GameRoomCard';
 import type { GameRoom } from '../../types/types'; // Import shared types
 import { useNavigate } from 'react-router-dom';
 import './GameRoomList.css';
-import { useAuthFetch } from '../../utils/auth';
+import { useAuth } from '../../contexts/AuthContext';
 
 const GameRoomList = () => {
   const [gameRooms, setGameRooms] = useState<GameRoom[]>([]);
@@ -14,7 +14,7 @@ const GameRoomList = () => {
   const [sort, setSort] = useState('roomName');
   const [selectedTab, setSelectedTab] = useState<'points' | 'gems' | 'TON'>('points');
   const navigate = useNavigate(); // Get navigate function from useNavigate hook
-  const { authFetch } = useAuthFetch();
+  const { authFetch } = useAuth();
 
   useEffect(() => {
     const fetchGameRooms = async () => {

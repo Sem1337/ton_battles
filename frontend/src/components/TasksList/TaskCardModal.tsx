@@ -3,7 +3,7 @@ import React from 'react';
 import Modal from 'react-modal';
 import { Task } from '../../types/types';
 import './TasksList.css';
-import { useAuthFetch } from '../../utils/auth';
+import { useAuth } from '../../contexts/AuthContext';
 
 Modal.setAppElement('#root');
 
@@ -13,7 +13,7 @@ interface TaskCardModalProps {
 }
 
 const TaskCardModal: React.FC<TaskCardModalProps> = ({ task, onClose }) => {
-  const { authFetch } = useAuthFetch();
+  const { authFetch } = useAuth();
 
   const handleTaskCompletion = async () => {
     try {

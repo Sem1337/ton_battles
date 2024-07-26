@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
-import { useAuthFetch } from '../../utils/auth';
 import WebApp from '@twa-dev/sdk';
 import { useNavigate } from 'react-router-dom';
 import { useSocket } from '../../contexts/SocketContext';
 import { beginCell, toNano } from '@ton/core';
 import { useTonConnectUI } from '@tonconnect/ui-react';
 import './Shop.css';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface ShopItem {
   itemId: number;
@@ -28,7 +28,7 @@ const Shop: React.FC = () => {
   const { sendMessage } = useSocket();
   const [tonConnectUI] = useTonConnectUI();
   const navigate = useNavigate(); // Get navigate function from useNavigate hook
-  const { authFetch } = useAuthFetch();
+  const { authFetch } = useAuth();
 
   useEffect(() => {
     const fetchShopItems = async () => {

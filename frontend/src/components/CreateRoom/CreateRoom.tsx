@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './CreateRoom.css';
-import { useAuthFetch } from '../../utils/auth';
+import { useAuth } from '../../contexts/AuthContext';
 
 const CreateGame = () => {
   const [gameType, setGameType] = useState<'points' | 'gems' | 'TON'>('points');
@@ -11,7 +11,7 @@ const CreateGame = () => {
   const [roomName, setRoomName] = useState('');
   const [isUnlimited, setIsUnlimited] = useState(false);
   const navigate = useNavigate();
-  const { authFetch } = useAuthFetch();
+  const { authFetch } = useAuth();
 
   const handleMinBetChange = (value: string) => {
     const numberValue = parseFloat(value);

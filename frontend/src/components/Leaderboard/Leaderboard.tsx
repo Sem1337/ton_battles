@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import { User } from '../../types/types';
 import './Leaderboard.css';
-import { useAuthFetch } from '../../utils/auth';
+import { useAuth } from '../../contexts/AuthContext';
 
 Modal.setAppElement('#root');
 
@@ -14,7 +14,7 @@ interface LeaderboardModalProps {
 
 const LeaderboardModal: React.FC<LeaderboardModalProps> = ({ isOpen, onClose }) => {
   const [users, setUsers] = useState<User[]>([]);
-  const { authFetch } = useAuthFetch();
+  const { authFetch } = useAuth();
 
   useEffect(() => {
     const fetchLeaderboard = async () => {

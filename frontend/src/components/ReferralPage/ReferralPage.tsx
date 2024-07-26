@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useAuthFetch } from '../../utils/auth';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import './ReferralPage.css';
+import { useAuth } from '../../contexts/AuthContext';
 
 const ReferralPage: React.FC = () => {
   const [referralLink, setReferralLink] = useState('');
   const [referrals, setReferrals] = useState<{ username: string; date: string }[]>([]);
-  const { authFetch } = useAuthFetch();
+  const { authFetch } = useAuth();
 
   useEffect(() => {
     const fetchReferralData = async () => {
