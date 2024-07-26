@@ -29,7 +29,7 @@ app.use(bodyParser.json());
 app.use(cookieParser()); // Ensure cookie-parser middleware is used
 
 app.use((req, res, next) => {
-  if (req.path === '/auth' || req.path === '/webhook') {
+  if (req.path === '/auth' || req.path === '/webhook' || req.path === '/refresh') {
     return next(); // Skip verifyToken middleware for /auth
   }
   return verifyToken(req, res, next); // Apply verifyToken middleware for all other routes
