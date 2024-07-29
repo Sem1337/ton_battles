@@ -40,6 +40,18 @@
   margin-right: 1rem;
 }
 
+.filter-label,
+.filter-input {
+  display: inline-block;
+  margin-right: 8px; /* Optional: Add some space between the label and select */
+}
+
+.sort-label,
+.sort-select {
+  display: inline-block;
+  margin-right: 8px; /* Optional: Add some space between the label and select */
+}
+
 .tab-buttons {
   display: flex;
   margin-bottom: 1rem;

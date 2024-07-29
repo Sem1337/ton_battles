@@ -11,7 +11,8 @@ export class GameRoomService {
   static async createGameRoom(gameType: 'points' | 'gems' | 'TON', minBet: string, maxBet: string, maxPlayers: number, roomName: string) {
     try {
       const maxBetValue = maxBet === 'Infinity' ? null : maxBet;
-      if (maxBetValue && new Big(maxBetValue).lt(minBet)) {
+      if (maxBetValue && new Big(maxBetValue).lt(minBet) ||
+          maxPlayers < 2 || maxPlayers > 100 || new Big(minBet).lte(0)) {
         throw new Error('Failed to create game room');
       }
       console.log('creating game room: ', gameType, minBet, maxBet, maxPlayers);

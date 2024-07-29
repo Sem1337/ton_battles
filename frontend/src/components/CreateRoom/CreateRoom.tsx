@@ -126,6 +126,8 @@ const CreateGame = () => {
             onChange={(e) => setMaxPlayers(parseInt(e.target.value, 10) || '')}
             className="form-input"
             required
+            max={100}
+            min={2}
           />
         </div>
         <button
