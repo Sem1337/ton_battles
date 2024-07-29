@@ -131,7 +131,7 @@ class ShopService {
           itemId: ShopItemId.PRODUCTION_SPEED_LVL_UP,
           name: 'Production Speed LVL Up',
           type: 1,
-          description: 'Increase your production speed.',
+          description: 'Increase your production speed (+1 per level).',
           points: 1000,
           gems: 10,
           stars: 1,

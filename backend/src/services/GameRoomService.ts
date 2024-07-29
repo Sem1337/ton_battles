@@ -194,7 +194,7 @@ export class GameRoomService {
       const existingPlayer = gameRoom.players.find(player => player.userId.toString() === userId.toString());
       if (existingPlayer) {
         console.log('Player already in the game room');
-        io.to(roomId).emit('message', { type: 'PLAYER_JOINED', payload: { players: gameRoom.players, remainingTime: this.gameRoomTimers[roomId] } });
+        io.to(roomId).emit('message', { type: 'PLAYER_JOINED', payload: { players: gameRoom.players, remainingTime: this.gameRoomTimers[roomId], roomName: gameRoom.roomName } });
         await transaction.commit();
         return gameRoom;
       }
@@ -213,7 +213,7 @@ export class GameRoomService {
       gameRoom.players.push(player);
       await gameRoom.save({ transaction });
 
-      io.to(roomId).emit('message', { type: 'PLAYER_JOINED', payload: { players: gameRoom.players, remainingTime: this.gameRoomTimers[roomId] } });
+      io.to(roomId).emit('message', { type: 'PLAYER_JOINED', payload: { players: gameRoom.players, remainingTime: this.gameRoomTimers[roomId], roomName: gameRoom.roomName } });
 
       console.log('success');
       await transaction.commit();

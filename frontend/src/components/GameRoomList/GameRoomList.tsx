@@ -12,7 +12,7 @@ const GameRoomList = () => {
   const [limit] = useState(10); // Adjust limit as needed
   const [filter, setFilter] = useState('');
   const [sort, setSort] = useState('roomName');
-  const [selectedTab, setSelectedTab] = useState<'points' | 'gems' | 'TON'>('points');
+  const [selectedTab, setSelectedTab] = useState<'points' | 'gems'>('points');
   const navigate = useNavigate(); // Get navigate function from useNavigate hook
   const { authFetch } = useAuth();
 
@@ -89,7 +89,7 @@ const GameRoomList = () => {
         {['points', 'gems', 'TON'].map((type) => (
           <button
             key={type}
-            onClick={() => setSelectedTab(type as 'points' | 'gems' | 'TON')}
+            onClick={() => setSelectedTab(type as 'points' | 'gems')}
             className={`tab-button ${selectedTab === type ? 'active' : ''}`}
           >
             {type.charAt(0).toUpperCase() + type.slice(1)}

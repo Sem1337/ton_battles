@@ -41,6 +41,7 @@ export interface Task {
   taskName: string;
   taskDescription: string;
   reward: string;
-  url: string;
+  payload: string;
   completed: boolean;
+  actionType: 'url' | 'transaction' | 'other'; // Add action types as needed
 }

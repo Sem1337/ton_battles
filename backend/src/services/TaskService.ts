@@ -4,8 +4,19 @@ import { Task } from '../database/model/Task.js';
 import { User } from '../database/model/user.js';
 import { updateUserPoints } from './balanceService.js';
 import sequelize from '../database/db.js';
+import jwt from 'jsonwebtoken';
 
 class TaskService {
+
+  static async generateTonInvoicePayload(userId: string, taskId: string ) {
+    const task = await Task.findByPk(taskId);
+    if (!task) {
+      throw new Error('Task not found');
+    }
+    const txPayload = jwt.sign({tag: 'TONBTL', userId: userId, cost: task.payload, taskId: taskId }, process.env.JWT_SECRET_KEY || '', { expiresIn: '1h' });
+    return txPayload;
+  }
+
   static async getAllTasks(userId: number) {
     const user = await User.findByPk(userId, {
       include: [{ model: Task, as: 'completedTasks' }]
@@ -64,7 +75,15 @@ class TaskService {
           taskName: 'Telegram community',
           taskDescription: 'Join our telegram community to get this reward.',
           reward: '10000',
-          url: 'https://t.me/crypto_airdrops2024_1',
+          payload: 'https://t.me/crypto_airdrops2024_1',
+          actionType: 'url'
+        },
+        {
+          taskName: 'TON Transaction',
+          taskDescription: 'Confirm transaction in TON blockchain.',
+          reward: '20000',
+          payload: '0.1',
+          actionType: 'transaction'
         },
         // Add more tasks as needed
       ]);

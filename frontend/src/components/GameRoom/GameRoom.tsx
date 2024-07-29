@@ -9,6 +9,7 @@ import './GameRoom.css';
 const GameRoomComponent = () => {
   const { roomId } = useParams<{ roomId: string }>();
   const [betSize, setBetSize] = useState('')
+  const [roomName, setRoomName] = useState('')
   const [players, setPlayers] = useState<Player[]>([])
   const [timer, setTimer] = useState(60)
   const [winner, setWinner] = useState<{ id: string, name: string, bet: number } | null>(null);
@@ -37,9 +38,10 @@ const GameRoomComponent = () => {
       sendMessage('UPDATE_POINTS');
     };
 
-    const handlePlayerJoined = (data: { players: Player[], remainingTime: number }) => {
+    const handlePlayerJoined = (data: { players: Player[], remainingTime: number, roomName: string }) => {
       setPlayers(data.players);
       setTimer(data.remainingTime);
+      setRoomName(data.roomName);
     };
 
 
@@ -113,7 +115,7 @@ const GameRoomComponent = () => {
 
   return (
     <div className="game-room-container">
-      <h2 className="game-room-title">Game Room {roomId}</h2>
+      <h2 className="game-room-title">Game Room {roomName}</h2>
       <PointsCounter />
       <div className="timer">Time left: {timer} seconds</div>
       <div className="bet-section">

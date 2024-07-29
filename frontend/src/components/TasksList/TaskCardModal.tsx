@@ -4,6 +4,7 @@ import Modal from 'react-modal';
 import { Task } from '../../types/types';
 import './TasksList.css';
 import { useAuth } from '../../contexts/AuthContext';
+import { useTonTransaction } from '../../utils/tonUtils';
 
 Modal.setAppElement('#root');
 
@@ -14,6 +15,7 @@ interface TaskCardModalProps {
 
 const TaskCardModal: React.FC<TaskCardModalProps> = ({ task, onClose }) => {
   const { authFetch } = useAuth();
+  const { sendTonTransaction } = useTonTransaction();
 
   const handleTaskCompletion = async () => {
     try {
@@ -32,9 +34,33 @@ const TaskCardModal: React.FC<TaskCardModalProps> = ({ task, onClose }) => {
     }
   };
 
-  const handleLinkClick = () => {
-    window.open(task.url, '_blank');
-    handleTaskCompletion();
+  const handleLinkClick = async () => {
+    switch (task.actionType) {
+      case 'url':
+        window.open(task.payload, '_blank');
+        await handleTaskCompletion();
+        break;
+      case 'transaction': {
+        const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/tasks/${task.id}/getPayload`);
+        const data = await response.json();
+        if (data.success) {
+          const success = await sendTonTransaction(task.payload, data.txPayload);
+          if (success) {
+            await handleTaskCompletion();
+          }
+        } else {
+          console.log('Failed to proceed payment.', data.message);
+        }
+      }
+        break;
+      case 'other':
+        // Implement other action logic
+        console.log('Other action');
+        await handleTaskCompletion();
+        break;
+      default:
+        console.error('Unknown action type');
+    }
   };
 
   return (

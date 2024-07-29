@@ -33,6 +33,21 @@ class TaskController {
       res.status(500).json({ error: error });
     }
   }
+
+  static async getTonTaskPayload(req: Request, res: Response) {
+    const { id } = req.params;
+    const user = (req as any).user
+    const userId = user?.userId // Extract user ID from the verified token
+    if (!userId) {
+      res.status(400).json({ error: 'User ID is required' });
+    }
+    try {
+      const txPayload = await TaskService.generateTonInvoicePayload(userId, id);
+      res.json({success: true, txPayload: txPayload});
+    } catch (error) {
+      res.status(500).json({ error: error });
+    }
+  }
 }
 
 export default TaskController;

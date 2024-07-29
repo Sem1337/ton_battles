@@ -7,6 +7,7 @@ import jwt from 'jsonwebtoken';
 import ShopService from "./ShopService.js";
 import { updateUserBalance } from "./balanceService.js";
 import { sendMessageToUser } from "./messageService.js";
+import TaskService from "./TaskService.js";
 
 dotenv.config();
 
@@ -118,19 +119,27 @@ async function fetchAndProcessTransactions(toLT: string): Promise<void> {
         if (tag === 'TONBTL') {
           const userId = payloadDecrypted['userId'];
           const itemId = payloadDecrypted['itemId'];
+          const taskId = payloadDecrypted['taskId'];
           const cost = payloadDecrypted['cost'];
           console.log(userId, itemId, cost);
           if (userId) {
-            if (!itemId) {
-              await updateUserBalance(userId, txValue);
-              sendMessageToUser(userId, 'NOTIFY', { message: `Successful top up: ${txValue.toFixed(9)} TON` });
-            } else {
+            if (taskId) {
+              const expectedCost = new Big(cost);
+              if (expectedCost.eq(txValue)) {
+                await TaskService.completeTask(taskId, userId);
+              } else {
+                console.log('wrong tx amount: ', txValue, expectedCost);
+              }
+            } else if (itemId) {
               const expectedCost = new Big(cost);
               if (expectedCost.eq(txValue)) {
                 await ShopService.giveGoods(userId, itemId);
               } else {
                 console.log('wrong tx amount: ', txValue, expectedCost);
               }
+            } else {
+              await updateUserBalance(userId, txValue);
+              sendMessageToUser(userId, 'NOTIFY', { message: `Successful top up: ${txValue.toFixed(9)} TON` });
             }
           } else {
             console.log('unknown user Id');
