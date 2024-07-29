@@ -14,7 +14,7 @@ export const useTonTransaction = () => {
           {
             address: 'UQCn0VvM7Rx7t3IJ38RBUnCFEpqUfOval4SJ2mV8HQOV79O3', // Replace with the actual address
             amount: toNano(amount).toString(), // Convert to nano format
-            payload: beginCell().storeStringTail(payload).endCell().toBoc().toString('base64'), // Convert payload to base64
+            payload: beginCell().storeUint(0,32).storeStringTail(payload).endCell().toBoc().toString('base64'), // Convert payload to base64
           },
         ],
       };
