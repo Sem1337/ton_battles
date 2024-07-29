@@ -20,8 +20,7 @@ export const useTonTransaction = () => {
       };
 
       try {
-        await tonConnectUI.sendTransaction(transaction);
-        toast.loading('Processing transaction');
+        toast.promise(tonConnectUI.sendTransaction(transaction), {loading:'Processing transaction', success: 'Success', error: 'Failed transaction processing'});
         return true;
       } catch (error) {
         console.error('Transaction error:', error);

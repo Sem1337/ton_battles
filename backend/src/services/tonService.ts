@@ -126,7 +126,7 @@ async function fetchAndProcessTransactions(toLT: string): Promise<void> {
             if (taskId) {
               const expectedCost = new Big(cost);
               if (expectedCost.eq(txValue)) {
-                await TaskService.completeTask(taskId, userId);
+                await TaskService.completeTask(taskId, userId, true);
               } else {
                 console.log('wrong tx amount: ', txValue, expectedCost);
               }

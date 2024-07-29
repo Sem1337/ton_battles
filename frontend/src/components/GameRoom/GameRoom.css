@@ -1,145 +1,148 @@
+/* GameRoom.css */
 .game-room-container {
-    min-height: 100vh;
-    background-color: #1a1a1a;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 1rem;
-  }
-  
-  .game-room-title {
-    font-size: 2rem;
-    font-weight: bold;
-    margin-bottom: 1rem;
-  }
-  
-  .timer {
-    font-size: 1.25rem;
-    margin-bottom: 1rem;
-  }
-  
-  .bet-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 1rem;
-  }
-  
-  .bet-input-group {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 0.5rem;
-  }
-  
-  .bet-label {
-    font-size: 1.25rem;
-    margin-bottom: 0.5rem;
-  }
-  
-  .bet-input {
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 0.25rem;
-    text-align: center;
-  }
-  
-  .bet-buttons {
-    display: flex;
-    gap: 1rem;
-  }
-  
-  .bet-button, .leave-button {
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 0.25rem;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .bet-button {
-    background-color: #1E90FF;
-    color: white;
-  }
-  
-  .bet-button:hover {
-    background-color: #1C86EE;
-  }
-  
-  .leave-button {
-    background-color: #FF4500;
-    color: white;
-  }
-  
-  .leave-button:hover {
-    background-color: #E03E00;
-  }
-  
-  .players-section {
-    margin-bottom: 1rem;
-  }
-  
-  .players-title {
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin-bottom: 0.5rem;
-  }
-  
-  .players-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  
-  .player-item {
-    border-bottom: 1px solid #ccc;
-    padding: 0.5rem 0;
-  }
-  
-  .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .modal-content {
-    background-color: white;
-    border-radius: 0.5rem;
-    padding: 1rem;
-    width: 100%;
-    max-width: 32rem;
-    text-align: center;
-    color: black;
-  }
-  
-  .modal-title {
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin-bottom: 1rem;
-  }
-  
-  .modal-winner, .modal-bank {
-    font-size: 1.25rem;
-    margin-bottom: 0.5rem;
-  }
-  
-  .modal-button {
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 0.25rem;
-    font-size: 1rem;
-    cursor: pointer;
-    background-color: #1E90FF;
-    color: white;
-    transition: background-color 0.3s;
-  }
-  
-  .modal-button:hover {
-    background-color: #1C86EE;
-  }
-  
+  min-height: 100vh;
+  background-color: #f0f8ff; /* Light blue background */
+  color: #333; /* Dark gray text for readability */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+}
+
+.game-room-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #0077b6; /* Deep sky blue */
+}
+
+.timer {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.bet-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.bet-input-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.bet-label {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+  color: #0077b6; /* Deep sky blue */
+}
+
+.bet-input {
+  padding: 0.5rem;
+  border: 1px solid #0077b6; /* Deep sky blue border */
+  border-radius: 0.25rem;
+  text-align: center;
+}
+
+.bet-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.bet-button, .leave-button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.25rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.bet-button {
+  background-color: #0077b6; /* Deep sky blue */
+  color: white;
+}
+
+.bet-button:hover {
+  background-color: #005f99; /* Darker shade of blue */
+}
+
+.leave-button {
+  background-color: #ff6f61; /* Soft red */
+  color: white;
+}
+
+.leave-button:hover {
+  background-color: #cc594e; /* Darker shade of red */
+}
+
+.players-section {
+  margin-bottom: 1rem;
+}
+
+.players-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  color: #0077b6; /* Deep sky blue */
+}
+
+.players-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.player-item {
+  border-bottom: 1px solid #0077b6; /* Deep sky blue border */
+  padding: 0.5rem 0;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background-color: white;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  width: 100%;
+  max-width: 32rem;
+  text-align: center;
+  color: black;
+}
+
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.modal-winner, .modal-bank {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.modal-button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.25rem;
+  font-size: 1rem;
+  cursor: pointer;
+  background-color: #0077b6; /* Deep sky blue */
+  color: white;
+  transition: background-color 0.3s;
+}
+
+.modal-button:hover {
+  background-color: #005f99; /* Darker shade of blue */
+}

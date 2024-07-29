@@ -115,12 +115,14 @@ const GameRoomComponent = () => {
 
   return (
     <div className="game-room-container">
-      <h2 className="game-room-title">Game Room {roomName}</h2>
+      <h3 className="game-room-title">{roomName}</h3>
       <PointsCounter />
       <div className="timer">Time left: {timer} seconds</div>
       <div className="bet-section">
         <div className="bet-input-group">
-          <label htmlFor="betSize" className="bet-label">Bet Size:</label>
+          <label htmlFor="betSize" className="bet-label">
+            Bet Size:
+          </label>
           <input
             type="number"
             id="betSize"
@@ -131,16 +133,10 @@ const GameRoomComponent = () => {
           />
         </div>
         <div className="bet-buttons">
-          <button
-            onClick={makeBet}
-            className="bet-button"
-          >
+          <button onClick={makeBet} className="bet-button">
             Make Bet
           </button>
-          <button
-            onClick={leaveGameRoom}
-            className="leave-button"
-          >
+          <button onClick={leaveGameRoom} className="leave-button">
             Leave GameRoom
           </button>
         </div>

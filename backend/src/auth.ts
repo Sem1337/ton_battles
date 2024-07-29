@@ -83,7 +83,7 @@ export const authenticateUser = async (req: Request, res: Response) => {
   }
 
   const currentTime = Math.floor(Date.now() / 1000);
-  if (currentTime - authDate > 600) { // 86400 seconds = 24 hours; 600 seconds = 10 minutes
+  if (currentTime - authDate > 86400) { // 86400 seconds = 24 hours;
     return res.status(403).send({ status: 'error', message: 'Auth date is too old' });
   }
 

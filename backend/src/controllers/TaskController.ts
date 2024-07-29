@@ -27,7 +27,7 @@ class TaskController {
     }
 
     try {
-      await TaskService.completeTask(id, userId);
+      await TaskService.completeTask(id, userId, false);
       res.json({ success: true });
     } catch (error) {
       res.status(500).json({ error: error });

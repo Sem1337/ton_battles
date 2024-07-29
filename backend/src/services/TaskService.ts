@@ -29,13 +29,18 @@ class TaskService {
     }));
   }
 
-  static async completeTask(taskId: string, userId: number) {
+  static async completeTask(taskId: string, userId: number, fromTonService: boolean) {
     const transaction = await sequelize.transaction();
 
     try {
       const task = await Task.findByPk(taskId, { transaction });
       if (!task) {
         throw new Error('Task not found');
+      }
+
+      if (task.actionType === 'transaction' && !fromTonService) {
+        await transaction.commit();
+        return;
       }
 
       const user = await User.findByPk(userId, { transaction, lock: transaction.LOCK.UPDATE });
