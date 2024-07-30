@@ -23,6 +23,26 @@ spec:
             secretKeyRef:
               name: my-app-secret
               key: database-url
+        - name: DB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: my-app-secret
+              key: db-username
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: my-app-secret
+              key: db-password
+        - name: DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: my-app-secret
+              key: db-name
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              name: my-app-secret
+              key: db-host
 ---
 apiVersion: v1
 kind: Service
