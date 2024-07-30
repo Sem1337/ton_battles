@@ -6,16 +6,6 @@ WORKDIR /usr/src/app
 # Copy the package.json and package-lock.json files to the working directory
 COPY package*.json ./
 
-ARG DB_USERNAME
-ARG DB_PASSWORD
-ARG DB_NAME
-ARG DB_HOST
-
-ENV DB_USERNAME=${DB_USERNAME}
-ENV DB_PASSWORD=${DB_PASSWORD}
-ENV DB_NAME=${DB_NAME}
-ENV DB_HOST=${DB_HOST}
-
 # Install dependencies
 RUN npm install
 

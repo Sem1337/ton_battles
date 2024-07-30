@@ -28,11 +28,11 @@ jobs:
         context: ./backend
         push: true
         tags: cr.yandex/crp864q0vdo1e470updf/my-app:latest
-        build-args: |
-          DB_USERNAME=${{ secrets.DB_USERNAME }}
-          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
-          DB_NAME=${{ secrets.DB_NAME }}
-          DB_HOST=${{ secrets.DB_HOST }}
+      env:
+        DB_USERNAME: ${{ secrets.DB_USERNAME }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        DB_NAME: ${{ secrets.DB_NAME }}
+        DB_HOST: ${{ secrets.DB_HOST }}
 
     - name: Set up Yandex CLI
       run: |
