@@ -18,9 +18,5 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  backend:
-    uses: ./.github/workflows/ci-backend.yml
-    secrets: inherit  # Pass all secrets to the backend workflow
-
   frontend:
     uses: ./.github/workflows/ci-frontend.yml
