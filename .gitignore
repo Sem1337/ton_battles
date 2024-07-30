@@ -16,6 +16,7 @@ certs
 dist_backend
 dist_frontend
 .env
+secret.yaml
 
 # Editor directories and files
 .vscode/*
