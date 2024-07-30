@@ -71,8 +71,7 @@ spec:
               name: my-app-secret
               key: jwt-secret
         - name: BACKEND_DOMAIN
-          valueFrom:
-            "app.tonbattles.ru"
+          value: "app.tonbattles.ru"
 ---
 apiVersion: v1
 kind: Service
