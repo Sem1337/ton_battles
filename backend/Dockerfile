@@ -21,8 +21,5 @@ EXPOSE 3000
 # Define the environment variable
 ENV NODE_ENV=production
 
-# Run database migrations
-RUN npm run migrate
-
 # Start the application
 CMD ["node", "./dist_backend/server.js"]

@@ -47,27 +47,16 @@ jobs:
         yc managed-kubernetes cluster get-credentials ton-btl-cluster --external --force
         echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
 
-    - name: Deploy to Kubernetes
+    - name: Run database migrations
       env:
         DB_USERNAME: ${{ secrets.DB_USERNAME }}
         DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         DB_NAME: ${{ secrets.DB_NAME }}
         DB_HOST: ${{ secrets.DB_HOST }}
-        DB_URL: ${{ secrets.DB_URL }}
       run: |
-        # Create secret.yaml
-        echo "apiVersion: v1
-        kind: Secret
-        metadata:
-          name: my-app-secret
-        type: Opaque
-        data:
-          database-url: $(echo -n $DB_URL | base64)
-          db-username: $(echo -n $DB_USERNAME | base64)
-          db-password: $(echo -n $DB_PASSWORD | base64)
-          db-name: $(echo -n $DB_NAME | base64)
-          db-host: $(echo -n $DB_HOST | base64)" > secret.yaml
+        npm run migrate
 
-        kubectl apply -f secret.yaml
+    - name: Apply Kubernetes Secrets and Deployment
+      run: |
         kubectl apply -f backend/deployment.yaml
         kubectl apply -f backend/service.yaml
