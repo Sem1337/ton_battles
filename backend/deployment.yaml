@@ -45,6 +45,34 @@ spec:
             secretKeyRef:
               name: my-app-secret
               key: db-host
+        - name: BOT_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: my-app-secret
+              key: bot-token
+        - name: TON_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: my-app-secret
+              key: ton-api
+        - name: TON_PUBLIC_KEY_HEX
+          valueFrom:
+            secretKeyRef:
+              name: my-app-secret
+              key: ton-public
+        - name: TON_PRIVATE_KEY_HEX
+          valueFrom:
+            secretKeyRef:
+              name: my-app-secret
+              key: ton-private
+        - name: JWT_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: my-app-secret
+              key: jwt-secret
+        - name: BACKEND_DOMAIN
+          valueFrom:
+            "app.tonbattles.ru"
 ---
 apiVersion: v1
 kind: Service
