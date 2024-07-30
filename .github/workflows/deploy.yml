@@ -35,6 +35,7 @@ jobs:
         cat /home/runner/yandex-cloud/path.bash.inc
         source '/home/runner/yandex-cloud/path.bash.inc'
         echo "PATH=$PATH"
+        echo 'export PATH=$HOME/yandex-cloud/bin:$PATH' >> $GITHUB_ENV
 
     - name: Set up Yandex CLI
       run: |
