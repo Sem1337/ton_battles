@@ -1,7 +1,6 @@
 import { Sequelize } from 'sequelize';
 import dotenv from 'dotenv';
 import fs from 'fs';
-import path from 'path';
 
 dotenv.config();
 
@@ -22,7 +21,7 @@ const sequelize = new Sequelize(
     logging: true, // Disable logging (optional)
     dialectOptions: {
       ssl: {
-        ca: fs.readFileSync(path.resolve(__dirname, '/root/.postgresql/root.crt')).toString(),
+        ca: fs.readFileSync('/root/.postgresql/root.crt').toString(),
       },
     },
   }
