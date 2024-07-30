@@ -75,6 +75,14 @@ jobs:
     - name: Set up kubectl
       run: |
         yc managed-kubernetes cluster get-credentials ton-btl-cluster --external --force
+  
+    - name: Create Docker Registry Secret
+      run: |
+        kubectl create secret docker-registry ycr-secret \
+          --docker-server=cr.yandex \
+          --docker-username=oauth \
+          --docker-password="${{ secrets.YC_OAUTH_TOKEN }}" \
+          --docker-email=semenvlasov2000@gmail.com
 
     - name: Apply Kubernetes Secrets and Deployment
       run: |
