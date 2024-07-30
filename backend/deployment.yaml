@@ -12,6 +12,8 @@ spec:
       labels:
         app: my-app
     spec:
+      imagePullSecrets:
+      - name: ycr-secret
       containers:
       - name: my-app
         image: cr.yandex/crp864q0vdo1e470updf/my-app:latest
