@@ -47,14 +47,14 @@ jobs:
         yc config set folder-id ${{ secrets.YC_FOLDER_ID }}
         yc config set compute-default-zone ru-central1-d
 
+    - name: Log in to Yandex Container Registry
+      run: |
+        yc container registry configure-docker
+
     - name: Verify Cluster
       run: |
         echo "Listing clusters to verify access..."
         yc managed-kubernetes cluster list
-
-    - name: Log in to Yandex Container Registry
-      run: |
-        yc container registry configure-docker
   
     - name: Build and push Docker image
       uses: docker/build-push-action@v2
