@@ -78,11 +78,13 @@ jobs:
   
     - name: Create Docker Registry Secret
       run: |
-        kubectl create secret docker-registry ycr-secret \
-          --docker-server=cr.yandex \
-          --docker-username=oauth \
-          --docker-password="${{ secrets.YC_OAUTH_TOKEN }}" \
-          --docker-email=semenvlasov2000@gmail.com
+        if ! kubectl get secret ycr-secret; then
+          kubectl create secret docker-registry ycr-secret \
+            --docker-server=cr.yandex \
+            --docker-username=oauth \
+            --docker-password="${{ secrets.YC_OAUTH_TOKEN }}" \
+            --docker-email=semenvlasov2000@gmail.com
+        fi
 
     - name: Apply Kubernetes Secrets and Deployment
       run: |
