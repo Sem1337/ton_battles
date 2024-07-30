@@ -22,25 +22,24 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
+    - name: Set up Yandex CLI
+      run: |
+        curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
+        echo "${{ secrets.YC_OAUTH_TOKEN }}" | yc init --token
+        yc config set cloud-id ${{ secrets.YC_CLOUD_ID }}
+        yc config set folder-id ${{ secrets.YC_FOLDER_ID }}
+        yc config set compute-default-zone ru-central1-a
+  
+    - name: Log in to Yandex Container Registry
+      run: |
+        yc container registry configure-docker
+  
     - name: Build and push Docker image
       uses: docker/build-push-action@v2
       with:
         context: ./backend
         push: true
         tags: cr.yandex/crp864q0vdo1e470updf/my-app:latest
-      env:
-        DB_USERNAME: ${{ secrets.DB_USERNAME }}
-        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-        DB_NAME: ${{ secrets.DB_NAME }}
-        DB_HOST: ${{ secrets.DB_HOST }}
-
-    - name: Set up Yandex CLI
-      run: |
-        curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
-        echo "${{ secrets.YC_OAUTH_TOKEN }}" | yc init --token
-        yc config set cloud-id ${ secrets.YC_CLOUD_ID }
-        yc config set folder-id ${ secrets.YC_FOLDER_ID }
-        yc config set compute-default-zone ru-central1-a
 
     - name: Set up kubectl
       run: |
