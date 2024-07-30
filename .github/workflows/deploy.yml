@@ -75,7 +75,6 @@ jobs:
     - name: Set up kubectl
       run: |
         yc managed-kubernetes cluster get-credentials ton-btl-cluster --external --force
-        echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
 
     - name: Apply Kubernetes Secrets and Deployment
       run: |
