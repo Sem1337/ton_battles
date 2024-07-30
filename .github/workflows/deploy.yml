@@ -24,7 +24,7 @@ jobs:
 
     - name: Install Yandex CLI
       run: |
-        curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
+        curl https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash -s -- -a
         echo 'source /home/runner/yandex-cloud/completion.zsh.inc' >> ~/.zshrc
         echo 'source /home/runner/yandex-cloud/path.zsh.inc' >> ~/.zshrc
         source ~/.zshrc
