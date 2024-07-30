@@ -33,6 +33,7 @@ jobs:
         echo "Checking environment variables:"
         echo "PATH=$PATH"
         ls -la /home/runner/yandex-cloud/
+        cat /home/runner/yandex-cloud/path.bash.inc
 
     - name: Set up Yandex CLI
       run: |
