@@ -22,9 +22,14 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Set up Yandex CLI
+    - name: Install Yandex CLI
       run: |
         curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
+        source ~/.bashrc
+        yc version
+
+    - name: Set up Yandex CLI
+      run: |
         echo "${{ secrets.YC_OAUTH_TOKEN }}" | yc init --token
         yc config set cloud-id ${{ secrets.YC_CLOUD_ID }}
         yc config set folder-id ${{ secrets.YC_FOLDER_ID }}
