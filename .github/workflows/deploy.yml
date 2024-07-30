@@ -42,10 +42,10 @@ jobs:
         echo "PATH=$PATH"
         echo $GITHUB_PATH
         ls -la $HOME/yandex-cloud/bin
-        echo "${{ secrets.YC_OAUTH_TOKEN }}" | yc init
+        yc config set token ${{ secrets.YC_OAUTH_TOKEN }}
         yc config set cloud-id ${{ secrets.YC_CLOUD_ID }}
         yc config set folder-id ${{ secrets.YC_FOLDER_ID }}
-        yc config set compute-default-zone ru-central1-a
+        yc config set compute-default-zone ru-central1-d
   
     - name: Log in to Yandex Container Registry
       run: |
