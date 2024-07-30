@@ -80,3 +80,10 @@ jobs:
       run: |
         kubectl apply -f backend/deployment.yaml
         kubectl apply -f backend/service.yaml
+
+    - name: Get External IP
+      run: |
+        echo "Waiting for LoadBalancer IP..."
+        sleep 60  # Wait for a minute to allow the LoadBalancer IP to be assigned
+        EXTERNAL_IP=$(kubectl get svc my-app-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+        echo "The external IP is: $EXTERNAL_IP"
