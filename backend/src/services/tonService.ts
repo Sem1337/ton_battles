@@ -154,14 +154,11 @@ async function fetchAndProcessTransactions(toLT: string): Promise<void> {
         }
       }
     }
-    console.log('it finished ', lastProcessedTxLt, toLT);
   } while (response.length == blockSize);
 
-  console.log('last checked before:', lastCheckedLt);
   if (firstProcessedTxLt) {
     lastCheckedLt = firstProcessedTxLt;
   }
-  console.log('last checked after:', lastCheckedLt);
 
 }
 
