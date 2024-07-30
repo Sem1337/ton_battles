@@ -27,7 +27,12 @@ jobs:
         curl https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash -s -- -a
         source "/home/runner/.bashrc"
         echo 'export PATH=$HOME/yandex-cloud/bin:$PATH' >> $GITHUB_ENV
-        yc version
+
+    - name: Check environment variables
+      run: |
+        echo "Checking environment variables:"
+        echo "PATH=$PATH"
+        ls -la /home/runner/yandex-cloud/
 
     - name: Set up Yandex CLI
       run: |
