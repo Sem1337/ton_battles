@@ -89,6 +89,10 @@ jobs:
         kubectl apply -f backend/deployment.yaml
         kubectl apply -f backend/service.yaml
 
+    - name: Wait for Deployment
+      run: |
+        kubectl rollout status deployment/my-app
+
     - name: Get External IP
       run: |
         echo "Waiting for LoadBalancer IP..."
