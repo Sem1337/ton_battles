@@ -59,6 +59,7 @@ jobs:
       run: |
         yc container registry configure-docker
 
+
     - name: Verify Cluster
       run: |
         echo "Listing clusters to verify access..."
