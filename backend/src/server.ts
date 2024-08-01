@@ -48,7 +48,6 @@ app.post('/refresh', refreshToken);
 app.get('/', (_req, res) => {
   res.send('Hello world');
 });
-//app.get('/', () => {console.log('Hello world !')});
 
 
 sequelize.authenticate()
