@@ -11,6 +11,7 @@ interface SocketContextType {
   off: (event: string) => void;
   joinRoom: (roomId: string) => void;
   leaveRoom: (roomId: string) => void;
+  onlineUsers: number;
 }
 
 const SocketContext = createContext<SocketContextType | undefined>(undefined);
@@ -31,6 +32,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const { isAuthenticated, token } = useAuth();
   const { showNotification } = useNotification();
   const [isConnected, setIsConnected] = useState<boolean>(false);
+  const [onlineUsers, setOnlineUsers] = useState<number>(0);
 
   useEffect(() => {
     if (isAuthenticated && token) {
@@ -49,13 +51,19 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
       const handleDisconnect = () => {
         setIsConnected(false);
       };
+
+      const handleOnlineUsers = (count: number) => {
+        setOnlineUsers(count);
+      };
   
       webSocketManager.on('connect', handleConnected);
       webSocketManager.on('disconnect', handleDisconnect);
+      webSocketManager.on('onlineUsers', handleOnlineUsers);
 
       return () => {
         webSocketManager.off('connect');
         webSocketManager.off('disconnect');
+        webSocketManager.off('onlineUsers', handleOnlineUsers);
         webSocketManager.disconnect();
       };
     }
@@ -80,7 +88,8 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
         on: webSocketManager.on.bind(webSocketManager),
         off: webSocketManager.off.bind(webSocketManager),
         joinRoom,
-        leaveRoom
+        leaveRoom,
+        onlineUsers
       }}
     >
       {children}

@@ -73,6 +73,7 @@ export const updateUserPoints = async (userId: number, points: Big, transaction?
   if (user) {
     const newBalance = new Big(user.points).plus(points);
     if (newBalance.lt(0)) {
+      await transaction?.rollback();
       throw new Error('Insufficient balance');
     }
     user.points = newBalance.toFixed(0);
@@ -85,6 +86,7 @@ export const updateUserGems = async (userId: number, gems: Big, transaction?: Tr
   if (user) {
     const newBalance = new Big(user.gems).plus(gems);
     if (newBalance.lt(0)) {
+      await transaction?.rollback();
       throw new Error('Insufficient balance');
     }
     user.gems = newBalance.toNumber();

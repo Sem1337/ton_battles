@@ -26,6 +26,11 @@ class WebSocketManager {
       console.log(`Received message of type ${data.type}`);
       this.invokeCallbacks(data.type, data.payload);
     });
+
+    this.socket.on('onlineUsers', (data: { count: number }) => {
+      console.log(`Current online users: ${data.count}`);
+      this.invokeCallbacks('onlineUsers', data.count);
+    });
   }
 
   disconnect() {

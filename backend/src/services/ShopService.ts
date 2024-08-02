@@ -5,6 +5,7 @@ import { StarService } from './StarService.js';
 import { bot } from '../routes/webhook.router.js';
 import { sendMessageToUser, sendUserInfo } from './messageService.js';
 import jwt from 'jsonwebtoken';
+import { User } from '../database/model/user.js';
 
 
 type CostType = 'points' | 'gems' | 'stars' | 'TON';
@@ -12,7 +13,7 @@ type CostType = 'points' | 'gems' | 'stars' | 'TON';
 class ShopService {
 
   static generateTonInvoicePayload(userId: string, itemId: ShopItemId, cost: Big) {
-    const txPayload = jwt.sign({tag: 'TONBTL', userId: userId, cost: cost.toFixed(9), itemId: itemId }, process.env.JWT_SECRET_KEY || '', { expiresIn: '1h' });
+    const txPayload = jwt.sign({ tag: 'TONBTL', userId: userId, cost: cost.toFixed(9), itemId: itemId }, process.env.JWT_SECRET_KEY || '', { expiresIn: '1h' });
     return txPayload
   }
 
@@ -74,6 +75,55 @@ class ShopService {
     }
   }
 
+  static getItemPriceForUser(user: User, item: ShopItem) {
+    const userProductionLevel = user.productionLVL;
+    const userShieldLevel = user.shield;
+    if (item.itemId === ShopItemId.PRODUCTION_SPEED_LVL_UP) {
+      return {
+        ...item.toJSON(),
+        points: item.points ? item.points * Math.pow(2, userProductionLevel - 1) : null,
+        gems: item.gems ? item.gems * Math.pow(2, userProductionLevel - 1) : null,
+        stars: item.stars ? item.stars * Math.pow(2, userProductionLevel - 1) : null,
+        TON: item.TON ? item.TON * Math.pow(2, userProductionLevel - 1) : null,
+      };
+    } else if (item.itemId === ShopItemId.SHIELD_LVL_UP) {
+      return {
+        ...item.toJSON(),
+        points: item.points ? item.points * Math.pow(3, userShieldLevel) : null,
+        gems: item.gems ? item.gems * Math.pow(3, userShieldLevel) : null,
+        stars: item.stars ? item.stars * Math.pow(3, userShieldLevel) : null,
+        TON: item.TON ? item.TON * Math.pow(3, userShieldLevel) : null,
+      };
+    } else {
+      return {
+        ...item.toJSON(),
+        points: item.points,
+        gems: item.gems,
+        stars: item.stars,
+        TON: item.TON,
+      };
+    }
+  }
+
+  static async getShopItemsForUser(userId: string) {
+    try {
+      const user = await User.findByPk(userId);
+      if (!user) {
+        throw new Error('User not found');
+      }
+
+      const shopItems = await ShopItem.findAll();
+
+      const shopItemsWithDynamicPrices = shopItems.map((item) => {
+        return ShopService.getItemPriceForUser(user, item);
+      });
+
+      return shopItemsWithDynamicPrices;
+    } catch (error) {
+      console.error('Unable to fetch shop items:', error);
+      throw error;
+    }
+  }
 
 
   static async buyItem(userId: string, itemId: ShopItemId, costType: CostType) {
@@ -82,15 +132,20 @@ class ShopService {
       if (!item) {
         return { success: false, message: 'Item not found' };
       }
-
+      const user = await User.findByPk(userId);
+      if (!user) {
+        throw new Error('User not found');
+      }
+      // Calculate the dynamic price for the item
+      const dynamicItem = ShopService.getItemPriceForUser(user, item);
       // Validate costType
       const validCostTypes: CostType[] = ['points', 'gems', 'stars', 'TON'];;
-      if (!validCostTypes.includes(costType) || item[costType] === null) {
+      if (!validCostTypes.includes(costType) || dynamicItem[costType] === null) {
         return { success: false, message: 'Invalid cost type' };
       }
+      
 
-      // Check if the user has enough resources
-      const cost = new Big(item[costType]);
+      const cost = new Big(dynamicItem[costType]);
       const { success, txPayload, message, invoice } = await ShopService.proceedPayment(userId, costType, itemId, cost);
       if (!success && !invoice) {
         return { success: false, message };

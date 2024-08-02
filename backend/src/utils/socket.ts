@@ -40,6 +40,10 @@ export const initializeSocket = (server: HttpServer) => {
     // Store the user's socket ID
     const userId = socket.data.user.userId;
     userSocketMap.set(userId, socket.id);
+
+    // Broadcast the current number of online users
+    socket.emit('onlineUsers', { count: userSocketMap.size });
+
     socket.on('join', (roomId) => {
       socket.join(roomId);
       console.log(`Socket ${socket.id} joined room ${roomId}`);

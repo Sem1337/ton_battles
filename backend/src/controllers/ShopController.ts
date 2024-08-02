@@ -1,11 +1,15 @@
 import { Request, Response } from 'express';
 import ShopService from '../services/ShopService.js';
-import { ShopItem } from '../database/model/ShopItems.js';
 
 class ShopController {
-  static async getShopItems(_req: Request, res: Response) {
+  static async getShopItems(req: Request, res: Response) {
     try {
-      const shopItems = await ShopItem.findAll();
+      const user = (req as any).user
+      const userId = user?.userId // Extract user ID from the verified token
+      if (!userId) {
+        res.status(400).json({ error: 'User ID is required' });
+      }
+      const shopItems = await ShopService.getShopItemsForUser(userId);
       return res.status(200).json(shopItems);
     } catch (error) {
       console.error('Error fetching shop items:', error);

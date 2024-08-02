@@ -7,6 +7,7 @@ import GameRoomList from './components/GameRoomList/GameRoomList';
 import Shop from './components/Shop/Shop';
 import TasksList from './components/TasksList/TasksList';
 import ReferralPage from './components/ReferralPage/ReferralPage';
+import Footer from './components/Footer/Footer'
 import { Toaster } from 'react-hot-toast';
 import './App.css';
 
@@ -30,9 +31,7 @@ const App = () => {
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </main>
-      <footer className="footer">
-        © 2024 TON Battles
-      </footer>
+      <Footer />
     </div>
   );
 };
