@@ -4,12 +4,14 @@ import TaskCardModal from './TaskCardModal';
 import { Task } from '../../types/types'
 import './TasksList.css';
 import { useAuth } from '../../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 
 const TasksList: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const { authFetch } = useAuth();
+  const navigate = useNavigate(); // Get navigate function from useNavigate hook
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -36,6 +38,12 @@ const TasksList: React.FC = () => {
   return (
     <div className="tasks-list">
       <h2 className="tasks-title">Tasks</h2>
+      <button
+        onClick={() => navigate('/')}
+        className="close-button"
+      >
+        Close
+      </button>
       <div className="tasks-grid">
         {tasks.map(task => (
           <div

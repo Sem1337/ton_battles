@@ -113,4 +113,23 @@
   .modal-button:hover {
     background-color: #1c86ee;
   }
+
+    /* Close button styles */
+  .close-button {
+    background-color: #1e90ff;
+    color: white;
+    border: none;
+    border-radius: 0.25rem;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-bottom: 1rem;
+    align-self: flex-end; /* Align the button to the end of the container */
+  }
+
+  .close-button:hover {
+    background-color: #1c86ee;
+  }
     

@@ -6,7 +6,7 @@ const Footer: React.FC = () => {
 
   return (
     <footer className="footer">
-      <div className="online-users">Current Online Users: {onlineUsers}</div>
+      <div className="online-users">Online Users: {onlineUsers}</div>
       <div>© 2024 TON Battles</div>
     </footer>
   );
