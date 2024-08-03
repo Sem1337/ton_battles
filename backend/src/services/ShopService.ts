@@ -47,8 +47,17 @@ class ShopService {
       case ShopItemId.SHIELD_LVL_UP:
         await userLvlUpShield(+userId);
         break;
+      case ShopItemId.GEMS_100:
+        await updateUserGems(+userId, new Big(100));
+        break;
+      case ShopItemId.GEMS_500:
+        await updateUserGems(+userId, new Big(500));
+        break;
       case ShopItemId.GEMS_1000:
         await updateUserGems(+userId, new Big(1000));
+        break;
+      case ShopItemId.GEMS_5000:
+        await updateUserGems(+userId, new Big(5000));
         break;
       case ShopItemId.POINTS_100K:
         await updateUserPoints(+userId, new Big(100000));
@@ -143,7 +152,7 @@ class ShopService {
       if (!validCostTypes.includes(costType) || dynamicItem[costType] === null) {
         return { success: false, message: 'Invalid cost type' };
       }
-      
+
 
       const cost = new Big(dynamicItem[costType]);
       const { success, txPayload, message, invoice } = await ShopService.proceedPayment(userId, costType, itemId, cost);
@@ -188,71 +197,95 @@ class ShopService {
           type: 1,
           description: 'Increase your production speed (+1 per level).',
           points: 1000,
-          gems: 10,
-          stars: 1,
-          TON: 0.01,
+          gems: 70,
+          stars: 70,
+          TON: 0.1,
         },
         {
           itemId: ShopItemId.SHIELD_LVL_UP,
           name: 'Shield LVL Up',
           type: 1,
           description: 'Increase your shield level.',
-          gems: 20,
-          stars: 2,
-          TON: 0.02,
+          gems: 200,
+          stars: 200,
+          TON: 0.2,
         },
         {
           itemId: ShopItemId.POINTS_100K,
           name: '100k Points',
           type: 2,
           description: 'Buy 100k points',
-          gems: 10,
-          stars: 1,
-          TON: 0.01,
+          gems: 100,
+          stars: 100,
+          TON: 0.1,
         },
         {
           itemId: ShopItemId.POINTS_500K,
           name: '500k Points',
           type: 2,
           description: 'Buy 500k points',
-          gems: 50,
-          stars: 1,
-          TON: 0.01,
+          gems: 500,
+          stars: 500,
+          TON: 0.5,
         },
         {
           itemId: ShopItemId.POINTS_1M,
           name: '1M Points',
           type: 2,
           description: 'Buy 1M points',
-          gems: 100,
-          stars: 1,
-          TON: 0.01,
+          gems: 1000,
+          stars: 1000,
+          TON: 1,
         },
         {
           itemId: ShopItemId.POINTS_5M,
           name: '5M Points',
           type: 2,
           description: 'Buy 5M points',
-          gems: 500,
-          stars: 1,
-          TON: 0.01,
+          gems: 5000,
+          stars: 5000,
+          TON: 5,
         },
         {
           itemId: ShopItemId.POINTS_25M,
           name: '25M Points',
           type: 2,
           description: 'Buy 25M points',
-          gems: 2500,
-          stars: 1,
-          TON: 0.01,
+          gems: 25000,
+          stars: 25000,
+          TON: 25,
+        },
+        {
+          itemId: ShopItemId.GEMS_100,
+          name: '100 Gems',
+          type: 3,
+          description: 'Buy 100 gems.',
+          stars: 100,
+          TON: 0.1,
+        },
+        {
+          itemId: ShopItemId.GEMS_500,
+          name: '500 Gems',
+          type: 3,
+          description: 'Buy 500 gems.',
+          stars: 450,
+          TON: 0.45,
         },
         {
           itemId: ShopItemId.GEMS_1000,
           name: '1000 Gems',
           type: 3,
           description: 'Buy 1000 gems.',
-          stars: 1,
-          TON: 0.01,
+          stars: 800,
+          TON: 0.8,
+        },
+        {
+          itemId: ShopItemId.GEMS_5000,
+          name: '5000 Gems',
+          type: 3,
+          description: 'Buy 5000 gems.',
+          stars: 3600,
+          TON: 3.6,
         },
       ]);
 

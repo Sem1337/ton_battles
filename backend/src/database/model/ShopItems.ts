@@ -9,7 +9,10 @@ export enum ShopItemId {
   POINTS_1M = 5,
   POINTS_5M = 6,
   POINTS_25M = 7,
-  GEMS_1000 = 8,
+  GEMS_100 = 8,
+  GEMS_500 = 9,
+  GEMS_1000 = 10,
+  GEMS_5000 = 11,
 }
 
 class ShopItem extends Model {
