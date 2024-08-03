@@ -118,9 +118,38 @@ export class GameRoomService {
       const io = getSocketInstance();
       let winner = null;
       if (gameRoom.players.length > 1) {
-        // Determine the winner (example logic: player with the highest bet)
-        winner = gameRoom.players.reduce((max, player) => (player.bet > max.bet ? player : max), gameRoom.players[0]);
+        // Determine the winner
+        const playersWithChances = gameRoom.players.map(player => {
+          const playerBet = new Big(player.bet);
+          const winChance = playerBet.div(game.total_bank).mul(100).toNumber(); // Normalize player's chance to win in percentage
+          const shieldThreshold = 100 - player.shield * 10; // Threshold based on player's shield
+          return { player, winChance, shieldThreshold };
+        });
+
+        // First attempt to find a winner based on shield criteria
+        for (const { player, winChance, shieldThreshold } of playersWithChances) {
+          if (winChance >= shieldThreshold) {
+            winner = player;
+            break;
+          }
+        }
+
+        // If no winner was found based on shield criteria, use weighted random selection
+        if (!winner) {
+          const totalWinChance = 100;
+          let random = Math.random() * totalWinChance;
+          for (const { player, winChance } of playersWithChances) {
+            if (random < winChance) {
+              winner = player;
+              break;
+            }
+            random -= winChance;
+          }
+        }
         console.log('winner determined');
+        if (!winner) {
+          winner = gameRoom.players[0];
+        }
         // Update the game's winner and status
         game.winner_id = winner.id;
         game.winnerBetSize = winner.bet;
@@ -203,10 +232,15 @@ export class GameRoomService {
         io.to(roomId).emit('message', { type: 'NOTIFY', payload: { message: 'Room is already full!' } });
         throw new Error('Game room is full');
       }
+      const user = await User.findByPk(userId);
+      if (!user) {
+        throw new Error('user not found');
+      }
       const player = await Player.create({
         bet: 0,
         name: `Player${userId}`,
         gameRoomId: roomId,
+        shield: user.shield,
         userId: userId
       }, { transaction });
       console.log('player created');

@@ -7,6 +7,7 @@ class Player extends Model {
   public bet!: string
   public name!: string
   public gameRoomId!: string
+  public shield!: number;
   public userId!: number;
 }
 
@@ -30,6 +31,15 @@ Player.init(
     gameRoomId: {
       type: DataTypes.STRING,
       allowNull: false,
+    },
+    shield: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0, // Set default value to 0
+      allowNull: false,
+      validate: {
+        min: 0,
+        max: 4
+      },
     },
     userId: {
       type: DataTypes.BIGINT,
