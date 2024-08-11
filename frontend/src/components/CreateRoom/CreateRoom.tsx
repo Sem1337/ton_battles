@@ -7,9 +7,9 @@ const CreateGame = () => {
   const [gameType, setGameType] = useState<'points' | 'gems' | 'TON'>('points');
   const [minBet, setMinBet] = useState<number | ''>('');
   const [maxBet, setMaxBet] = useState<number | ''>('');
-  const [maxPlayers, setMaxPlayers] = useState<number | ''>('');
+  const [maxPlayers, setMaxPlayers] = useState<number | ''>(10);
   const [roomName, setRoomName] = useState('');
-  const [isUnlimited, setIsUnlimited] = useState(false);
+  const [isUnlimited, setIsUnlimited] = useState(true);
   const navigate = useNavigate();
   const { authFetch } = useAuth();
 
@@ -66,7 +66,6 @@ const CreateGame = () => {
           >
             <option value="points">Points</option>
             <option value="gems">Gems</option>
-            <option value="TON">TON</option>
           </select>
         </div>
         <div className="form-group">
