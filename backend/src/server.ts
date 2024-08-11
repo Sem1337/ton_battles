@@ -53,7 +53,7 @@ app.get('/', (_req, res) => {
 sequelize.authenticate()
   .then(() => {
     console.log('Connection has been established successfully.');
-    return sequelize.sync({ force: true }); // Set to true to drop and re-create tables during development
+    return sequelize.sync({ force: false }); // Set to true to drop and re-create tables during development
   })
   .then(() => {
     console.log('seeding shop');
