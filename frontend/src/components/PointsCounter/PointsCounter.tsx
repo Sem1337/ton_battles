@@ -31,7 +31,6 @@ const PointsCounter: React.FC = () => {
     };
 
     on('USER_INFO', handlePointsUpdated);
-    console.log('balance info use effect');
     sendMessage('GET_BALANCE');
 
     console.log('initial Points: ', points)

@@ -50,7 +50,9 @@ class WebSocketManager {
     if (!this.eventCallbacks.has(event)) {
       this.eventCallbacks.set(event, new Map());
     }
+    console.log('register callback for ', event, this.eventCallbacks.get(event)?.size);
     this.eventCallbacks.get(event)!.set(callback, callback);
+    console.log('registered callback for ', event, this.eventCallbacks.get(event)?.size);
   }
 
   off(event: string, callback?: EventCallback) {
