@@ -238,7 +238,7 @@ export class GameRoomService {
       }
       const player = await Player.create({
         bet: 0,
-        name: `Player${userId}`,
+        name: `${user.username}`,
         gameRoomId: roomId,
         shield: user.shield,
         userId: userId

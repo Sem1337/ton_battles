@@ -79,7 +79,7 @@ const GameRoomComponent = () => {
     <ul className="players-list">
       {players.map((player) => (
         <li key={player.id} className="player-item">
-          {player.name}: {player.bet}
+          {player.name}: {Number(player.bet).toString()}
         </li>
       ))}
     </ul>
