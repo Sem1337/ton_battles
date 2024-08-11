@@ -26,7 +26,7 @@ const BalanceInfo = () => {
     on('CONNECTED', handleConnected);
 
     return () => {
-      off('USER_INFO');
+      off('USER_INFO', handleBalanceUpdate);
       off('CONNECTED');
     };
   }, [sendMessage, on, off]);

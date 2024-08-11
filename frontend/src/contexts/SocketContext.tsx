@@ -8,7 +8,7 @@ import LoadingScreen from '../components/LoadingScreen/LoadingScreen';
 interface SocketContextType {
   sendMessage: (type: string, payload?: any) => void;
   on: (event: string, callback: (data: any) => void) => void;
-  off: (event: string) => void;
+  off: (event: string,  callback?: (data: any) => void) => void;
   joinRoom: (roomId: string) => void;
   leaveRoom: (roomId: string) => void;
   onlineUsers: number;

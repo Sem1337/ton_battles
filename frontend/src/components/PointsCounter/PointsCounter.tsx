@@ -44,7 +44,7 @@ const PointsCounter: React.FC = () => {
       console.log('disable points counter intevals');
       clearInterval(pointsIncrementInterval);
       clearInterval(pointsUpdateInterval);
-      off('USER_INFO');
+      off('USER_INFO', handlePointsUpdated);
     };
 
   }, [productionSpeed]);
