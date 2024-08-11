@@ -35,7 +35,7 @@ export class GameRoomService {
       await gameRoom.save();
 
       // Start the game loop
-      await this.startGameLoop(gameRoom.id);
+      this.startGameLoop(gameRoom.id);
 
       return gameRoom;
     } catch (error) {
@@ -248,7 +248,7 @@ export class GameRoomService {
       gameRoom.currentPlayers++;
       gameRoom.players.push(player);
       await gameRoom.save({ transaction });
-      
+
       console.log('remainingTime', this.gameRoomTimers[roomId]);
       io.to(roomId).emit('message', { type: 'PLAYER_JOINED', payload: { players: gameRoom.players, remainingTime: this.gameRoomTimers[roomId], roomName: gameRoom.roomName } });
 
