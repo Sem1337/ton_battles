@@ -25,7 +25,13 @@ const GameRoomComponent = () => {
     console.log('GameRoom rendered');
     joinRoom(roomId!);
     const interval = setInterval(() => {
-      if (timer > 0) setTimer(prev => prev - 1)
+      setTimer(prevTimer => {
+        if (prevTimer > 0) {
+          return prevTimer - 1;
+        } else {
+          return 0;
+        }
+      });
     }, 1000);
 
     const handleBetMade = (playersData: Player[]) => {

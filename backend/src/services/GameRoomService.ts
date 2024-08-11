@@ -35,7 +35,7 @@ export class GameRoomService {
       await gameRoom.save();
 
       // Start the game loop
-      this.startGameLoop(gameRoom.id);
+      await this.startGameLoop(gameRoom.id);
 
       return gameRoom;
     } catch (error) {
