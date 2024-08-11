@@ -77,7 +77,6 @@ export class GameRoomService {
           await Player.destroy({ where: { gameRoomId } });
           gameRoom.players = [];
           gameRoom.currentPlayers = 0;
-          console.log(gameRoom.toJSON());
           await gameRoom.save();
         }
 
@@ -222,6 +221,9 @@ export class GameRoomService {
       const io = getSocketInstance();
       // Check if player is already in the game room
       const existingPlayer = gameRoom.players.find(player => player.userId.toString() === userId.toString());
+      if (!this.gameRoomTimers[roomId]) {
+        this.gameRoomTimers[roomId] = 60;
+      }
       if (existingPlayer) {
         console.log('Player already in the game room');
         console.log('remainingTime', this.gameRoomTimers[roomId]);
@@ -328,7 +330,6 @@ export class GameRoomService {
         throw new Error('Game room not found');
       }
       console.log('players count: ', gameRoom.players.length);
-      console.log(gameRoom.players[0].toJSON());
       const player = gameRoom.players.find(p => p.userId.toString() === userId.toString());
       if (!player) {
         throw new Error('Player not found in this game room');
