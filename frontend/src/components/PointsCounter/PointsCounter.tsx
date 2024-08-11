@@ -10,24 +10,11 @@ const PointsCounter: React.FC = () => {
 
   const { sendMessage, on, off } = useSocket();
   useEffect(() => {
-    console.log('balance info use effect')
-    sendMessage('GET_BALANCE');
 
     const handlePointsUpdated = (data: User) => {
       setPoints(Number(data.points));
       setProductionSpeed(Number(data.productionSpeed));
     };
-
-    on('USER_INFO', handlePointsUpdated);
-
-    const updatePoints = () => {
-      sendMessage('UPDATE_POINTS');
-    };
-
-    console.log('initial Points: ', points)
-    if (points === 0) {
-      updatePoints();
-    }
 
     const pointsIncrementInterval = setInterval(() => {
       setPoints(prevPoints => prevPoints + productionSpeed);
@@ -36,6 +23,21 @@ const PointsCounter: React.FC = () => {
     const pointsUpdateInterval = setInterval(() => {
       updatePoints();
     }, 10000);
+
+    const updatePoints = () => {
+      sendMessage('UPDATE_POINTS');
+    };
+
+    on('USER_INFO', handlePointsUpdated);
+    console.log('balance info use effect');
+    sendMessage('GET_BALANCE');
+
+    console.log('initial Points: ', points)
+    if (points === 0) {
+      updatePoints();
+    }
+
+
 
     return () => {
       clearInterval(pointsIncrementInterval);
