@@ -10,8 +10,10 @@ const PointsCounter: React.FC = () => {
 
   const { sendMessage, on, off } = useSocket();
   useEffect(() => {
+    console.log('enable points counter intervals');
 
     const handlePointsUpdated = (data: User) => {
+      console.log('user info received: ', data.points, data.productionSpeed);
       setPoints(Number(data.points));
       setProductionSpeed(Number(data.productionSpeed));
     };
@@ -40,6 +42,7 @@ const PointsCounter: React.FC = () => {
 
 
     return () => {
+      console.log('disable points counter intevals');
       clearInterval(pointsIncrementInterval);
       clearInterval(pointsUpdateInterval);
       off('USER_INFO');
