@@ -102,6 +102,7 @@ class ShopService {
         gems: item.gems ? item.gems * Math.pow(3, userShieldLevel) : null,
         stars: item.stars ? item.stars * Math.pow(3, userShieldLevel) : null,
         TON: item.TON ? item.TON * Math.pow(3, userShieldLevel) : null,
+        description: `You win if your bet is >= ${100-10*(userShieldLevel+1)}% of total bank`,
       };
     } else {
       return {
@@ -195,7 +196,7 @@ class ShopService {
           itemId: ShopItemId.PRODUCTION_SPEED_LVL_UP,
           name: 'Production Speed LVL Up',
           type: 1,
-          description: 'Increase your production speed (+1 per level).',
+          description: 'Increase your production speed (+1/sec per level).',
           points: 1000,
           gems: 70,
           stars: 70,
