@@ -21,6 +21,7 @@ const LeaderboardModal: React.FC<LeaderboardModalProps> = ({ isOpen, onClose }) 
       const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/leaderboard`);
       if (response.ok) {
         const data = await response.json();
+        console.log(data);
         setUsers(data);
       } else {
         console.error('Failed to fetch leaderboard');
