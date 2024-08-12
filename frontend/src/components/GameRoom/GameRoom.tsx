@@ -94,7 +94,7 @@ const GameRoomComponent = () => {
   ), [players]);
 
   const memoizedModal = useMemo(() => (
-    winner && totalBank !== null && (
+    winner && (
       <Modal
         isOpen={true}
         onRequestClose={() => {
