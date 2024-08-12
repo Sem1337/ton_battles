@@ -7,8 +7,7 @@ export const getLeaderboard = async (_req: Request, res: Response) => {
     const users = await User.findAll({
       limit: 50,
       order: [
-        sequelize.cast(sequelize.col('points'), 'BIGINT'),
-        ['points', 'DESC']
+        [sequelize.cast(sequelize.col('points'), 'BIGINT'), 'DESC']
       ],
       attributes: ['userId', 'username', 'points']
     });
