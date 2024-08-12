@@ -323,9 +323,10 @@ export class GameRoomService {
     try {
       console.log(`${userId} bet ${betSize} in ${roomId}`);
       const gameRoom = await GameRoom.findByPk(roomId, {
-        include: [{ model: Player, as: 'players' }, { model: Game, as: 'currentGame' }],
+        include: [{ model: Player, as: 'players' }, { model: Game, as: 'currentGame', required: true }],
         transaction,
-        lock: transaction.LOCK.UPDATE
+        lock: {level: transaction.LOCK.UPDATE, of: Game},
+        
       });
       if (!gameRoom) {
         throw new Error('Game room not found');
