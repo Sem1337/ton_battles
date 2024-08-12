@@ -8,10 +8,11 @@ export const getLeaderboard = async (_req: Request, res: Response) => {
       limit: 50,
       order: [
         sequelize.cast(sequelize.col('points'), 'BIGINT'),
-        ['points', 'ASC']
+        ['points', 'DESC']
       ],
       attributes: ['userId', 'username', 'points']
     });
+    console.log(users);
     res.json(users);
   } catch (error) {
     console.error('Failed to fetch leaderboard:', error);
