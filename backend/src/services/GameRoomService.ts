@@ -325,7 +325,7 @@ export class GameRoomService {
       const gameRoom = await GameRoom.findByPk(roomId, {
         include: [{ model: Player, as: 'players' }, { model: Game, as: 'currentGame', required: true }],
         transaction,
-        lock: {level: transaction.LOCK.UPDATE, of: Game},
+        lock: {level: transaction.LOCK.UPDATE, of: sequelize.model('currentGame')},
         
       });
       if (!gameRoom) {
