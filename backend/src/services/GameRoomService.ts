@@ -332,7 +332,6 @@ export class GameRoomService {
           }
         ],
         transaction,
-        lock: transaction.LOCK.UPDATE, // Lock the GameRoom model for update
       });
       if (!gameRoom) {
         throw new Error('Game room not found');
