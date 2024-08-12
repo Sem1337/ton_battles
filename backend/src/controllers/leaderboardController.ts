@@ -8,7 +8,7 @@ export const getLeaderboard = async (_req: Request, res: Response) => {
       limit: 50,
       order: [
         sequelize.cast(sequelize.col('points'), 'BIGINT'),
-        ['points', 'DESC']
+        ['points', 'ASC']
       ],
       attributes: ['userId', 'username', 'points']
     });
