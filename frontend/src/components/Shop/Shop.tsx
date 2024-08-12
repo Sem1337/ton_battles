@@ -28,18 +28,16 @@ const Shop: React.FC = () => {
   const { sendTonTransaction } = useTonTransaction();
   const navigate = useNavigate(); // Get navigate function from useNavigate hook
   const { authFetch } = useAuth();
-
+  const fetchShopItems = async () => {
+    try {
+      const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/shop/items`);
+      const data = await response.json();
+      setShopItems(data);
+    } catch (error) {
+      console.error('Error fetching shop items:', error);
+    }
+  };
   useEffect(() => {
-    const fetchShopItems = async () => {
-      try {
-        const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/shop/items`);
-        const data = await response.json();
-        setShopItems(data);
-      } catch (error) {
-        console.error('Error fetching shop items:', error);
-      }
-    };
-
     fetchShopItems();
   }, []);
 
@@ -88,6 +86,7 @@ const Shop: React.FC = () => {
     } catch (error) {
       console.error('Error purchasing item:', error);
     } finally {
+      await fetchShopItems();
       setIsBuying(false);
       sendMessage('UPDATE_POINTS');
       closeModal();
