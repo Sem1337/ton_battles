@@ -3,7 +3,7 @@ import { updateUserGems, updateUserPoints, userLvlUpProduction, userLvlUpShield 
 import Big from 'big.js';
 import { StarService } from './StarService.js';
 import { bot } from '../routes/webhook.router.js';
-import { sendMessageToUser, sendUserInfo } from './messageService.js';
+import { sendNotificationToUser, sendUserInfo } from './messageService.js';
 import jwt from 'jsonwebtoken';
 import { User } from '../database/model/user.js';
 
@@ -79,7 +79,7 @@ class ShopService {
     }
     const item = await ShopItem.findByPk(itemId);
     if (item) {
-      sendMessageToUser(userId, 'NOTIFY', { message: `Successfully purchased "${item?.name}"` });
+      sendNotificationToUser(userId, { message: `Successfully purchased "${item?.name}"` });
       sendUserInfo(+userId);
     }
   }

@@ -6,7 +6,7 @@ import Big from 'big.js'; // Import Big.js
 import jwt from 'jsonwebtoken';
 import ShopService from "./ShopService.js";
 import { updateUserBalance } from "./balanceService.js";
-import { sendMessageToUser } from "./messageService.js";
+import { sendNotificationToUser } from "./messageService.js";
 import TaskService from "./TaskService.js";
 
 dotenv.config();
@@ -139,7 +139,7 @@ async function fetchAndProcessTransactions(toLT: string): Promise<void> {
               }
             } else {
               await updateUserBalance(userId, txValue);
-              sendMessageToUser(userId, 'NOTIFY', { message: `Successful top up: ${txValue.toFixed(9)} TON` });
+              sendNotificationToUser(userId, { message: `Successful top up: ${txValue.toFixed(9)} TON` });
             }
           } else {
             console.log('unknown user Id');

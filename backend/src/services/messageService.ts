@@ -12,6 +12,17 @@ export const sendMessageToUser = (userId: string, messageType: string, payload: 
   }
 };
 
+export const sendNotificationToUser = (userId: string, payload: any) => {
+  const io = getSocketInstance();
+  const socketId = userSocketMap.get(userId);
+
+  if (socketId) {
+    io.to(socketId).emit('NOTIFY', payload);
+  } else {
+    console.log(`User with ID ${userId} is not connected`);
+  }
+};
+
 export const sendUserInfoToSocket = (socket: any, user: User) => {
   socket.emit('message', {
     type: 'USER_INFO',

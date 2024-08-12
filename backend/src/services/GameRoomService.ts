@@ -5,6 +5,7 @@ import { getSocketInstance } from '../utils/socket.js';
 import { updateUserBalanceWithTransaction, updateUserGems, updateUserPoints } from './balanceService.js';
 import Big from 'big.js'; // Import Big.js
 import { col, Op, Order } from 'sequelize';
+import { sendNotificationToUser } from './messageService.js';
 
 export class GameRoomService {
   static gameRoomTimers: { [key: string]: number } = {}; // In-memory storage for remaining time
@@ -161,8 +162,7 @@ export class GameRoomService {
           await this.updateUserBalanceByGameType(gameRoom.players[0].userId, gameRoom.gameType, new Big(game.total_bank));
         }
         console.log(`The winner is ${gameRoom.players[0].userId} with a bet of ${gameRoom.players[0].bet}. The total bank of ${game.total_bank} has been credited to their balance.`);
-        console.log('sending NOTIFY');
-        io.to(gameRoomId).emit('message', { type: 'NOTIFY', payload: { message: 'Not enough players for battle. Bet returned to your balance' } });
+        io.to(gameRoomId).emit('NOTIFY', { message: 'Not enough players for battle. Bet returned to your balance' });
       }
       // Notify players
       const gameResult = {
@@ -232,7 +232,7 @@ export class GameRoomService {
         return gameRoom;
       }
       if (gameRoom.players.length >= gameRoom.maxPlayers) {
-        io.to(roomId).emit('message', { type: 'NOTIFY', payload: { message: 'Room is already full!' } });
+        sendNotificationToUser(userId, {message: 'Room is already full!' });
         throw new Error('Game room is full');
       }
       const user = await User.findByPk(userId);
