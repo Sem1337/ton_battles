@@ -358,7 +358,7 @@ export class GameRoomService {
       // Notify clients of the bet made
       const io = getSocketInstance();
 
-      io.to(roomId).emit('message', { type: 'BET_MADE', payload: gameRoom.players });
+      io.to(roomId).emit('message', { type: 'BET_MADE', payload: { players: gameRoom.players, totalbank: game.total_bank} });
 
       return gameRoom;
     } catch (error) {

@@ -13,7 +13,7 @@ const GameRoomComponent = () => {
   const [players, setPlayers] = useState<Player[]>([])
   const [timer, setTimer] = useState(60)
   const [winner, setWinner] = useState<{ id: string, name: string, bet: number } | null>(null);
-  const [totalBank, setTotalBank] = useState<number | null>(null);
+  const [totalBank, setTotalBank] = useState<number>(0);
   const { sendMessage, on, off, joinRoom, leaveRoom } = useSocket();
   const navigate = useNavigate();
 
@@ -34,9 +34,10 @@ const GameRoomComponent = () => {
       });
     }, 1000);
 
-    const handleBetMade = (playersData: Player[]) => {
-      console.log(playersData);
-      setPlayers(playersData);
+    const handleBetMade = (data: {players: Player[], totalbank: number}) => {
+      console.log(data.players);
+      setPlayers(data.players);
+      setTotalBank(data.totalbank);  // Set the total bank
     };
 
     const handleGameStarted = () => {
@@ -52,8 +53,9 @@ const GameRoomComponent = () => {
 
 
     const handleGameCompleted = (data: { winner: { id: string, name: string, bet: number }, totalBank: number }) => {
-      setWinner(data.winner);
+      console.log('received game result: ', data.winner.name, data.winner.bet, data.totalBank);
       setTotalBank(data.totalBank);
+      setWinner(data.winner);
       sendMessage('GET_BALANCE');
     };
 
@@ -97,19 +99,19 @@ const GameRoomComponent = () => {
         isOpen={true}
         onRequestClose={() => {
           setWinner(null);
-          setTotalBank(null);
+          setTotalBank(0);
         }}
         className="modal-content"
         overlayClassName="modal-overlay"
         contentLabel="Game Completed"
       >
         <h2 className="modal-title">Game Completed</h2>
-        <p className="modal-winner">Winner: {winner.name} (Bet: {winner.bet})</p>
-        <p className="modal-bank">Total Bank: {totalBank}</p>
+        <p className="modal-winner">Winner: {winner.name} (Bet: {Number(winner.bet).toString()})</p>
+        <p className="modal-bank">Total Bank: {Number(totalBank).toString()}</p>
         <button
           onClick={() => {
             setWinner(null);
-            setTotalBank(null);
+            setTotalBank(0);
           }}
           className="modal-button"
         >
@@ -122,6 +124,7 @@ const GameRoomComponent = () => {
   return (
     <div className="game-room-container">
       <h3 className="game-room-title">{roomName}</h3>
+      <p className="total-bank">Total Bank: {Number(totalBank).toString()}</p>
       <PointsCounter />
       <div className="timer">Time left: {timer} seconds</div>
       <div className="bet-section">
