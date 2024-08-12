@@ -168,7 +168,7 @@ async function processIncomingTransactions() {
   try {
     await fetchAndProcessTransactions(lastCheckedLt);
   } catch (error) {
-    console.error('Error processing transactions:', error);
+    console.error('Error processing transactions');
   }
 }
 
