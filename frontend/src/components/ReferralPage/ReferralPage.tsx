@@ -45,6 +45,7 @@ const ReferralPage: React.FC = () => {
   return (
     <div className="referral-page">
       <h2 className="referral-title">Referral Page</h2>
+      <p className="referral-info">Get 15000 points and 10 gems for each referral!</p>
       <div className="referral-link-section">
         <label className="referral-label">Your Referral Link:</label>
         <input

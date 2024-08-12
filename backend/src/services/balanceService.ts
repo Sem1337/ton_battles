@@ -69,6 +69,10 @@ export const updatePoints = async (userId: string) => {
 };
 
 export const updateUserPoints = async (userId: number, points: Big, transaction?: Transaction) => {
+  const localTx = !transaction;
+  if (localTx) {
+    transaction = await sequelize.transaction();
+  }
   const user = await User.findByPk(userId, { transaction, lock: transaction?.LOCK.UPDATE });
   if (user) {
     const newBalance = new Big(user.points).plus(points);
@@ -79,9 +83,16 @@ export const updateUserPoints = async (userId: number, points: Big, transaction?
     user.points = newBalance.toFixed(0);
     await user.save({ transaction });
   }
+  if (localTx) {
+    await transaction?.commit();
+  }
 };
 
 export const updateUserGems = async (userId: number, gems: Big, transaction?: Transaction) => {
+  const localTx = !transaction;
+  if (localTx) {
+    transaction = await sequelize.transaction();
+  }
   const user = await User.findByPk(userId, { transaction, lock: transaction?.LOCK.UPDATE });
   if (user) {
     const newBalance = new Big(user.gems).plus(gems);
@@ -92,21 +103,38 @@ export const updateUserGems = async (userId: number, gems: Big, transaction?: Tr
     user.gems = newBalance.toNumber();
     await user.save({ transaction });
   }
+  if (localTx) {
+    await transaction?.commit();
+  }
 };
 
 export const userLvlUpProduction = async (userId: number, transaction?: Transaction) => {
+  const localTx = !transaction;
+  if (localTx) {
+    transaction = await sequelize.transaction();
+  }
   const user = await User.findByPk(userId, { transaction, lock: transaction?.LOCK.UPDATE });
   if (user) {
     user.productionLVL++;
     await user.save({ transaction });
   }
+  if (localTx) {
+    await transaction?.commit();
+  }
 };
 
 export const userLvlUpShield = async (userId: number, transaction?: Transaction) => {
+  const localTx = !transaction;
+  if (localTx) {
+    transaction = await sequelize.transaction();
+  }
   const user = await User.findByPk(userId, { transaction, lock: transaction?.LOCK.UPDATE });
   if (user) {
     user.shield++;
     await user.save({ transaction });
+  }
+  if (localTx) {
+    await transaction?.commit();
   }
 };
 

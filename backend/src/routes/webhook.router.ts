@@ -3,6 +3,8 @@ import bodyParser from 'body-parser';
 import { Telegraf } from 'telegraf';
 import { StarService } from '../services/StarService.js';
 import { User } from '../database/model/user.js';
+import { updateUserGems, updateUserPoints } from '../services/balanceService.js';
+import Big from 'big.js';
 
 export const bot = new Telegraf(process.env.BOT_TOKEN || '');
 
@@ -39,6 +41,8 @@ const handleStart = async (startPayload: string, message: any) => {
         points: '0',
       });
       console.log('user created');
+      await updateUserPoints(referredBy, new Big(15000));
+      await updateUserGems(referredBy, new Big(10));
     } catch (error) {
       return {
         method: 'sendMessage',
