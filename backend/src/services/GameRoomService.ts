@@ -322,11 +322,17 @@ export class GameRoomService {
     const transaction = await sequelize.transaction();
     try {
       console.log(`${userId} bet ${betSize} in ${roomId}`);
+
       const gameRoom = await GameRoom.findByPk(roomId, {
-        include: [{ model: Player, as: 'players' }, { model: Game, as: 'currentGame', required: true }],
+        include: [
+          { model: Player, as: 'players' },
+          {
+            model: Game,
+            as: 'currentGame',
+          }
+        ],
         transaction,
-        lock: {level: transaction.LOCK.UPDATE, of: sequelize.model('currentGame')},
-        
+        lock: transaction.LOCK.UPDATE, // Lock the GameRoom model for update
       });
       if (!gameRoom) {
         throw new Error('Game room not found');
@@ -336,10 +342,14 @@ export class GameRoomService {
       if (!player) {
         throw new Error('Player not found in this game room');
       }
-      const game = gameRoom.currentGame;
-      if (!game) {
+
+      if (!gameRoom.currentGame) {
         throw new Error('Game not found');
       }
+      const game = await Game.findByPk(gameRoom.currentGame.gameId, {
+        lock: transaction.LOCK.UPDATE,
+        transaction,
+      });
 
       // Validate bet size considering maxBet can be null for unlimited bet
       if (
@@ -352,15 +362,15 @@ export class GameRoomService {
 
       await this.updateUserBalanceByGameType(+userId, gameRoom.gameType, new Big(-betSize), transaction); // Update balance using Big.js
       player.bet = new Big(player.bet).plus(betSize).toFixed(9); // Update player's bet using Big.js
-      game.total_bank = new Big(game.total_bank).plus(betSize).toFixed(9); // Update game's total bank using Big.js
+      game!.total_bank = new Big(game!.total_bank).plus(betSize).toFixed(9); // Update game's total bank using Big.js
       await player.save({ transaction });
-      await game.save({ transaction });
+      await game!.save({ transaction });
       await gameRoom.save({ transaction });
       await transaction.commit();
       // Notify clients of the bet made
       const io = getSocketInstance();
 
-      io.to(roomId).emit('message', { type: 'BET_MADE', payload: { players: gameRoom.players, totalbank: game.total_bank} });
+      io.to(roomId).emit('message', { type: 'BET_MADE', payload: { players: gameRoom.players, totalbank: game!.total_bank} });
 
       return gameRoom;
     } catch (error) {
