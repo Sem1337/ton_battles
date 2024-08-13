@@ -162,10 +162,11 @@ export class GameRoomService {
         }
         console.log(`The winner is ${gameRoom.players[0].userId} with a bet of ${gameRoom.players[0].bet}. The total bank of ${game.total_bank} has been credited to their balance.`);
         await sendNotificationToGameRoom(gameRoomId, 'Not enough players for battle. Bet returned to your balance');
+        await sendNotificationToUser(gameRoom.players[0].userId.toString(), {message: 'test!'} );
       }
       // Notify players
       const gameResult = { winner: winner ? { id: winner.id, name: winner.name, bet: winner.bet } : null, totalBank: game.total_bank };
-      await sendMessageToGameRoom(gameRoomId, 'GAME_COMPLETED', gameResult)
+      await sendMessageToGameRoom(gameRoomId, 'GAME_COMPLETED', gameResult);
       game.status = 'closed';
       await game.save();
       return gameRoom;

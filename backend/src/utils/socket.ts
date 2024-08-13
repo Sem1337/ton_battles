@@ -11,19 +11,18 @@ import redisClient from './redisClient.js'; // Import the shared Redis client
 let io: SocketIOServer;
 
 export const initializeSocket = (server: HttpServer) => {
+  // Set up Redis clients for pub/sub
+  const pubClient = redisClient;
+  const subClient = pubClient.duplicate();
+
   io = new SocketIOServer(server, {
     cors: {
       origin: ['https://sem1337.github.io', 'https://www.tonbattles.ru'],
       methods: ['GET', 'POST'],
       credentials: true,
     },
+    adapter: createAdapter(pubClient, subClient),
   });
-
-  // Set up Redis clients for pub/sub
-  const pubClient = redisClient;
-  const subClient = pubClient.duplicate();
-
-  io.adapter(createAdapter(pubClient, subClient));
 
   io.use((socket, next) => {
     const token = socket.handshake.query.token;
@@ -51,17 +50,6 @@ export const initializeSocket = (server: HttpServer) => {
     // Broadcast the current number of online users
     const onlineUsersCount = await pubClient.dbSize(); // Assuming all user sessions are stored in Redis
     socket.emit('onlineUsers', { count: onlineUsersCount });
-
-    socket.on('join', (roomId) => {
-      socket.join(roomId);
-      console.log(`Socket ${socket.id} joined room ${roomId}`);
-    });
-
-    socket.on('leave', (roomId) => {
-      socket.leave(roomId);
-      console.log(`Socket ${socket.id} left room ${roomId}`);
-    });
-
 
     socket.on('message', async (data: { type: string, payload: any }) => {
       const { type, payload } = data;
