@@ -1,7 +1,7 @@
 // utils/redisClient.js
-import { createClient } from 'redis';
+import { Redis } from 'ioredis';
 
-const redisClient = createClient({ url: 'redis://redis:6379' });
+const redisClient = new Redis('redis://redis:6379');
 
 // Handle Redis client connection events
 redisClient.on('error', (err) => console.error('Redis Client Error', err));

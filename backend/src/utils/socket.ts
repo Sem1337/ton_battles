@@ -48,7 +48,7 @@ export const initializeSocket = (server: HttpServer) => {
     await pubClient.set(`socket:${userId}`, socket.id);
 
     // Broadcast the current number of online users
-    const onlineUsersCount = await pubClient.dbSize(); // Assuming all user sessions are stored in Redis
+    const onlineUsersCount = await pubClient.dbsize(); // Assuming all user sessions are stored in Redis
     socket.emit('onlineUsers', { count: onlineUsersCount });
 
     socket.on('message', async (data: { type: string, payload: any }) => {
