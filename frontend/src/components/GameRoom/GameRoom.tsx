@@ -40,9 +40,10 @@ const GameRoomComponent = () => {
       setTotalBank(data.totalbank);  // Set the total bank
     };
 
-    const handleGameStarted = () => {
+    const handleGameStarted = (data: {remainingTime: number}) => {
       sendMessage('JOIN_GAME', { roomId });
       sendMessage('UPDATE_POINTS');
+      setTimer(data.remainingTime);
     };
 
     const handlePlayerJoined = (data: { players: Player[], remainingTime: number, roomName: string, totalbank: number }) => {

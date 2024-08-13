@@ -55,7 +55,7 @@ export class GameRoomService {
         // Initialize the remaining time for the game
         this.gameRoomTimers[gameRoomId] = 60;
         // Start the game
-        io.to(gameRoomId).emit('message', { type: 'GAME_STARTED' });
+        io.to(gameRoomId).emit('message', { type: 'GAME_STARTED', payload: {remainingTime: this.gameRoomTimers[gameRoomId] } });
 
         // Update the remaining time every second
         while (this.gameRoomTimers[gameRoomId] > 0) {
