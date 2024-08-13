@@ -1,5 +1,7 @@
 import { Server as HttpServer } from 'http';
 import { Server as SocketIOServer } from 'socket.io';
+import { createClient } from 'redis';
+import { createAdapter } from '@socket.io/redis-adapter';
 import { authenticateWebSocket } from '../auth.js';
 import { GameRoomService } from '../services/GameRoomService.js';
 import { User, UserSocket } from '../database/model/user.js';
@@ -11,11 +13,17 @@ let io: SocketIOServer;
 export const initializeSocket = (server: HttpServer) => {
   io = new SocketIOServer(server, {
     cors: {
-      origin: 'https://sem1337.github.io',
+      origin: ['https://sem1337.github.io', 'https://www.tonbattles.ru'],
       methods: ['GET', 'POST'],
       credentials: true,
     },
   });
+
+  // Set up Redis clients for pub/sub
+  const pubClient = createClient({ url: 'redis://redis:6379' });
+  const subClient = pubClient.duplicate();
+
+  io.adapter(createAdapter(pubClient, subClient));
 
   io.use((socket, next) => {
     const token = socket.handshake.query.token;

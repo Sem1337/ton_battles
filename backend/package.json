@@ -12,6 +12,7 @@
     },
     "dependencies": {
         "@orbs-network/ton-access": "^2.3.3",
+        "@socket.io/redis-adapter": "^8.3.0",
         "@ton/ton": "^13.11.2",
         "@types/cookie-parser": "^1.4.7",
         "@types/jsonwebtoken": "^9.0.6",
@@ -23,6 +24,7 @@
         "express": "^4.19.2",
         "jsonwebtoken": "^9.0.2",
         "pg": "^8.12.0",
+        "redis": "^4.7.0",
         "sequelize": "^6.37.3",
         "socket.io": "^4.7.5",
         "telegraf": "^4.16.3",
