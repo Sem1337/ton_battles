@@ -14,6 +14,7 @@ import { createServer } from 'http';
 import { initializeSocket } from './utils/socket.js';
 import ShopService from './services/ShopService.js';
 import TaskService from './services/TaskService.js';
+import { Game, GameRoom, Player } from './database/model/gameRoom.js';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -62,6 +63,15 @@ sequelize.authenticate()
   .then(() => {
     console.log('seeding tasks');
     return TaskService.seedTasks();    
+  })
+  .then(() => {
+    return Player.destroy({where: {}, truncate: true});
+  })
+  .then(() => {
+    return Game.destroy({where: {}, truncate: true});
+  })
+  .then(() => {
+    return GameRoom.destroy({where: {}, truncate: true});
   })
   .then(() => {
     console.log('Database synced successfully.');
