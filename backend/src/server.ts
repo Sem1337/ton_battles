@@ -65,13 +65,13 @@ sequelize.authenticate()
     return TaskService.seedTasks();    
   })
   .then(() => {
-    return Player.destroy({where: {}, truncate: true});
+    return Player.destroy({ truncate: true, cascade: true });
   })
   .then(() => {
-    return Game.destroy({where: {}, truncate: true});
+    return Game.destroy({ truncate: true, cascade: true });
   })
   .then(() => {
-    return GameRoom.destroy({where: {}, truncate: true});
+    return GameRoom.destroy({ truncate: true, cascade: true });
   })
   .then(() => {
     console.log('Database synced successfully.');
