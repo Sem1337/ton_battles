@@ -54,7 +54,8 @@ const GameRoomComponent = () => {
 
 
     const handleGameCompleted = (data: { winner: { id: string, name: string, bet: number }, totalBank: number }) => {
-      console.log('received game result: ', data.winner.name, data.winner.bet, data.totalBank);
+      console.log('winner: ', winner);
+      console.log('received game result: ', data.winner?.name, data.winner?.bet, data.totalBank);
       setTotalBank(data.totalBank);
       setWinner(data.winner);
       sendMessage('GET_BALANCE');
