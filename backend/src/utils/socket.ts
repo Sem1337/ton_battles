@@ -1,12 +1,12 @@
 import { Server as HttpServer } from 'http';
 import { Server as SocketIOServer } from 'socket.io';
-import { createClient } from 'redis';
 import { createAdapter } from '@socket.io/redis-adapter';
 import { authenticateWebSocket } from '../auth.js';
 import { GameRoomService } from '../services/GameRoomService.js';
-import { User, UserSocket } from '../database/model/user.js';
+import { User } from '../database/model/user.js';
 import { updatePoints } from '../services/balanceService.js';
 import { sendUserInfoToSocket } from '../services/messageService.js';
+import redisClient from './redisClient.js'; // Import the shared Redis client
 
 let io: SocketIOServer;
 
@@ -20,7 +20,7 @@ export const initializeSocket = (server: HttpServer) => {
   });
 
   // Set up Redis clients for pub/sub
-  const pubClient = createClient({ url: 'redis://redis:6379' });
+  const pubClient = redisClient;
   const subClient = pubClient.duplicate();
 
   io.adapter(createAdapter(pubClient, subClient));
@@ -45,11 +45,11 @@ export const initializeSocket = (server: HttpServer) => {
     console.log('A user connected', socket.data.user);
     // Store the user's socket ID
     const userId = socket.data.user.userId;
-    // Store the user's socket ID in the database
-    await UserSocket.create({ userId, socketId: socket.id });
+    // Store the user's socket ID in Redis
+    await pubClient.set(`socket:${userId}`, socket.id);
 
     // Broadcast the current number of online users
-    const onlineUsersCount = await UserSocket.count();
+    const onlineUsersCount = await pubClient.dbSize(); // Assuming all user sessions are stored in Redis
     socket.emit('onlineUsers', { count: onlineUsersCount });
 
     socket.on('join', (roomId) => {
@@ -126,7 +126,7 @@ export const initializeSocket = (server: HttpServer) => {
 
     socket.on('disconnect', async () => {
       console.log('A user disconnected', socket.data.user);
-      await UserSocket.destroy({ where: { userId, socketId: socket.id } });
+      await pubClient.del(`socket:${userId}`);
     });
 
     socket.emit('message', { type: 'CONNECTED' });

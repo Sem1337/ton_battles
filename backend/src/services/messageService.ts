@@ -1,11 +1,10 @@
 import { User } from '../database/model/user.js';
 import { getSocketInstance } from '../utils/socket.js'
-import { UserSocket } from '../database/model/user.js';
+import redisClient from '../utils/redisClient.js';
 
 export const sendMessageToUser = async (userId: string, messageType: string, payload: any) => {
   const io = getSocketInstance();
-  const userSocket = await UserSocket.findOne({ where: { userId } });
-  const socketId = userSocket?.socketId;
+  const socketId = await redisClient.get(`socket:${userId}`);
 
   if (socketId) {
     io.to(socketId).emit('message', { type: messageType, payload: payload });
@@ -16,8 +15,8 @@ export const sendMessageToUser = async (userId: string, messageType: string, pay
 
 export const sendNotificationToUser = async (userId: string, payload: any) => {
   const io = getSocketInstance();
-  const userSocket = await UserSocket.findOne({ where: { userId } });
-  const socketId = userSocket?.socketId;
+  // Get the socket ID from Redis
+  const socketId = await redisClient.get(`socket:${userId}`);
 
   if (socketId) {
     io.to(socketId).emit('NOTIFY', payload);
@@ -41,8 +40,7 @@ export const sendUserInfoToSocket = (socket: any, user: User) => {
 
 export const sendUserInfo = async (userId: number) => {
   const io = getSocketInstance();
-  const userSocket = await UserSocket.findOne({ where: { userId } });
-  const socketId = userSocket?.socketId;
+  const socketId = await redisClient.get(`socket:${userId}`);
   const user = await User.findByPk(userId);
   if (socketId && user) {
     const payload = {
