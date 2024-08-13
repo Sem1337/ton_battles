@@ -49,7 +49,7 @@ const GameRoomComponent = () => {
       setPlayers(data.players);
       setTimer(data.remainingTime);
       setRoomName(data.roomName);
-      setTotalBank(totalBank);
+      setTotalBank(data.totalbank);
     };
 
 
