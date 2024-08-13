@@ -61,6 +61,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
       webSocketManager.on('onlineUsers', handleOnlineUsers);
 
       return () => {
+        webSocketManager.off('NOTIFY');
         webSocketManager.off('connect');
         webSocketManager.off('disconnect');
         webSocketManager.off('onlineUsers', handleOnlineUsers);

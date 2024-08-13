@@ -5,7 +5,7 @@ import { getSocketInstance } from '../utils/socket.js';
 import { updateUserBalanceWithTransaction, updateUserGems, updateUserPoints } from './balanceService.js';
 import Big from 'big.js'; // Import Big.js
 import { col, Op, Order } from 'sequelize';
-import { sendNotificationToUser } from './messageService.js';
+import { sendMessageToGameRoom, sendNotificationToGameRoom, sendNotificationToUser } from './messageService.js';
 
 export class GameRoomService {
   static async createGameRoom(gameType: 'points' | 'gems' | 'TON', minBet: string, maxBet: string, maxPlayers: number, roomName: string) {
@@ -115,7 +115,6 @@ export class GameRoomService {
         console.log('no players, no winner');
         return gameRoom;
       }
-      const io = getSocketInstance();
       let winner = null;
       if (gameRoom.players.length > 1) {
         // Determine the winner
@@ -162,14 +161,11 @@ export class GameRoomService {
           await this.updateUserBalanceByGameType(gameRoom.players[0].userId, gameRoom.gameType, new Big(game.total_bank));
         }
         console.log(`The winner is ${gameRoom.players[0].userId} with a bet of ${gameRoom.players[0].bet}. The total bank of ${game.total_bank} has been credited to their balance.`);
-        io.to(gameRoomId).emit('NOTIFY', { message: 'Not enough players for battle. Bet returned to your balance' });
+        await sendNotificationToGameRoom(gameRoomId, 'Not enough players for battle. Bet returned to your balance');
       }
       // Notify players
-      const gameResult = {
-        type: 'GAME_COMPLETED',
-        payload: { winner: winner ? { id: winner.id, name: winner.name, bet: winner.bet } : null, totalBank: game.total_bank }
-      };
-      io.to(gameRoomId).emit('message', gameResult);
+      const gameResult = { winner: winner ? { id: winner.id, name: winner.name, bet: winner.bet } : null, totalBank: game.total_bank };
+      await sendMessageToGameRoom(gameRoomId, 'GAME_COMPLETED', gameResult)
       game.status = 'closed';
       await game.save();
       return gameRoom;

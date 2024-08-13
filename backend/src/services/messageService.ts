@@ -14,16 +14,18 @@ export const sendMessageToUser = async (userId: string, messageType: string, pay
 };
 
 export const sendNotificationToUser = async (userId: string, payload: any) => {
-  const io = getSocketInstance();
-  // Get the socket ID from Redis
-  const socketId = await redisClient.get(`socket:${userId}`);
-
-  if (socketId) {
-    io.to(socketId).emit('NOTIFY', payload);
-  } else {
-    console.log(`User with ID ${userId} is not connected`);
-  }
+  await sendMessageToUser(userId, 'NOTIFY', payload);
 };
+
+export const sendMessageToGameRoom = async (gameRoomId: string, messageType: string , payload: any) => {
+  const io = getSocketInstance();
+  console.log('sending message to ', gameRoomId);
+  io.to(gameRoomId).emit('message', {type: messageType, payload: payload});
+}
+
+export const sendNotificationToGameRoom = async (gameRoomId: string, message: string) => {
+  await sendMessageToGameRoom(gameRoomId, 'NOTIFY', {message: message});
+}
 
 export const sendUserInfoToSocket = (socket: any, user: User) => {
   socket.emit('message', {
