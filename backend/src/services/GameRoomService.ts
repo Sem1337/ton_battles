@@ -13,7 +13,7 @@ export class GameRoomService {
     try {
       const maxBetValue = maxBet === 'Infinity' ? null : maxBet;
       if (maxBetValue && new Big(maxBetValue).lt(minBet) ||
-          maxPlayers < 2 || maxPlayers > 100 || new Big(minBet).lte(0)) {
+        maxPlayers < 2 || maxPlayers > 100 || new Big(minBet).lte(0)) {
         throw new Error('Failed to create game room');
       }
       console.log('creating game room: ', gameType, minBet, maxBet, maxPlayers);
@@ -211,28 +211,38 @@ export class GameRoomService {
     try {
       console.log(`${userId} user joins to ${roomId}`);
       const gameRoom = await GameRoom.findByPk(roomId, {
-        include: [{ model: Player, as: 'players', include: [{ model: User }] }],
+        include: [{
+          model: Player, as: 'players', include: [
+            {
+              model: User
+            },
+            {
+              model: Game,
+              as: 'currentGame',
+            }]
+        }],
         transaction
       });
       console.log('game room fetched');
       if (!gameRoom || gameRoom.status === 'closed') {
         throw new Error('Game room not found');
       }
+      const game = await Game.findByPk(gameRoom.currentGame.gameId, {
+        lock: transaction.LOCK.UPDATE,
+        transaction,
+      });
       const io = getSocketInstance();
       // Check if player is already in the game room
       const existingPlayer = gameRoom.players.find(player => player.userId.toString() === userId.toString());
-      if (!this.gameRoomTimers[roomId]) {
-        this.gameRoomTimers[roomId] = 60;
-      }
       if (existingPlayer) {
         console.log('Player already in the game room');
         console.log('remainingTime', this.gameRoomTimers[roomId]);
-        io.to(roomId).emit('message', { type: 'PLAYER_JOINED', payload: { players: gameRoom.players, remainingTime: this.gameRoomTimers[roomId], roomName: gameRoom.roomName } });
+        io.to(roomId).emit('message', { type: 'PLAYER_JOINED', payload: { players: gameRoom.players, remainingTime: this.gameRoomTimers[roomId], roomName: gameRoom.roomName, totalbank: game?.total_bank  } });
         await transaction.commit();
         return gameRoom;
       }
       if (gameRoom.players.length >= gameRoom.maxPlayers) {
-        sendNotificationToUser(userId, {message: 'Room is already full!' });
+        sendNotificationToUser(userId, { message: 'Room is already full!' });
         throw new Error('Game room is full');
       }
       const user = await User.findByPk(userId);
@@ -252,7 +262,7 @@ export class GameRoomService {
       await gameRoom.save({ transaction });
 
       console.log('remainingTime', this.gameRoomTimers[roomId]);
-      io.to(roomId).emit('message', { type: 'PLAYER_JOINED', payload: { players: gameRoom.players, remainingTime: this.gameRoomTimers[roomId], roomName: gameRoom.roomName } });
+      io.to(roomId).emit('message', { type: 'PLAYER_JOINED', payload: { players: gameRoom.players, remainingTime: this.gameRoomTimers[roomId], roomName: gameRoom.roomName, totalbank: game?.total_bank } });
 
       console.log('success');
       await transaction.commit();
@@ -369,7 +379,7 @@ export class GameRoomService {
       // Notify clients of the bet made
       const io = getSocketInstance();
 
-      io.to(roomId).emit('message', { type: 'BET_MADE', payload: { players: gameRoom.players, totalbank: game!.total_bank} });
+      io.to(roomId).emit('message', { type: 'BET_MADE', payload: { players: gameRoom.players, totalbank: game!.total_bank } });
 
       return gameRoom;
     } catch (error) {

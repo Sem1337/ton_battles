@@ -45,10 +45,11 @@ const GameRoomComponent = () => {
       sendMessage('UPDATE_POINTS');
     };
 
-    const handlePlayerJoined = (data: { players: Player[], remainingTime: number, roomName: string }) => {
+    const handlePlayerJoined = (data: { players: Player[], remainingTime: number, roomName: string, totalbank: number }) => {
       setPlayers(data.players);
       setTimer(data.remainingTime);
       setRoomName(data.roomName);
+      setTotalBank(totalBank);
     };
 
 
