@@ -8,7 +8,6 @@ import { col, Op, Order } from 'sequelize';
 import { sendNotificationToUser } from './messageService.js';
 
 export class GameRoomService {
-  static gameRoomTimers: { [key: string]: number } = {}; // In-memory storage for remaining time
   static async createGameRoom(gameType: 'points' | 'gems' | 'TON', minBet: string, maxBet: string, maxPlayers: number, roomName: string) {
     try {
       const maxBetValue = maxBet === 'Infinity' ? null : maxBet;
@@ -47,21 +46,23 @@ export class GameRoomService {
     }
   }
 
+  static calculateRemainingTime(creationTime: Date): number {
+    const now = new Date().getTime();  // Get current time in milliseconds
+    const creationTimeInMs = new Date(creationTime).getTime();  // Convert creation time to milliseconds
+    const elapsedSeconds = Math.floor((now - creationTimeInMs) / 1000);  // Calculate elapsed time in seconds
+    return Math.max(60 - elapsedSeconds, 0);  // Calculate remaining time, ensuring it's not negative
+  }
+
   static async startGameLoop(gameRoomId: string) {
     try {
       const io = getSocketInstance();
       console.log('starting game loop in gameRoom', gameRoomId);
       while (true) {
-        // Initialize the remaining time for the game
-        this.gameRoomTimers[gameRoomId] = 60;
         // Start the game
-        io.to(gameRoomId).emit('message', { type: 'GAME_STARTED', payload: {remainingTime: this.gameRoomTimers[gameRoomId] } });
+        io.to(gameRoomId).emit('message', { type: 'GAME_STARTED' });
 
         // Update the remaining time every second
-        while (this.gameRoomTimers[gameRoomId] > 0) {
-          await new Promise(resolve => setTimeout(resolve, 1000));
-          this.gameRoomTimers[gameRoomId] -= 1;
-        }
+        await new Promise(resolve => setTimeout(resolve, 60000));
 
         const gameRoom = await this.completeGame(gameRoomId); // Complete the current game
         if (!gameRoom || gameRoom.status === 'closed') {
@@ -71,7 +72,6 @@ export class GameRoomService {
         if (gameRoom.players.length === 0) {
           gameRoom.status = 'closed';
           await gameRoom.save();
-          delete this.gameRoomTimers[gameRoomId];
           console.log(`Game room ${gameRoomId} closed due to no players`);
           break;
         } else {
@@ -232,13 +232,17 @@ export class GameRoomService {
         lock: transaction.LOCK.UPDATE,
         transaction,
       });
+      if (!game) {
+        throw new Error('Game does not exists');
+      }
+      const remainingTime = this.calculateRemainingTime(game.createdAt);
       const io = getSocketInstance();
       // Check if player is already in the game room
       const existingPlayer = gameRoom.players.find(player => player.userId.toString() === userId.toString());
       if (existingPlayer) {
         console.log('Player already in the game room');
-        console.log('remainingTime', this.gameRoomTimers[roomId]);
-        io.to(roomId).emit('message', { type: 'PLAYER_JOINED', payload: { players: gameRoom.players, remainingTime: this.gameRoomTimers[roomId], roomName: gameRoom.roomName, totalbank: game?.total_bank } });
+        console.log('remainingTime', remainingTime);
+        io.to(roomId).emit('message', { type: 'PLAYER_JOINED', payload: { players: gameRoom.players, remainingTime: remainingTime, roomName: gameRoom.roomName, totalbank: game.total_bank } });
         await transaction.commit();
         return gameRoom;
       }
@@ -262,8 +266,8 @@ export class GameRoomService {
       gameRoom.players.push(player);
       await gameRoom.save({ transaction });
 
-      console.log('remainingTime', this.gameRoomTimers[roomId]);
-      io.to(roomId).emit('message', { type: 'PLAYER_JOINED', payload: { players: gameRoom.players, remainingTime: this.gameRoomTimers[roomId], roomName: gameRoom.roomName, totalbank: game?.total_bank } });
+      console.log('remainingTime', remainingTime);
+      io.to(roomId).emit('message', { type: 'PLAYER_JOINED', payload: { players: gameRoom.players, remainingTime: remainingTime, roomName: gameRoom.roomName, totalbank: game.total_bank } });
 
       console.log('success');
       await transaction.commit();

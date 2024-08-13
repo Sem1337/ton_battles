@@ -1,9 +1,11 @@
 import { User } from '../database/model/user.js';
-import { getSocketInstance, userSocketMap } from '../utils/socket.js'
+import { getSocketInstance } from '../utils/socket.js'
+import { UserSocket } from '../database/model/user.js';
 
-export const sendMessageToUser = (userId: string, messageType: string, payload: any) => {
+export const sendMessageToUser = async (userId: string, messageType: string, payload: any) => {
   const io = getSocketInstance();
-  const socketId = userSocketMap.get(userId);
+  const userSocket = await UserSocket.findOne({ where: { userId } });
+  const socketId = userSocket?.socketId;
 
   if (socketId) {
     io.to(socketId).emit('message', { type: messageType, payload: payload });
@@ -12,9 +14,10 @@ export const sendMessageToUser = (userId: string, messageType: string, payload: 
   }
 };
 
-export const sendNotificationToUser = (userId: string, payload: any) => {
+export const sendNotificationToUser = async (userId: string, payload: any) => {
   const io = getSocketInstance();
-  const socketId = userSocketMap.get(userId);
+  const userSocket = await UserSocket.findOne({ where: { userId } });
+  const socketId = userSocket?.socketId;
 
   if (socketId) {
     io.to(socketId).emit('NOTIFY', payload);
@@ -38,7 +41,8 @@ export const sendUserInfoToSocket = (socket: any, user: User) => {
 
 export const sendUserInfo = async (userId: number) => {
   const io = getSocketInstance();
-  const socketId = userSocketMap.get(userId);
+  const userSocket = await UserSocket.findOne({ where: { userId } });
+  const socketId = userSocket?.socketId;
   const user = await User.findByPk(userId);
   if (socketId && user) {
     const payload = {

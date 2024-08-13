@@ -84,6 +84,36 @@ User.init(
   }
 );
 
+class UserSocket extends Model {
+  public userId!: number;
+  public socketId!: string;
+}
+
+UserSocket.init(
+  {
+    userId: {
+      type: DataTypes.BIGINT,
+      allowNull: false,
+      primaryKey: true,
+    },
+    socketId: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+    },
+  },
+  {
+    sequelize,
+    modelName: 'UserSocket',
+    indexes: [
+      {
+        unique: true,
+        fields: ['userId', 'socketId'],
+      },
+    ],
+  }
+);
+
 User.hasMany(User, {
   sourceKey: 'userId',
   foreignKey: 'referredBy',
@@ -93,4 +123,4 @@ User.hasMany(User, {
 User.belongsToMany(Task, { through: 'UserTasks', as: 'completedTasks' });
 Task.belongsToMany(User, { through: 'UserTasks' });
 
-export { User };
+export { User, UserSocket };

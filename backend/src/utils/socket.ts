@@ -2,13 +2,11 @@ import { Server as HttpServer } from 'http';
 import { Server as SocketIOServer } from 'socket.io';
 import { authenticateWebSocket } from '../auth.js';
 import { GameRoomService } from '../services/GameRoomService.js';
-import { User } from '../database/model/user.js';
+import { User, UserSocket } from '../database/model/user.js';
 import { updatePoints } from '../services/balanceService.js';
 import { sendUserInfoToSocket } from '../services/messageService.js';
 
 let io: SocketIOServer;
-
-export const userSocketMap = new Map();
 
 export const initializeSocket = (server: HttpServer) => {
   io = new SocketIOServer(server, {
@@ -35,14 +33,16 @@ export const initializeSocket = (server: HttpServer) => {
     }
   });
 
-  io.on('connection', (socket) => {
+  io.on('connection', async (socket) => {
     console.log('A user connected', socket.data.user);
     // Store the user's socket ID
     const userId = socket.data.user.userId;
-    userSocketMap.set(userId, socket.id);
+    // Store the user's socket ID in the database
+    await UserSocket.create({ userId, socketId: socket.id });
 
     // Broadcast the current number of online users
-    socket.emit('onlineUsers', { count: userSocketMap.size });
+    const onlineUsersCount = await UserSocket.count();
+    socket.emit('onlineUsers', { count: onlineUsersCount });
 
     socket.on('join', (roomId) => {
       socket.join(roomId);
@@ -116,9 +116,9 @@ export const initializeSocket = (server: HttpServer) => {
       }
     });
 
-    socket.on('disconnect', () => {
+    socket.on('disconnect', async () => {
       console.log('A user disconnected', socket.data.user);
-      userSocketMap.delete(userId);
+      await UserSocket.destroy({ where: { userId, socketId: socket.id } });
     });
 
     socket.emit('message', { type: 'CONNECTED' });

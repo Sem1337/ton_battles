@@ -3,10 +3,10 @@ import sequelize from '../db.js';
 import { User } from './user.js';
 
 class Player extends Model {
-  public id!: string
-  public bet!: string
-  public name!: string
-  public gameRoomId!: string
+  public id!: string;
+  public bet!: string;
+  public name!: string;
+  public gameRoomId!: string;
   public shield!: number;
   public userId!: number;
 }
@@ -59,12 +59,13 @@ Player.init(
 )
 
 class Game extends Model {
-  public gameId!: string
-  public gameRoomId!: string
-  public total_bank!: string
-  public winner_id!: string
-  public winnerBetSize!: string
-  public status!: 'active' | 'closed'
+  public gameId!: string;
+  public gameRoomId!: string;
+  public total_bank!: string;
+  public winner_id!: string;
+  public winnerBetSize!: string;
+  public status!: 'active' | 'closed';
+  public readonly createdAt!: Date;
 }
 
 Game.init(
@@ -104,16 +105,16 @@ Game.init(
 )
 
 class GameRoom extends Model {
-  public id!: string
+  public id!: string;
   public gameType!: 'points' | 'gems' | 'TON';
-  public minBet!: string
-  public maxBet!: string
-  public maxPlayers!: number
-  public status!: 'active' | 'closed'
-  public currentGame!: Game
-  public players!: Player[]
-  public roomName!: string // Add this line
-  public currentPlayers!: number
+  public minBet!: string;
+  public maxBet!: string;
+  public maxPlayers!: number;
+  public status!: 'active' | 'closed';
+  public currentGame!: Game;
+  public players!: Player[];
+  public roomName!: string; // Add this line
+  public currentPlayers!: number;
 }
 
 GameRoom.init(
