@@ -99,15 +99,12 @@ async function fetchAndProcessTransactions(toLT: string): Promise<void> {
       }
       lastProcessedTxLt = transaction.transaction_id.lt;
       lastProcessedTxHash = transaction.transaction_id.hash;
-      console.log('-----tx-----', transaction.transaction_id.lt);
       if (transaction.out_msgs.length > 0
         || !transaction.in_msg
         || !transaction.in_msg.message
         || lastProcessedTxLt === lastCheckedLt) continue;
       try {
         const txValue = new Big(fromNano(transaction.in_msg.value));
-        console.log('amount: ', txValue);
-        console.log('msg: ', transaction.in_msg.message);
         const payloadEncrypted = transaction.in_msg.message
 
         const payloadDecrypted = jwt.verify(payloadEncrypted, process.env.JWT_SECRET_KEY || '');
