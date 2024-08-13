@@ -211,16 +211,17 @@ export class GameRoomService {
     try {
       console.log(`${userId} user joins to ${roomId}`);
       const gameRoom = await GameRoom.findByPk(roomId, {
-        include: [{
-          model: Player, as: 'players', include: [
-            {
-              model: User
-            },
-            {
-              model: Game,
-              as: 'currentGame',
-            }]
-        }],
+        include: [
+          {
+            model: Player, as: 'players', include: [
+              {
+                model: User
+              }],
+          },
+          {
+            model: Game,
+            as: 'currentGame',
+          }],
         transaction
       });
       console.log('game room fetched');
@@ -237,7 +238,7 @@ export class GameRoomService {
       if (existingPlayer) {
         console.log('Player already in the game room');
         console.log('remainingTime', this.gameRoomTimers[roomId]);
-        io.to(roomId).emit('message', { type: 'PLAYER_JOINED', payload: { players: gameRoom.players, remainingTime: this.gameRoomTimers[roomId], roomName: gameRoom.roomName, totalbank: game?.total_bank  } });
+        io.to(roomId).emit('message', { type: 'PLAYER_JOINED', payload: { players: gameRoom.players, remainingTime: this.gameRoomTimers[roomId], roomName: gameRoom.roomName, totalbank: game?.total_bank } });
         await transaction.commit();
         return gameRoom;
       }
