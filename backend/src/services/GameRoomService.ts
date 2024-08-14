@@ -116,7 +116,7 @@ export class GameRoomService {
         return gameRoom;
       }
       let winner = null;
-      if (gameRoom.players.length > 1) {
+      if (gameRoom.players.length > 1 && new Big(game.total_bank).gt(0)) {
         // Determine the winner
         const playersWithChances = gameRoom.players.map(player => {
           const playerBet = new Big(player.bet);
@@ -156,11 +156,13 @@ export class GameRoomService {
         // Update the winner's user balance
         await this.updateUserBalanceByGameType(winner.userId, gameRoom.gameType, new Big(game.total_bank));
         console.log(`The winner is ${winner.name} with a bet of ${winner.bet}. The total bank of ${game.total_bank} has been credited to their balance.`);
-      } else {
+      } else if (new Big(game.total_bank).gt(0)) {
         if (new Big(game.total_bank).gt(0)) {
           await this.updateUserBalanceByGameType(gameRoom.players[0].userId, gameRoom.gameType, new Big(game.total_bank));
         }
         console.log(`The winner is ${gameRoom.players[0].userId} with a bet of ${gameRoom.players[0].bet}. The total bank of ${game.total_bank} has been credited to their balance.`);
+        await sendNotificationToGameRoom(gameRoomId, 'Not enough players for battle. Bet returned to your balance');
+      } else {
         await sendNotificationToGameRoom(gameRoomId, 'Not enough players for battle. Bet returned to your balance');
       }
       // Notify players
