@@ -96,84 +96,86 @@ export class GameRoomService {
 
   static async completeGame(gameRoomId: string) {
     try {
-
-      console.log('completing game in gameRoom', gameRoomId);
-      const gameRoom = await GameRoom.findByPk(gameRoomId, {
-        include: [
-          { model: Player, as: 'players' },
-          { model: Game, as: 'currentGame' }
-        ]
-      });
-      if (!gameRoom) {
-        throw new Error('Game room not found');
-      }
-
-      const game = gameRoom.currentGame;
-      if (!game) {
-        throw new Error('Current game not found');
-      }
-
-      if (gameRoom.players.length === 0) {
-        game.status = 'closed';
-        await game.save();
-        console.log('no players, no winner');
-        return gameRoom;
-      }
-      let winner = null;
-      if (gameRoom.players.length > 1 && new Big(game.total_bank).gt(0)) {
-        // Determine the winner
-        const playersWithChances = gameRoom.players.map(player => {
-          const playerBet = new Big(player.bet);
-          const winChance = playerBet.div(game.total_bank).mul(100).toNumber(); // Normalize player's chance to win in percentage
-          const shieldThreshold = 100 - player.shield * 10; // Threshold based on player's shield
-          return { player, winChance, shieldThreshold };
+      const gameRoom = await sequelize.transaction(async () => {
+        console.log('completing game in gameRoom', gameRoomId);
+        const gameRoom = await GameRoom.findByPk(gameRoomId, {
+          include: [
+            { model: Player, as: 'players' },
+            { model: Game, as: 'currentGame' }
+          ]
         });
-
-        // First attempt to find a winner based on shield criteria
-        for (const { player, winChance, shieldThreshold } of playersWithChances) {
-          if (winChance >= shieldThreshold) {
-            winner = player;
-            break;
-          }
+        if (!gameRoom) {
+          throw new Error('Game room not found');
         }
 
-        // If no winner was found based on shield criteria, use weighted random selection
-        if (!winner) {
-          const totalWinChance = 100;
-          let random = Math.random() * totalWinChance;
-          for (const { player, winChance } of playersWithChances) {
-            if (random < winChance) {
+        const game = gameRoom.currentGame;
+        if (!game) {
+          throw new Error('Current game not found');
+        }
+
+        if (gameRoom.players.length === 0) {
+          game.status = 'closed';
+          await game.save();
+          console.log('no players, no winner');
+          return gameRoom;
+        }
+        let winner = null;
+        if (gameRoom.players.length > 1 && new Big(game.total_bank).gt(0)) {
+          // Determine the winner
+          const playersWithChances = gameRoom.players.map(player => {
+            const playerBet = new Big(player.bet);
+            const winChance = playerBet.div(game.total_bank).mul(100).toNumber(); // Normalize player's chance to win in percentage
+            const shieldThreshold = 100 - player.shield * 10; // Threshold based on player's shield
+            return { player, winChance, shieldThreshold };
+          });
+
+          // First attempt to find a winner based on shield criteria
+          for (const { player, winChance, shieldThreshold } of playersWithChances) {
+            if (winChance >= shieldThreshold) {
               winner = player;
               break;
             }
-            random -= winChance;
           }
-        }
-        console.log('winner determined');
-        if (!winner) {
-          winner = gameRoom.players[0];
-        }
-        // Update the game's winner and status
-        game.winner_id = winner.id;
-        game.winnerBetSize = winner.bet;
 
-        // Update the winner's user balance
-        await this.updateUserBalanceByGameType(winner.userId, gameRoom.gameType, new Big(game.total_bank));
-        console.log(`The winner is ${winner.name} with a bet of ${winner.bet}. The total bank of ${game.total_bank} has been credited to their balance.`);
-      } else if (new Big(game.total_bank).gt(0)) {
-        if (new Big(game.total_bank).gt(0)) {
-          await this.updateUserBalanceByGameType(gameRoom.players[0].userId, gameRoom.gameType, new Big(game.total_bank));
+          // If no winner was found based on shield criteria, use weighted random selection
+          if (!winner) {
+            const totalWinChance = 100;
+            let random = Math.random() * totalWinChance;
+            for (const { player, winChance } of playersWithChances) {
+              if (random < winChance) {
+                winner = player;
+                break;
+              }
+              random -= winChance;
+            }
+          }
+          console.log('winner determined');
+          if (!winner) {
+            winner = gameRoom.players[0];
+          }
+          // Update the game's winner and status
+          game.winner_id = winner.id;
+          game.winnerBetSize = winner.bet;
+
+          // Update the winner's user balance
+          await this.updateUserBalanceByGameType(winner.userId, gameRoom.gameType, new Big(game.total_bank));
+          console.log(`The winner is ${winner.name} with a bet of ${winner.bet}. The total bank of ${game.total_bank} has been credited to their balance.`);
+        } else if (new Big(game.total_bank).gt(0)) {
+          if (new Big(game.total_bank).gt(0)) {
+            await this.updateUserBalanceByGameType(gameRoom.players[0].userId, gameRoom.gameType, new Big(game.total_bank));
+          }
+          console.log(`The winner is ${gameRoom.players[0].userId} with a bet of ${gameRoom.players[0].bet}. The total bank of ${game.total_bank} has been credited to their balance.`);
+          await sendNotificationToGameRoom(gameRoomId, 'Not enough players for battle. Bet returned to your balance');
+        } else {
+          await sendNotificationToGameRoom(gameRoomId, 'Not enough players for battle. Bet returned to your balance');
         }
-        console.log(`The winner is ${gameRoom.players[0].userId} with a bet of ${gameRoom.players[0].bet}. The total bank of ${game.total_bank} has been credited to their balance.`);
-        await sendNotificationToGameRoom(gameRoomId, 'Not enough players for battle. Bet returned to your balance');
-      } else {
-        await sendNotificationToGameRoom(gameRoomId, 'Not enough players for battle. Bet returned to your balance');
-      }
-      // Notify players
-      const gameResult = { winner: winner ? { id: winner.id, name: winner.name, bet: winner.bet } : null, totalBank: game.total_bank };
-      await sendMessageToGameRoom(gameRoomId, 'GAME_COMPLETED', gameResult);
-      game.status = 'closed';
-      await game.save();
+        // Notify players
+        const gameResult = { winner: winner ? { id: winner.id, name: winner.name, bet: winner.bet } : null, totalBank: game.total_bank };
+        await sendMessageToGameRoom(gameRoomId, 'GAME_COMPLETED', gameResult);
+        game.status = 'closed';
+        await game.save();
+        return gameRoom;
+      });
       return gameRoom;
     } catch (error) {
       if (error instanceof Error) {
