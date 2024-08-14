@@ -86,14 +86,28 @@ const GameRoomComponent = () => {
   }, [navigate]);
 
   const memoizedPlayersList = useMemo(() => (
-    <ul className="players-list">
-      {players.map((player) => (
-        <li key={player.id} className="player-item">
-          {player.name}: {Number(player.bet).toString()}
-        </li>
-      ))}
-    </ul>
-  ), [players]);
+    <table className="players-list-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Bet</th>
+          <th>Win Chance</th>
+        </tr>
+      </thead>
+      <tbody>
+        {players.map((player) => {
+          const winChance = totalBank > 0 ? (Number(player.bet) / totalBank) * 100 : 0;
+          return (
+            <tr key={player.id} className="player-item">
+              <td>{player.name}</td>
+              <td>{Number(player.bet).toFixed(2)}</td>
+              <td>{winChance.toFixed(2)}%</td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  ), [players, totalBank]);
 
   const memoizedModal = useMemo(() => (
     winner && (

@@ -82,6 +82,7 @@
 
 .players-section {
   margin-bottom: 1rem;
+  width: 100%; /* Ensure the table takes full width */
 }
 
 .players-title {
@@ -91,15 +92,26 @@
   color: #0077b6; /* Deep sky blue */
 }
 
-.players-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+.players-list-table {
+  width: 100%;
+  border-collapse: collapse; /* Ensure borders are not doubled */
 }
 
-.player-item {
-  border-bottom: 1px solid #0077b6; /* Deep sky blue border */
-  padding: 0.5rem 0;
+.players-list-table th,
+.players-list-table td {
+  border: 1px solid #0077b6; /* Deep sky blue border */
+  padding: 0.5rem;
+  text-align: center;
+}
+
+.players-list-table th {
+  background-color: #0077b6; /* Deep sky blue */
+  color: white;
+  font-weight: bold;
+}
+
+.players-list-table td {
+  background-color: #e1f5fe; /* Light blue background for rows */
 }
 
 .modal-overlay {
