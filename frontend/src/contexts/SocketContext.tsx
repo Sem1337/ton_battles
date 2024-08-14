@@ -30,7 +30,7 @@ interface SocketProviderProps {
 
 export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const { isAuthenticated, token } = useAuth();
-  const { showNotification } = useNotification();
+  const { showNotification, showError } = useNotification();
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [onlineUsers, setOnlineUsers] = useState<number>(0);
 
@@ -42,6 +42,11 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
       webSocketManager.on('NOTIFY', (data: { message: string }) => {
         console.log('received NOTIFY')
         showNotification(data.message);
+      });
+
+      webSocketManager.on('ERROR', (data: { message: string }) => {
+        console.log('received ERROR')
+        showError(data.message);
       });
 
       const handleConnected = () => {
@@ -62,6 +67,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
 
       return () => {
         webSocketManager.off('NOTIFY');
+        webSocketManager.off('ERROR');
         webSocketManager.off('connect');
         webSocketManager.off('disconnect');
         webSocketManager.off('onlineUsers', handleOnlineUsers);

@@ -3,6 +3,7 @@ import Modal from 'react-modal';
 
 interface NotificationContextType {
   showNotification: (message: string) => void;
+  showError: (message: string) => void;
 }
 
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
@@ -21,6 +22,7 @@ interface NotificationProviderProps {
 
 export const NotificationProvider: React.FC<NotificationProviderProps> = ({ children }) => {
   const [notification, setNotification] = useState<string | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const showNotification = (message: string) => {
     setNotification(message);
@@ -30,8 +32,16 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
     setNotification(null);
   };
 
+  const showError = (message: string) => {
+    setErrorMsg(message);
+  };
+
+  const closeError = () => {
+    setErrorMsg(null);
+  };
+
   return (
-    <NotificationContext.Provider value={{ showNotification }}>
+    <NotificationContext.Provider value={{ showNotification, showError }}>
       {children}
       <Modal
         isOpen={notification !== null}
@@ -45,6 +55,24 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
           <div className="mb-4">{notification}</div>
           <button 
             onClick={closeNotification} 
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          >
+            Close
+          </button>
+        </div>
+      </Modal>
+      <Modal
+        isOpen={errorMsg !== null}
+        onRequestClose={closeError}
+        className="fixed inset-0 flex items-center justify-center z-50"
+        overlayClassName="fixed inset-0 bg-black bg-opacity-50"
+        contentLabel="Error"
+      >
+        <div className="bg-white p-6 rounded shadow-lg max-w-md w-full">
+          <h2 className="text-xl font-bold mb-4">Error</h2>
+          <div className="mb-4">{errorMsg}</div>
+          <button 
+            onClick={closeError} 
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           >
             Close
