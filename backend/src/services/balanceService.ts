@@ -8,20 +8,6 @@ export const generateTonTopUpPayload = (userId: number) => {
   return txPayload
 }
 
-export const updateUserBalanceWithTransaction = async (userId: number, amount: Big) => {
-  await sequelize.transaction(async () => {
-    const user = await User.findByPk(userId, { lock: true });
-    if (user) {
-      const newBalance = new Big(user.balance).plus(amount);
-      if (newBalance.lt(0)) {
-        throw new Error('Insufficient balance');
-      }
-      user.balance = newBalance.toFixed(9);
-      await user.save();
-    }
-  });
-};
-
 export const updateUserBalance = async (userId: number, amount: Big) => {
   try {
     await sequelize.transaction(async () => {
@@ -64,57 +50,76 @@ export const updatePoints = async (userId: string) => {
     return user;
   } catch (error) {
     console.error(error);
-    throw new Error('An error occurred while updating points');
+    throw new Error('An error occurred while automatically updating points');
   }
-  return null;
 };
 
 export const updateUserPoints = async (userId: number, points: Big) => {
-  await sequelize.transaction(async () => {
-    const user = await User.findByPk(userId, { lock: true });
-    if (user) {
-      const newBalance = new Big(user.points).plus(points);
-      if (newBalance.lt(0)) {
-        throw new Error('Insufficient balance');
+  try {
+    await sequelize.transaction(async () => {
+      const user = await User.findByPk(userId, { lock: true });
+      if (user) {
+        const newBalance = new Big(user.points).plus(points);
+        if (newBalance.lt(0)) {
+          throw new Error('Insufficient balance');
+        }
+        user.points = newBalance.toFixed(0);
+        await user.save();
       }
-      user.points = newBalance.toFixed(0);
-      await user.save();
-    }
-  });
+    });
+  } catch (error) {
+    console.log(error);
+    throw new Error('An error occurred while updating points');
+  }
 };
 
 export const updateUserGems = async (userId: number, gems: Big) => {
-  await sequelize.transaction(async () => {
-    const user = await User.findByPk(userId, { lock: true });
-    if (user) {
-      const newBalance = new Big(user.gems).plus(gems);
-      if (newBalance.lt(0)) {
-        throw new Error('Insufficient balance');
+  try {
+    await sequelize.transaction(async () => {
+      const user = await User.findByPk(userId, { lock: true });
+      if (user) {
+        const newBalance = new Big(user.gems).plus(gems);
+        if (newBalance.lt(0)) {
+          throw new Error('Insufficient balance');
+        }
+        user.gems = newBalance.toNumber();
+        await user.save({});
       }
-      user.gems = newBalance.toNumber();
-      await user.save({});
-    }
-  });
+    });
+  } catch (error) {
+    console.log(error);
+    throw new Error('An error occurred while updating gems');
+  }
 };
 
 export const userLvlUpProduction = async (userId: number) => {
-  await sequelize.transaction(async () => {
-    const user = await User.findByPk(userId, { lock: true });
-    if (user) {
-      user.productionLVL++;
-      await user.save();
-    }
-  });
+  try {
+    await sequelize.transaction(async () => {
+      const user = await User.findByPk(userId, { lock: true });
+      if (user) {
+        user.productionLVL++;
+        await user.save();
+      }
+    });
+  } catch (error) {
+    console.log(error);
+    throw new Error('An error occurred while updating prod speed');
+  }
 };
 
 export const userLvlUpShield = async (userId: number) => {
-  await sequelize.transaction(async () => {
-    const user = await User.findByPk(userId, { lock: true });
-    if (user) {
-      user.shield++;
-      await user.save();
-    }
-  });
+  try {
+    await sequelize.transaction(async () => {
+      const user = await User.findByPk(userId, { lock: true });
+      if (user) {
+        user.shield++;
+        await user.save();
+      }
+    });
+  } catch (error) {
+    console.log(error);
+    throw new Error('An error occurred while updating shield lvl');
+  }
 };
 
 export const getUserBalance = async (userId: number) => {

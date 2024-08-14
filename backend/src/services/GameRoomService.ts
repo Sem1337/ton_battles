@@ -2,7 +2,7 @@ import sequelize from '../database/db.js';
 import { GameRoom, Player, Game } from '../database/model/gameRoom.js'
 import { User } from '../database/model/user.js';
 import { getSocketInstance } from '../utils/socket.js';
-import { updateUserBalanceWithTransaction, updateUserGems, updateUserPoints } from './balanceService.js';
+import { updateUserBalance, updateUserGems, updateUserPoints } from './balanceService.js';
 import Big from 'big.js'; // Import Big.js
 import { col, Op, Order, Transaction } from 'sequelize';
 import { sendMessageToGameRoom, sendNotificationToGameRoom, sendNotificationToUser } from './messageService.js';
@@ -417,7 +417,7 @@ export class GameRoomService {
         await updateUserGems(+userId, amount);
         break;
       case 'TON':
-        await updateUserBalanceWithTransaction(+userId, amount);
+        await updateUserBalance(+userId, amount);
         return;
       default:
         throw new Error('Invalid game type');
