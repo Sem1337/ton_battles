@@ -101,7 +101,12 @@ export class GameRoomService {
         const gameRoom = await GameRoom.findByPk(gameRoomId, {
           include: [
             { model: Player, as: 'players' },
-            { model: Game, as: 'currentGame' }
+            {
+              model: Game, as: 'currentGame',
+              where: {
+                status: 'active', // Filter for only active games
+              },
+            }
           ],
           transaction
         });
@@ -116,7 +121,7 @@ export class GameRoomService {
 
         if (gameRoom.players.length === 0) {
           game.status = 'closed';
-          await game.save({transaction});
+          await game.save({ transaction });
           console.log('no players, no winner');
           return gameRoom;
         }
@@ -174,7 +179,7 @@ export class GameRoomService {
         const gameResult = { winner: winner ? { id: winner.id, name: winner.name, bet: winner.bet } : null, totalBank: game.total_bank };
         await sendMessageToGameRoom(gameRoomId, 'GAME_COMPLETED', gameResult);
         game.status = 'closed';
-        await game.save({transaction});
+        await game.save({ transaction });
         return gameRoom;
       });
       return gameRoom;
@@ -228,6 +233,9 @@ export class GameRoomService {
             {
               model: Game,
               as: 'currentGame',
+              where: {
+                status: 'active', // Filter for only active games
+              },
             }],
           lock: {
             level: Transaction.LOCK.UPDATE,
@@ -348,10 +356,13 @@ export class GameRoomService {
       const gameRoom = await sequelize.transaction(async (transaction) => {
         const gameRoom = await GameRoom.findByPk(roomId, {
           include: [
-            { model: Player, as: 'players'},
+            { model: Player, as: 'players' },
             {
               model: Game,
               as: 'currentGame',
+              where: {
+                status: 'active', // Filter for only active games
+              },
             }
           ],
           transaction,
