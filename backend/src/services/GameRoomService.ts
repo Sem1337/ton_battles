@@ -4,7 +4,7 @@ import { User } from '../database/model/user.js';
 import { getSocketInstance } from '../utils/socket.js';
 import { updateUserBalanceWithTransaction, updateUserGems, updateUserPoints } from './balanceService.js';
 import Big from 'big.js'; // Import Big.js
-import { col, LOCK, Op, Order } from 'sequelize';
+import { col, Op, Order, Transaction } from 'sequelize';
 import { sendMessageToGameRoom, sendNotificationToGameRoom, sendNotificationToUser } from './messageService.js';
 
 export class GameRoomService {
@@ -229,7 +229,7 @@ export class GameRoomService {
               as: 'currentGame',
             }],
           lock: {
-            level: LOCK.UPDATE,
+            level: Transaction.LOCK.UPDATE,
             of: GameRoom
           }
 
