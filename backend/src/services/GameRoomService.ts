@@ -403,7 +403,7 @@ export class GameRoomService {
         }
 
         console.log('updating balance in make bet');
-        await this.updateUserBalanceByGameType(+userId, gameRoom.gameType, new Big(-betSize), transaction); // Update balance using Big.js
+        await this.updateUserBalanceByGameType(+userId, gameRoom.gameType, new Big(-betSize), transaction);
         console.log('updated balance in make bet');
 
         player.bet = new Big(player.bet).plus(betSize).toFixed(9); // Update player's bet using Big.js
@@ -440,11 +440,6 @@ export class GameRoomService {
   }
 
   static async updateUserBalanceByGameType(userId: number, gameType: 'points' | 'gems' | 'TON', amount: Big, transaction: Transaction) {
-    const user = await User.findByPk(userId);
-    if (!user) {
-      throw new Error('User not found');
-    }
-
     switch (gameType) {
       case 'points':
         await updateUserPoints(+userId, amount, transaction);

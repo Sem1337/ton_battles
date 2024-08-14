@@ -75,18 +75,24 @@ export const updatePoints = async (userId: string, transaction?: Transaction) =>
 
 export const updateUserPoints = async (userId: number, points: Big, transaction?: Transaction) => {
   const executeUpdate = async (trans: Transaction) => {
+    console.log('fetching user...');
     const user = await User.findByPk(userId, { lock: trans.LOCK.UPDATE, transaction: trans });
+    console.log('user fetched', user);
     if (user) {
       const newBalance = new Big(user.points).plus(points);
+      console.log('calc new balance');
       if (newBalance.lt(0)) {
         throw new Error('Insufficient balance');
       }
       user.points = newBalance.toFixed(0);
+      console.log('saving user');
       await user.save({ transaction: trans });
+      console.log('user saved');
     }
   };
 
   if (transaction) {
+    console.log('updating with existing tx');
     await executeUpdate(transaction);
   } else {
     try {
