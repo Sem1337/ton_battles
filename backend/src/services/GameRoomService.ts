@@ -96,13 +96,14 @@ export class GameRoomService {
 
   static async completeGame(gameRoomId: string) {
     try {
-      const gameRoom = await sequelize.transaction(async () => {
+      const gameRoom = await sequelize.transaction(async (transaction) => {
         console.log('completing game in gameRoom', gameRoomId);
         const gameRoom = await GameRoom.findByPk(gameRoomId, {
           include: [
             { model: Player, as: 'players' },
             { model: Game, as: 'currentGame' }
-          ]
+          ],
+          transaction
         });
         if (!gameRoom) {
           throw new Error('Game room not found');
@@ -115,7 +116,7 @@ export class GameRoomService {
 
         if (gameRoom.players.length === 0) {
           game.status = 'closed';
-          await game.save();
+          await game.save({transaction});
           console.log('no players, no winner');
           return gameRoom;
         }
@@ -158,11 +159,11 @@ export class GameRoomService {
           game.winnerBetSize = winner.bet;
 
           // Update the winner's user balance
-          await this.updateUserBalanceByGameType(winner.userId, gameRoom.gameType, new Big(game.total_bank));
+          await this.updateUserBalanceByGameType(winner.userId, gameRoom.gameType, new Big(game.total_bank), transaction);
           console.log(`The winner is ${winner.name} with a bet of ${winner.bet}. The total bank of ${game.total_bank} has been credited to their balance.`);
         } else if (new Big(game.total_bank).gt(0)) {
           if (new Big(game.total_bank).gt(0)) {
-            await this.updateUserBalanceByGameType(gameRoom.players[0].userId, gameRoom.gameType, new Big(game.total_bank));
+            await this.updateUserBalanceByGameType(gameRoom.players[0].userId, gameRoom.gameType, new Big(game.total_bank), transaction);
           }
           console.log(`The winner is ${gameRoom.players[0].userId} with a bet of ${gameRoom.players[0].bet}. The total bank of ${game.total_bank} has been credited to their balance.`);
           await sendNotificationToGameRoom(gameRoomId, 'Not enough players for battle. Bet returned to your balance');
@@ -173,7 +174,7 @@ export class GameRoomService {
         const gameResult = { winner: winner ? { id: winner.id, name: winner.name, bet: winner.bet } : null, totalBank: game.total_bank };
         await sendMessageToGameRoom(gameRoomId, 'GAME_COMPLETED', gameResult);
         game.status = 'closed';
-        await game.save();
+        await game.save({transaction});
         return gameRoom;
       });
       return gameRoom;
@@ -344,7 +345,7 @@ export class GameRoomService {
   static async makeBet(roomId: string, userId: string, betSize: number) {
     try {
 
-      const gameRoom = await sequelize.transaction(async () => {
+      const gameRoom = await sequelize.transaction(async (transaction) => {
         const gameRoom = await GameRoom.findByPk(roomId, {
           include: [
             { model: Player, as: 'players'},
@@ -353,6 +354,7 @@ export class GameRoomService {
               as: 'currentGame',
             }
           ],
+          transaction,
         });
         if (!gameRoom) {
           throw new Error('Game room not found');
@@ -367,8 +369,12 @@ export class GameRoomService {
           throw new Error('Game not found');
         }
         const game = await Game.findByPk(gameRoom.currentGame.gameId, {
+          transaction,
           lock: true,
         });
+        if (!game) {
+          throw new Error('Game not found');
+        }
         // Validate bet size considering maxBet can be null for unlimited bet
         if (
           new Big(player.bet).plus(betSize).lt(gameRoom.minBet) ||
@@ -378,13 +384,16 @@ export class GameRoomService {
           throw new Error('Invalid bet size');
         }
 
-        await this.updateUserBalanceByGameType(+userId, gameRoom.gameType, new Big(-betSize)); // Update balance using Big.js
+        await this.updateUserBalanceByGameType(+userId, gameRoom.gameType, new Big(-betSize), transaction); // Update balance using Big.js
+
         player.bet = new Big(player.bet).plus(betSize).toFixed(9); // Update player's bet using Big.js
-        game!.total_bank = new Big(game!.total_bank).plus(betSize).toFixed(9); // Update game's total bank using Big.js
-        await player.save();
-        await game!.save();
-        await gameRoom.save();
-        console.log(`${userId} bet ${betSize} in ${roomId}, total_bank: ${game!.total_bank}`);
+        game.total_bank = new Big(game!.total_bank).plus(betSize).toFixed(9); // Update game's total bank using Big.js
+
+        await player.save({ transaction });
+        await game.save({ transaction });
+        await gameRoom.save({ transaction });
+
+        console.log(`${userId} bet ${betSize} in ${roomId}, total_bank: ${game.total_bank}`);
         // Notify clients of the bet made
         const io = getSocketInstance();
 
@@ -403,7 +412,7 @@ export class GameRoomService {
     }
   }
 
-  static async updateUserBalanceByGameType(userId: number, gameType: 'points' | 'gems' | 'TON', amount: Big) {
+  static async updateUserBalanceByGameType(userId: number, gameType: 'points' | 'gems' | 'TON', amount: Big, transaction: Transaction) {
     const user = await User.findByPk(userId);
     if (!user) {
       throw new Error('User not found');
@@ -411,13 +420,13 @@ export class GameRoomService {
 
     switch (gameType) {
       case 'points':
-        await updateUserPoints(+userId, amount);
+        await updateUserPoints(+userId, amount, transaction);
         break;
       case 'gems':
-        await updateUserGems(+userId, amount);
+        await updateUserGems(+userId, amount, transaction);
         break;
       case 'TON':
-        await updateUserBalance(+userId, amount);
+        await updateUserBalance(+userId, amount, transaction);
         return;
       default:
         throw new Error('Invalid game type');
