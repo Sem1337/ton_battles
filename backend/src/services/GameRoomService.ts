@@ -402,7 +402,7 @@ export class GameRoomService {
           throw new Error('Invalid bet size');
         }
 
-        //await this.updateUserBalanceByGameType(+userId, gameRoom.gameType, new Big(-betSize), transaction); // Update balance using Big.js
+        await this.updateUserBalanceByGameType(+userId, gameRoom.gameType, new Big(-betSize), transaction); // Update balance using Big.js
 
         player.bet = new Big(player.bet).plus(betSize).toFixed(9); // Update player's bet using Big.js
         game.total_bank = new Big(game.total_bank).plus(betSize).toFixed(9); // Update game's total bank using Big.js

@@ -25,7 +25,14 @@ export const updateUserBalance = async (userId: number, amount: Big, transaction
   if (transaction) {
     await executeUpdate(transaction);
   } else {
-    await sequelize.transaction(executeUpdate);
+    try {
+      await sequelize.transaction(executeUpdate);
+    } catch (error) {
+      if (error instanceof Error) {
+        console.log(error.message);
+      }
+      throw new Error('Failed update balance');
+    }
   }
 };
 
@@ -53,7 +60,15 @@ export const updatePoints = async (userId: string, transaction?: Transaction) =>
   if (transaction) {
     return await executeUpdate(transaction);
   } else {
-    return await sequelize.transaction(executeUpdate);
+    try {
+      const user = await sequelize.transaction(executeUpdate);
+      return user;
+    } catch (error) {
+      if (error instanceof Error) {
+        console.log(error.message);
+      }
+      throw new Error('Failed update points');
+    }
   }
 };
 
@@ -73,7 +88,14 @@ export const updateUserPoints = async (userId: number, points: Big, transaction?
   if (transaction) {
     await executeUpdate(transaction);
   } else {
-    await sequelize.transaction(executeUpdate);
+    try {
+      await sequelize.transaction(executeUpdate);
+    } catch (error) {
+      if (error instanceof Error) {
+        console.log(error.message);
+      }
+      throw new Error('Failed update user points');
+    }
   }
 };
 
@@ -93,7 +115,14 @@ export const updateUserGems = async (userId: number, gems: Big, transaction?: Tr
   if (transaction) {
     await executeUpdate(transaction);
   } else {
-    await sequelize.transaction(executeUpdate);
+    try {
+      await sequelize.transaction(executeUpdate);
+    } catch (error) {
+      if (error instanceof Error) {
+        console.log(error.message);
+      }
+      throw new Error('Failed update user gems');
+    }
   }
 };
 
@@ -109,7 +138,14 @@ export const userLvlUpProduction = async (userId: number, transaction?: Transact
   if (transaction) {
     await executeUpdate(transaction);
   } else {
-    await sequelize.transaction(executeUpdate);
+    try {
+      await sequelize.transaction(executeUpdate);
+    } catch (error) {
+      if (error instanceof Error) {
+        console.log(error.message);
+      }
+      throw new Error('Failed update user prod');
+    }
   }
 };
 
@@ -125,7 +161,14 @@ export const userLvlUpShield = async (userId: number, transaction?: Transaction)
   if (transaction) {
     await executeUpdate(transaction);
   } else {
-    await sequelize.transaction(executeUpdate);
+    try {
+      await sequelize.transaction(executeUpdate);
+    } catch (error) {
+      if (error instanceof Error) {
+        console.log(error.message);
+      }
+      throw new Error('Failed update user shield');
+    }
   }
 };
 
