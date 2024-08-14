@@ -344,10 +344,10 @@ export class GameRoomService {
   static async makeBet(roomId: string, userId: string, betSize: number) {
     try {
 
-      const gameRoom = await sequelize.transaction(async () => {
+      const gameRoom = await sequelize.transaction(async (transaction) => {
         const gameRoom = await GameRoom.findByPk(roomId, {
           include: [
-            { model: Player, as: 'players' },
+            { model: Player, as: 'players'},
             {
               model: Game,
               as: 'currentGame',
@@ -381,9 +381,9 @@ export class GameRoomService {
         await this.updateUserBalanceByGameType(+userId, gameRoom.gameType, new Big(-betSize)); // Update balance using Big.js
         player.bet = new Big(player.bet).plus(betSize).toFixed(9); // Update player's bet using Big.js
         game!.total_bank = new Big(game!.total_bank).plus(betSize).toFixed(9); // Update game's total bank using Big.js
-        await player.save();
-        await game!.save();
-        await gameRoom.save();
+        await player.save({transaction});
+        await game!.save({transaction});
+        await gameRoom.save({transaction});
         console.log(`${userId} bet ${betSize} in ${roomId}, total_bank: ${game!.total_bank}`);
         // Notify clients of the bet made
         const io = getSocketInstance();
