@@ -55,8 +55,10 @@ export const updatePoints = async (userId: string) => {
         user.lastPointsUpdate = new Date(+currentTime * 1000);
 
         await user.save();
+        console.log('updated points for user', userId);
         return user;
       }
+      console.log('returning null');
       return null;
     });
   } catch (error) {
