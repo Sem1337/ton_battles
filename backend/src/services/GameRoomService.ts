@@ -366,6 +366,10 @@ export class GameRoomService {
             }
           ],
           transaction,
+          lock: {
+            level: transaction.LOCK.UPDATE,
+            of: GameRoom
+          }
         });
         if (!gameRoom) {
           throw new Error('Game room not found');
@@ -408,7 +412,7 @@ export class GameRoomService {
         // Notify clients of the bet made
         const io = getSocketInstance();
 
-        io.to(roomId).emit('message', { type: 'BET_MADE', payload: { players: gameRoom.players, totalbank: game!.total_bank } });
+        io.to(roomId).emit('message', { type: 'BET_MADE', payload: { players: gameRoom.players, totalbank: game.total_bank } });
 
         return gameRoom;
       });
