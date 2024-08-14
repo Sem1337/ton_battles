@@ -367,7 +367,7 @@ export class GameRoomService {
           throw new Error('Game not found');
         }
         const game = await Game.findByPk(gameRoom.currentGame.gameId, {
-          lock: Transaction.LOCK.UPDATE,
+          lock: true,
         });
         // Validate bet size considering maxBet can be null for unlimited bet
         if (
