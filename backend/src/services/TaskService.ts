@@ -8,12 +8,12 @@ import jwt from 'jsonwebtoken';
 
 class TaskService {
 
-  static async generateTonInvoicePayload(userId: string, taskId: string ) {
+  static async generateTonInvoicePayload(userId: string, taskId: string) {
     const task = await Task.findByPk(taskId);
     if (!task) {
       throw new Error('Task not found');
     }
-    const txPayload = jwt.sign({tag: 'TONBTL', userId: userId, cost: task.payload, taskId: taskId }, process.env.JWT_SECRET_KEY || '', { expiresIn: '1h' });
+    const txPayload = jwt.sign({ tag: 'TONBTL', userId: userId, cost: task.payload, taskId: taskId }, process.env.JWT_SECRET_KEY || '', { expiresIn: '1h' });
     return txPayload;
   }
 
@@ -30,37 +30,34 @@ class TaskService {
   }
 
   static async completeTask(taskId: string, userId: number, fromTonService: boolean) {
-    const transaction = await sequelize.transaction();
 
     try {
-      const task = await Task.findByPk(taskId, { transaction });
-      if (!task) {
-        throw new Error('Task not found');
-      }
+      await sequelize.transaction(async () => {
+        const task = await Task.findByPk(taskId);
+        if (!task) {
+          throw new Error('Task not found');
+        }
 
-      if (task.actionType === 'transaction' && !fromTonService) {
-        await transaction.commit();
-        return;
-      }
+        if (task.actionType === 'transaction' && !fromTonService) {
+          return;
+        }
 
-      const user = await User.findByPk(userId, { transaction, lock: transaction.LOCK.UPDATE });
+        const user = await User.findByPk(userId, { lock: true });
 
-      if (!user) {
-        throw new Error('User not found');
-      }
-      // Check if the user already completed the task to avoid duplicates
-      const hasTask = await (user as any).hasCompletedTask(task, { transaction });
-      if (hasTask) {
-        throw new Error('Task already completed');
-      }
+        if (!user) {
+          throw new Error('User not found');
+        }
+        // Check if the user already completed the task to avoid duplicates
+        const hasTask = await (user as any).hasCompletedTask(task);
+        if (hasTask) {
+          throw new Error('Task already completed');
+        }
 
-      // Mark the task as completed by the user
-      await (user as any).addCompletedTask(task, { transaction });
-      await updateUserPoints(user.userId, new Big(task.reward), transaction);
-
-      await transaction.commit();
+        // Mark the task as completed by the user
+        await (user as any).addCompletedTask(task);
+        await updateUserPoints(user.userId, new Big(task.reward));
+      });
     } catch (error) {
-      await transaction.rollback();
       throw error;
     }
   }
