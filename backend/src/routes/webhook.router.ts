@@ -34,13 +34,17 @@ const handleStart = async (startPayload: string, message: any) => {
   if (startPayload) {
     try {
       referredBy = +startPayload;
-      await User.create({
-        userId: message.from.id,
-        username,
-        referredBy,
-        points: '0',
+      await User.findOrCreate({
+        where: {
+          userId: message.from.id,
+        },
+        defaults: {
+          username,
+          referredBy,
+          points: '0',
+        }
       });
-      console.log('user created');
+      console.log('assigned refferal');
       await updateUserPoints(referredBy, new Big(15000));
       await updateUserGems(referredBy, new Big(10));
     } catch (error) {

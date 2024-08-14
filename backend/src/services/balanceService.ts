@@ -77,7 +77,7 @@ export const updateUserPoints = async (userId: number, points: Big, transaction?
   const executeUpdate = async (trans: Transaction) => {
     console.log('fetching user...');
     const user = await User.findByPk(userId, { lock: trans.LOCK.UPDATE, transaction: trans });
-    console.log('user fetched', user);
+    console.log('user fetched');
     if (user) {
       const newBalance = new Big(user.points).plus(points);
       console.log('calc new balance');
