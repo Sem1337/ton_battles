@@ -344,7 +344,7 @@ export class GameRoomService {
   static async makeBet(roomId: string, userId: string, betSize: number) {
     try {
 
-      const gameRoom = await sequelize.transaction(async (transaction) => {
+      const gameRoom = await sequelize.transaction(async () => {
         const gameRoom = await GameRoom.findByPk(roomId, {
           include: [
             { model: Player, as: 'players'},
@@ -367,7 +367,7 @@ export class GameRoomService {
           throw new Error('Game not found');
         }
         const game = await Game.findByPk(gameRoom.currentGame.gameId, {
-          lock: true,
+          lock: Transaction.LOCK.UPDATE,
         });
         // Validate bet size considering maxBet can be null for unlimited bet
         if (
@@ -381,9 +381,9 @@ export class GameRoomService {
         await this.updateUserBalanceByGameType(+userId, gameRoom.gameType, new Big(-betSize)); // Update balance using Big.js
         player.bet = new Big(player.bet).plus(betSize).toFixed(9); // Update player's bet using Big.js
         game!.total_bank = new Big(game!.total_bank).plus(betSize).toFixed(9); // Update game's total bank using Big.js
-        await player.save({transaction});
-        await game!.save({transaction});
-        await gameRoom.save({transaction});
+        await player.save();
+        await game!.save();
+        await gameRoom.save();
         console.log(`${userId} bet ${betSize} in ${roomId}, total_bank: ${game!.total_bank}`);
         // Notify clients of the bet made
         const io = getSocketInstance();
