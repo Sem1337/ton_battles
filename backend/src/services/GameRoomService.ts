@@ -354,41 +354,40 @@ export class GameRoomService {
     try {
 
       const gameRoom = await sequelize.transaction(async (transaction) => {
+
         const gameRoom = await GameRoom.findByPk(roomId, {
-          include: [
-            { model: Player, as: 'players' },
-            {
-              model: Game,
-              as: 'currentGame',
-              where: {
-                status: 'active', // Filter for only active games
-              },
-            }
-          ],
           transaction,
-          lock: {
-            level: transaction.LOCK.UPDATE,
-            of: GameRoom
-          }
+          lock: transaction.LOCK.UPDATE,  // Lock the GameRoom row
         });
+
         if (!gameRoom) {
           throw new Error('Game room not found');
         }
-        console.log('players count: ', gameRoom.players.length);
-        const player = gameRoom.players.find(p => p.userId.toString() === userId.toString());
+        // Find and lock the active Game
+        const game = await Game.findOne({
+          where: {
+            gameRoomId: gameRoom.id,
+            status: 'active',
+          },
+          transaction,
+          lock: transaction.LOCK.UPDATE,  // Lock the Game row
+        });
+
+        if (!game) {
+          throw new Error('Active game not found');
+        }
+        // Find and lock the Player
+        const player = await Player.findOne({
+          where: {
+            gameRoomId: gameRoom.id,
+            userId: userId,
+          },
+          transaction,
+          lock: transaction.LOCK.UPDATE,  // Lock the Player row
+        });
+
         if (!player) {
           throw new Error('Player not found in this game room');
-        }
-
-        if (!gameRoom.currentGame) {
-          throw new Error('Game not found');
-        }
-        const game = await Game.findByPk(gameRoom.currentGame.gameId, {
-          transaction,
-          lock: transaction.LOCK.UPDATE,  // Explicitly lock the Game row
-        });
-        if (!game) {
-          throw new Error('Game not found');
         }
         // Validate bet size considering maxBet can be null for unlimited bet
         if (
