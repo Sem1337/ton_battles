@@ -370,7 +370,7 @@ export class GameRoomService {
         }
         const game = await Game.findByPk(gameRoom.currentGame.gameId, {
           transaction,
-          lock: true,
+          lock: transaction.LOCK.UPDATE,  // Explicitly lock the Game row
         });
         if (!game) {
           throw new Error('Game not found');
