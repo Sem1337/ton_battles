@@ -42,7 +42,7 @@ export const updateUserBalance = async (userId: number, amount: Big) => {
 
 export const updatePoints = async (userId: string) => {
   try {
-    await sequelize.transaction(async () => {
+    const user = await sequelize.transaction(async () => {
       const user = await User.findByPk(userId, { lock: true });
 
       if (user) {
@@ -61,6 +61,7 @@ export const updatePoints = async (userId: string) => {
       console.log('returning null');
       return null;
     });
+    return user;
   } catch (error) {
     console.error(error);
     throw new Error('An error occurred while updating points');
