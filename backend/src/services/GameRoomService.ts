@@ -352,7 +352,7 @@ export class GameRoomService {
 
   static async makeBet(roomId: string, userId: string, betSize: number) {
     try {
-
+      console.log('making bet')
       const gameRoom = await sequelize.transaction(async (transaction) => {
 
         const gameRoom = await GameRoom.findByPk(roomId, {
@@ -363,6 +363,7 @@ export class GameRoomService {
         if (!gameRoom) {
           throw new Error('Game room not found');
         }
+        console.log('fetched gameRoom');
         // Find and lock the active Game
         const game = await Game.findOne({
           where: {
@@ -376,6 +377,7 @@ export class GameRoomService {
         if (!game) {
           throw new Error('Active game not found');
         }
+        console.log('fetched game');
         // Find and lock the Player
         const player = await Player.findOne({
           where: {
@@ -389,6 +391,7 @@ export class GameRoomService {
         if (!player) {
           throw new Error('Player not found in this game room');
         }
+        console.log('fetched player');
         // Validate bet size considering maxBet can be null for unlimited bet
         if (
           new Big(player.bet).plus(betSize).lt(gameRoom.minBet) ||
