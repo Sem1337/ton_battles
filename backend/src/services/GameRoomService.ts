@@ -294,6 +294,7 @@ export class GameRoomService {
       if (error instanceof Error) {
         console.log(error.message);
       }
+      console.log('Failed to join game room log');
       throw new Error('Failed to join game room');
     }
   }
@@ -410,7 +411,7 @@ export class GameRoomService {
         await game.save({ transaction });
         await gameRoom.save({ transaction });
 
-        console.log(`${userId} bet ${betSize} in ${roomId}, total_bet ${player.bet}, total_bank: ${game.total_bank}, ${gameRoom.currentGame.total_bank}`);
+        console.log(`${userId} bet ${betSize} in ${roomId}, total_bet ${player.bet}, total_bank: ${game.total_bank}`);
         // Notify clients of the bet made
         const io = getSocketInstance();
 
