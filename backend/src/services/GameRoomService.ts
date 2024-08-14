@@ -411,11 +411,18 @@ export class GameRoomService {
         await game.save({ transaction });
         await gameRoom.save({ transaction });
 
+        // Fetch all players in the game room after the update
+        const updatedPlayers = await Player.findAll({
+          where: { gameRoomId: gameRoom.id },
+          transaction,
+          lock: transaction.LOCK.UPDATE, // Optionally lock all players as well
+        });
+
         console.log(`${userId} bet ${betSize} in ${roomId}, total_bet ${player.bet}, total_bank: ${game.total_bank}`);
         // Notify clients of the bet made
         const io = getSocketInstance();
 
-        io.to(roomId).emit('message', { type: 'BET_MADE', payload: { players: gameRoom.players, totalbank: game.total_bank } });
+        io.to(roomId).emit('message', { type: 'BET_MADE', payload: { players: updatedPlayers, totalbank: game.total_bank } });
 
         return gameRoom;
       });
