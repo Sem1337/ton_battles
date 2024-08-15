@@ -166,7 +166,7 @@ async function fetchAndProcessTransactions(toLT: string): Promise<void> {
 async function processIncomingTransactions() {
   try {
     await sequelize.transaction(async (transaction) => {
-      await sequelize.query('LOCK TABLES TransactionState WRITE', { transaction });
+      await sequelize.query('LOCK TABLES "TransactionState" WRITE', { transaction });
       let lastCheckedLtRow = await TransactionState.findOne({
         transaction,
       });
