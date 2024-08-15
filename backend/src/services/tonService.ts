@@ -176,6 +176,7 @@ async function processIncomingTransactions() {
       } else {
         // Use the existing lastCheckedLt from the database
         lastCheckedLt = lastCheckedLtRow.lastCheckedLt;
+        lastCheckedLt = '47978777000003'
       }
       console.log('got last value', lastCheckedLt);
       await fetchAndProcessTransactions(lastCheckedLt);
