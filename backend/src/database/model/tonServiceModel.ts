@@ -15,15 +15,6 @@ TransactionState.init({
   sequelize,
   tableName: 'transaction_state',
   timestamps: false,
-  hooks: {
-    beforeCreate: async (_instance, options) => {
-      // Prevent multiple entries by throwing an error if an entry already exists
-      const existing = await TransactionState.findOne({ transaction: options.transaction });
-          if (existing) {
-              throw new Error('Attempting to create a new TransactionState entry when one already exists.');
-          }
-    }
-  }
 });
 
 export default TransactionState;
