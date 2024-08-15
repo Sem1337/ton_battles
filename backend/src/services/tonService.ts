@@ -187,6 +187,9 @@ async function processIncomingTransactions() {
     });
 
   } catch (error) {
+    if (error instanceof Error) {
+      console.log(error.message);
+    }
     console.error('Error processing transactions');
   }
 }
