@@ -190,7 +190,7 @@ async function processIncomingTransactions() {
       console.log(lastCheckedLt + '1');
     }
     console.log('saving new value', lastCheckedLt);
-    lastCheckedLtRow.lastCheckedLt = lastCheckedLt;
+    lastCheckedLtRow.set('lastCheckedLt', lastCheckedLt);
     lastCheckedLtRow = await lastCheckedLtRow.save({ transaction });
     console.log('New lastCheckedLt saved:', lastCheckedLtRow.lastCheckedLt);
     await transaction.commit();
