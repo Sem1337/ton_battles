@@ -102,8 +102,8 @@ router.post('/webhook', jsonParser, async (req: Request, res: Response) => {
       console.log('response: ', checkoutResponse);
       return res.status(200).send(checkoutResponse);
     }
-    console.log('checking message');
-    if (!message || !message.text) {
+    console.log('checking message', message);
+    if (!message) {
       return res.sendStatus(200);
     }
     if (message) {
