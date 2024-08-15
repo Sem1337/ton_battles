@@ -153,6 +153,7 @@ async function fetchAndProcessTransactions(toLT: string): Promise<void> {
   if (firstProcessedTxLt) {
     lastCheckedLt = firstProcessedTxLt;
   }
+  console.log('processing finished');
 
 }
 
@@ -182,12 +183,14 @@ async function processIncomingTransactions() {
       console.log('saving new value', lastCheckedLt)
       await lastCheckedLtRow.save({ transaction });
     });
+    console.log('commited');
 
   } catch (error) {
     if (error instanceof Error) {
       console.log(error.message);
     }
-    console.error('Error processing transactions');
+
+    console.error('Error processing transactions', error);
   }
 }
 
