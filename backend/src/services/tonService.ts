@@ -185,6 +185,8 @@ async function processIncomingTransactions() {
     console.log('got last value', lastCheckedLt);
     if (lastCheckedLt === '-1') {
       await fetchAndProcessTransactions(lastCheckedLt, transaction);
+    } else {
+      lastCheckedLt = lastCheckedLt + '1'
     }
     console.log('saving new value', lastCheckedLt);
     lastCheckedLtRow.lastCheckedLt = lastCheckedLt;
