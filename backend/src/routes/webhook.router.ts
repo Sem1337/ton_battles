@@ -100,8 +100,9 @@ router.post('/webhook', jsonParser, async (req: Request, res: Response) => {
       console.log(pre_checkout_query.id);
       const checkoutResponse = await bot.telegram.answerPreCheckoutQuery(pre_checkout_query.id, true);
       console.log('response: ', checkoutResponse);
-      return res.sendStatus(200);
+      return res.status(200).send(checkoutResponse);
     }
+    console.log('checking message');
     if (!message || !message.text) {
       return res.sendStatus(200);
     }
@@ -110,6 +111,7 @@ router.post('/webhook', jsonParser, async (req: Request, res: Response) => {
     }
     const { successful_payment, entities, text } = message
     if (entities && entities[0].type === 'bot_command') {
+      console.log('received bot command');
       if (text.startsWith('/start')) {
         const startPayload = text.split(' ')[1]; // This contains the referral token
         if (startPayload === '123') return res.status(200).send();
@@ -117,13 +119,15 @@ router.post('/webhook', jsonParser, async (req: Request, res: Response) => {
         return res.json(result).send();
       }
     }
-
+    console.log('checking successful_payment');
     if (!successful_payment || !successful_payment.invoice_payload) {
       console.log('not successful_payment or payload');
       return res.status(400).send('Not successful payment');
     }
-
+    console.log('handling purchase');
     await StarService.handlePurchase(successful_payment);
+
+    console.log('success purchase');
     return res.status(200).send();
   } catch (error) {
     console.error('Error processing webhook:', error);
