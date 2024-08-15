@@ -166,7 +166,7 @@ async function fetchAndProcessTransactions(toLT: string): Promise<void> {
 async function processIncomingTransactions() {
   try {
     await sequelize.transaction(async (transaction) => {
-      await sequelize.query('LOCK TABLES "TransactionState" WRITE', { transaction });
+      await sequelize.query('LOCK TABLE "TransactionState" IN EXCLUSIVE MODE', { transaction });
       let lastCheckedLtRow = await TransactionState.findOne({
         transaction,
       });
@@ -182,8 +182,6 @@ async function processIncomingTransactions() {
       await fetchAndProcessTransactions(lastCheckedLt);
       lastCheckedLtRow.lastCheckedLt = lastCheckedLt;
       await lastCheckedLtRow.save({ transaction });
-      // Release the lock
-      await sequelize.query('UNLOCK TABLES', { transaction });
     });
 
   } catch (error) {
