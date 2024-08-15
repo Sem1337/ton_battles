@@ -164,11 +164,6 @@ async function fetchAndProcessTransactions(toLT: string, dbTx?: Transaction): Pr
 async function processIncomingTransactions() {
   const transaction = await sequelize.transaction();
   try {
-
-
-    console.log('trying to get exclusive lock');
-    //await sequelize.query('LOCK TABLE "transaction_state" IN EXCLUSIVE MODE', { transaction });
-    console.log('got lock');
     let lastCheckedLtRow = await TransactionState.findOne({
       transaction,
       lock: transaction.LOCK.UPDATE
@@ -180,15 +175,10 @@ async function processIncomingTransactions() {
       }, { transaction });
     } else {
       // Use the existing lastCheckedLt from the database
-      //lastCheckedLt = lastCheckedLtRow.lastCheckedLt;
+      lastCheckedLt = lastCheckedLtRow.lastCheckedLt;
     }
     console.log('got last value', lastCheckedLt);
-    if (lastCheckedLt === '-1') {
-      await fetchAndProcessTransactions(lastCheckedLt, transaction);
-    } else {
-      lastCheckedLt = lastCheckedLt + '1'
-      console.log(lastCheckedLt + '1');
-    }
+    await fetchAndProcessTransactions(lastCheckedLt, transaction);
     console.log('saving new value', lastCheckedLt);
     lastCheckedLtRow.set('lastCheckedLt', lastCheckedLt);
     lastCheckedLtRow = await lastCheckedLtRow.save({ transaction });
