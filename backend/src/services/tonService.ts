@@ -193,7 +193,7 @@ async function processIncomingTransactions() {
     await lastCheckedLtRow.reload({ transaction });
     lastCheckedLtRow.set('lastCheckedLt', lastCheckedLt);
     lastCheckedLtRow.changed('lastCheckedLt', true); // Explicitly mark it as changed
-    await lastCheckedLtRow.save({ transaction });
+    lastCheckedLtRow = await lastCheckedLtRow.save({ transaction });
     console.log('New lastCheckedLt saved:', lastCheckedLtRow.lastCheckedLt);
     await transaction.commit();
     console.log('commited');
