@@ -16,7 +16,7 @@ dotenv.config();
 
 //const providerUrl = 'https://toncenter.com/api/v2/jsonRPC';
 //const apiKey = process.env.TON_API_KEY; // Replace with your TON center API key
-let lastCheckedLt: string = '47539854000003'; // This could be initialized from a persistent store
+let lastCheckedLt: string = '47978777000003'; // This could be initialized from a persistent store
 // Replace these with your actual keys
 const publicKeyHex = process.env.TON_PUBLIC_KEY_HEX || '';
 const secretKeyHex = process.env.TON_PRIVATE_KEY_HEX || '';
@@ -190,7 +190,7 @@ async function processIncomingTransactions() {
       console.log(error.message);
     }
 
-    console.error('Error processing transactions', error);
+    console.error('Error processing transactions');
   }
 }
 
