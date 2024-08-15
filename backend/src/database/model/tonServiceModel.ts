@@ -13,7 +13,6 @@ TransactionState.init({
   }
 }, {
   sequelize,
-  tableName: 'transaction_state',
   timestamps: false,
   hooks: {
     beforeCreate: async (_instance, options) => {
