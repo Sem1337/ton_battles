@@ -72,6 +72,32 @@ spec:
               key: jwt-secret
         - name: BACKEND_DOMAIN
           value: "app.tonbattles.ru"
+      volumes:
+      - name: public-key-storage
+        persistentVolumeClaim:
+          claimName: public-key-pvc  # Name of the PVC defined earlier
+      initContainers:
+      - name: init-cert
+        image: busybox
+        command: ['sh', '-c', 'echo "|
+            -----BEGIN PUBLIC KEY-----
+            MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAtkwaumxncsroNVHbxdsY
+            ruVTJrRfbejR/2Z5UwPpRETiKCml7XX6F3HIzG4OppeoXeOqU7W96KLBDnQalSoS
+            Axyg7aTeW1M3pqY/S4cyAtozXZkXqfd6+0GsMkqkLKi4w0o9cgbhjz/X9l9kpqNe
+            A0kqgT2v+QbZRck5NYZFfm+R1xJakc24FjvsQ14FmRYOJjWj2piDTksxY8DFN2Cw
+            05d9NQ56dZyHBpd8lGlcX+8dEDY3rt1xKfpX5chfdZ4iQTEPgWb+dtUQuofw02WF
+            whNFWME1637fo8xXgbafATqFy2O9Ws2QhlasvxGCCB3JaHGthaAAYLznmamSzuCZ
+            44vPKpxPrvTOQdJMnp32Y0ZOZUIsbNwCz016VBQa1idLuB6psNdiJqzFKxiSzLWd
+            Q+51W8ZzqODWB0oBAvKKDF4066mtdfWEmMLlBokLpqlW219arxkyMHIjpsGLUdlp
+            PSvGXr8Urw8DqM8wAZgAxY1oeqdxZ1pRUAiNzZXlCS7k8wPfBzgO1EdZA1Gqw8CW
+            F2wffE17tI02fJSgv8rnJ3WhAHTOuTqr6nqdqVNe4ZPYfHsrfEeEJ4r0fSeWgbKF
+            dOai/eOzvKyMn4cSKKRp+37nmDS2vaCS9s9rzdzblryxCvRQzn3yow9jh+BA1mjv
+            mpy+jhkMguvACIcyG/+OPW8CAwEAAQ==
+            -----END PUBLIC KEY-----" > /app/keys/public-key.pem']
+        volumeMounts:
+        - name: public-key-storage
+          mountPath: /app/keys # Adjust this path as needed
+
 ---
 apiVersion: v1
 kind: Service

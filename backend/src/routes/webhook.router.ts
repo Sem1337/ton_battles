@@ -5,6 +5,8 @@ import { StarService } from '../services/StarService.js';
 import { User } from '../database/model/user.js';
 import { updateUserGems, updateUserPoints } from '../services/balanceService.js';
 import Big from 'big.js';
+import { readFileSync } from 'fs';
+import { InputFile } from 'telegraf/types';
 
 export const bot = new Telegraf(process.env.BOT_TOKEN || '');
 
@@ -22,7 +24,15 @@ bot.on('pre_checkout_query', async (ctx) => {
   await ctx.answerPreCheckoutQuery(true);
 });
 
-bot.createWebhook({ domain: `${process.env.BACKEND_DOMAIN}`, path: '/webhook' });
+const publicKey = readFileSync('/app/keys/public-key.pem');
+
+// Wrap the Buffer in an object to satisfy the InputFile type
+const publicKeyFile: InputFile = {
+  source: publicKey,
+  filename: 'public-key.pem',
+};
+
+bot.createWebhook({ domain: `${process.env.BACKEND_DOMAIN}`, path: '/webhook', certificate: publicKeyFile });
 
 const router = Router();
 const jsonParser = bodyParser.json();
