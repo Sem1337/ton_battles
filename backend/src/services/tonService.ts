@@ -166,7 +166,7 @@ async function fetchAndProcessTransactions(toLT: string): Promise<void> {
 async function processIncomingTransactions() {
   try {
     await sequelize.transaction(async (transaction) => {
-      await sequelize.query('LOCK TABLE "TransactionState" IN EXCLUSIVE MODE', { transaction });
+      await sequelize.query('LOCK TABLE "transaction_state" IN EXCLUSIVE MODE', { transaction });
       let lastCheckedLtRow = await TransactionState.findOne({
         transaction,
       });
