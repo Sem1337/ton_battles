@@ -5,7 +5,6 @@ import { StarService } from '../services/StarService.js';
 import { User } from '../database/model/user.js';
 import { updateUserGems, updateUserPoints } from '../services/balanceService.js';
 import Big from 'big.js';
-import { InputFile } from 'telegraf/types';
 
 export const bot = new Telegraf(process.env.BOT_TOKEN || '');
 
@@ -23,27 +22,8 @@ bot.on('pre_checkout_query', async (ctx) => {
   await ctx.answerPreCheckoutQuery(true);
 });
 
-const pubKey = '-----BEGIN PUBLIC KEY-----\
-MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAtkwaumxncsroNVHbxdsY\
-ruVTJrRfbejR/2Z5UwPpRETiKCml7XX6F3HIzG4OppeoXeOqU7W96KLBDnQalSoS\
-Axyg7aTeW1M3pqY/S4cyAtozXZkXqfd6+0GsMkqkLKi4w0o9cgbhjz/X9l9kpqNe\
-A0kqgT2v+QbZRck5NYZFfm+R1xJakc24FjvsQ14FmRYOJjWj2piDTksxY8DFN2Cw\
-05d9NQ56dZyHBpd8lGlcX+8dEDY3rt1xKfpX5chfdZ4iQTEPgWb+dtUQuofw02WF\
-whNFWME1637fo8xXgbafATqFy2O9Ws2QhlasvxGCCB3JaHGthaAAYLznmamSzuCZ\
-44vPKpxPrvTOQdJMnp32Y0ZOZUIsbNwCz016VBQa1idLuB6psNdiJqzFKxiSzLWd\
-Q+51W8ZzqODWB0oBAvKKDF4066mtdfWEmMLlBokLpqlW219arxkyMHIjpsGLUdlp\
-PSvGXr8Urw8DqM8wAZgAxY1oeqdxZ1pRUAiNzZXlCS7k8wPfBzgO1EdZA1Gqw8CW\
-F2wffE17tI02fJSgv8rnJ3WhAHTOuTqr6nqdqVNe4ZPYfHsrfEeEJ4r0fSeWgbKF\
-dOai/eOzvKyMn4cSKKRp+37nmDS2vaCS9s9rzdzblryxCvRQzn3yow9jh+BA1mjv\
-mpy+jhkMguvACIcyG/+OPW8CAwEAAQ==\
------END PUBLIC KEY-----'
-// Wrap the Buffer in an object to satisfy the InputFile type
-const publicKeyFile: InputFile = {
-  source: Buffer.from(pubKey),
-  filename: 'public-key.pem',
-};
 
-bot.createWebhook({ domain: `${process.env.BACKEND_DOMAIN}`, path: '/webhook', certificate: publicKeyFile });
+bot.createWebhook({ domain: `${process.env.BACKEND_DOMAIN}`, path: '/webhook'});
 
 const router = Router();
 const jsonParser = bodyParser.json();
