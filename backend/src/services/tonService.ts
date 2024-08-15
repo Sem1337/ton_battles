@@ -83,7 +83,7 @@ async function fetchAndProcessTransactions(toLT: string): Promise<void> {
   let lastProcessedTxLt: string | undefined = undefined;
   let lastProcessedTxHash: string | undefined = undefined;
   let firstProcessedTxLt: string | undefined = undefined;
-  const blockSize = 3;
+  const blockSize = 15;
   let response = undefined;
   do {
     response = await httpApi.getTransactions(wallet.address, { limit: blockSize, lt: lastProcessedTxLt, hash: lastProcessedTxHash, to_lt: toLT, inclusive: true });
@@ -182,6 +182,7 @@ async function processIncomingTransactions() {
       lastCheckedLtRow.lastCheckedLt = lastCheckedLt;
       console.log('saving new value', lastCheckedLt);
       await lastCheckedLtRow.save({ transaction });
+      console.log('New lastCheckedLt saved:', lastCheckedLtRow.lastCheckedLt);
     });
     console.log('commited');
 
