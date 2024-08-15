@@ -8,6 +8,8 @@ import ShopService from "./ShopService.js";
 import { updateUserBalance } from "./balanceService.js";
 import { sendNotificationToUser } from "./messageService.js";
 import TaskService from "./TaskService.js";
+import sequelize from "../database/db.js";
+import TransactionState from "../database/model/tonServiceModel.js"
 
 dotenv.config();
 
@@ -163,7 +165,27 @@ async function fetchAndProcessTransactions(toLT: string): Promise<void> {
 // Function to process incoming transactions
 async function processIncomingTransactions() {
   try {
-    await fetchAndProcessTransactions(lastCheckedLt);
+    await sequelize.transaction(async (transaction) => {
+      await sequelize.query('LOCK TABLES `TransactionState` WRITE', { transaction });
+      let lastCheckedLtRow = await TransactionState.findOne({
+        transaction,
+      });
+      if (!lastCheckedLtRow) {
+        // Insert lastCheckedLt if it doesn't exist
+        lastCheckedLtRow = await TransactionState.create({
+          lastCheckedLt: lastCheckedLt,
+        }, { transaction });
+      } else {
+        // Use the existing lastCheckedLt from the database
+        lastCheckedLt = lastCheckedLtRow.lastCheckedLt;
+      }
+      await fetchAndProcessTransactions(lastCheckedLt);
+      lastCheckedLtRow.lastCheckedLt = lastCheckedLt;
+      await lastCheckedLtRow.save({ transaction });
+      // Release the lock
+      await sequelize.query('UNLOCK TABLES', { transaction });
+    });
+
   } catch (error) {
     console.error('Error processing transactions');
   }
@@ -171,4 +193,4 @@ async function processIncomingTransactions() {
 
 
 // Schedule the processIncomingTransactions function to run every 5 seconds
-setInterval(processIncomingTransactions, 10000);
+setInterval(processIncomingTransactions, 15000);
