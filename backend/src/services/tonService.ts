@@ -180,13 +180,14 @@ async function processIncomingTransactions() {
       }, { transaction });
     } else {
       // Use the existing lastCheckedLt from the database
-      lastCheckedLt = lastCheckedLtRow.lastCheckedLt;
+      //lastCheckedLt = lastCheckedLtRow.lastCheckedLt;
     }
     console.log('got last value', lastCheckedLt);
     if (lastCheckedLt === '-1') {
       await fetchAndProcessTransactions(lastCheckedLt, transaction);
     } else {
       lastCheckedLt = lastCheckedLt + '1'
+      console.log(lastCheckedLt + '1');
     }
     console.log('saving new value', lastCheckedLt);
     lastCheckedLtRow.lastCheckedLt = lastCheckedLt;
