@@ -6,6 +6,7 @@ import { bot } from '../routes/webhook.router.js';
 import { sendNotificationToUser, sendUserInfo } from './messageService.js';
 import jwt from 'jsonwebtoken';
 import { User } from '../database/model/user.js';
+import { Transaction } from 'sequelize';
 
 
 type CostType = 'points' | 'gems' | 'stars' | 'TON';
@@ -39,48 +40,48 @@ class ShopService {
     return { success: false, message: 'Invalid costType' };
   }
 
-  static async giveGoods(userId: string, itemId: ShopItemId) {
+  static async giveGoods(userId: string, itemId: ShopItemId, transaction?: Transaction) {
     switch (itemId) {
       case ShopItemId.PRODUCTION_SPEED_LVL_UP:
-        await userLvlUpProduction(+userId);
+        await userLvlUpProduction(+userId, transaction);
         break;
       case ShopItemId.SHIELD_LVL_UP:
-        await userLvlUpShield(+userId);
+        await userLvlUpShield(+userId, transaction);
         break;
       case ShopItemId.GEMS_100:
-        await updateUserGems(+userId, new Big(100));
+        await updateUserGems(+userId, new Big(100), transaction);
         break;
       case ShopItemId.GEMS_500:
-        await updateUserGems(+userId, new Big(500));
+        await updateUserGems(+userId, new Big(500), transaction);
         break;
       case ShopItemId.GEMS_1000:
-        await updateUserGems(+userId, new Big(1000));
+        await updateUserGems(+userId, new Big(1000), transaction);
         break;
       case ShopItemId.GEMS_5000:
-        await updateUserGems(+userId, new Big(5000));
+        await updateUserGems(+userId, new Big(5000), transaction);
         break;
       case ShopItemId.POINTS_100K:
-        await updateUserPoints(+userId, new Big(100000));
+        await updateUserPoints(+userId, new Big(100000), transaction);
         break;
       case ShopItemId.POINTS_500K:
-        await updateUserPoints(+userId, new Big(500000));
+        await updateUserPoints(+userId, new Big(500000), transaction);
         break;
       case ShopItemId.POINTS_1M:
-        await updateUserPoints(+userId, new Big(1000000));
+        await updateUserPoints(+userId, new Big(1000000), transaction);
         break;
       case ShopItemId.POINTS_5M:
-        await updateUserPoints(+userId, new Big(5000000));
+        await updateUserPoints(+userId, new Big(5000000), transaction);
         break;
       case ShopItemId.POINTS_25M:
-        await updateUserPoints(+userId, new Big(25000000));
+        await updateUserPoints(+userId, new Big(25000000), transaction);
         break;
       default:
         break;
     }
-    const item = await ShopItem.findByPk(itemId);
+    const item = await ShopItem.findByPk(itemId, {transaction});
     if (item) {
       sendNotificationToUser(userId, { message: `Successfully purchased "${item?.name}"` });
-      sendUserInfo(+userId);
+      sendUserInfo(+userId, transaction);
     }
   }
 

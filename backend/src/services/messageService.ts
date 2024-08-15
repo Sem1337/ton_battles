@@ -1,6 +1,7 @@
 import { User } from '../database/model/user.js';
 import { getSocketInstance } from '../utils/socket.js'
 import redisClient from '../utils/redisClient.js';
+import { Transaction } from 'sequelize';
 
 export const sendMessageToUser = async (userId: string, messageType: string, payload: any) => {
   const io = getSocketInstance();
@@ -40,10 +41,10 @@ export const sendUserInfoToSocket = (socket: any, user: User) => {
   });
 };
 
-export const sendUserInfo = async (userId: number) => {
+export const sendUserInfo = async (userId: number, transaction?: Transaction) => {
   const io = getSocketInstance();
   const socketId = await redisClient.get(`socket:${userId}`);
-  const user = await User.findByPk(userId);
+  const user = await User.findByPk(userId, {transaction});
   if (socketId && user) {
     const payload = {
       balance: user.balance,

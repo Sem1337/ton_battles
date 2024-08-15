@@ -7,9 +7,10 @@ import jwt from 'jsonwebtoken';
 import ShopService from "./ShopService.js";
 import { updateUserBalance } from "./balanceService.js";
 import { sendNotificationToUser } from "./messageService.js";
-import TaskService from "./TaskService.js";
+//import TaskService from "./TaskService.js";
 import sequelize from "../database/db.js";
 import TransactionState from "../database/model/tonServiceModel.js"
+import { Transaction } from "sequelize";
 
 dotenv.config();
 
@@ -78,7 +79,7 @@ export const confirmTransaction = async (transfer: Cell) => {
 
 
 // Function to fetch and process transactions since the last checked logical time
-async function fetchAndProcessTransactions(toLT: string): Promise<void> {
+async function fetchAndProcessTransactions(toLT: string, dbTx?: Transaction): Promise<void> {
 
   let lastProcessedTxLt: string | undefined = undefined;
   let lastProcessedTxHash: string | undefined = undefined;
@@ -125,19 +126,19 @@ async function fetchAndProcessTransactions(toLT: string): Promise<void> {
             if (taskId) {
               const expectedCost = new Big(cost);
               if (expectedCost.eq(txValue)) {
-                await TaskService.completeTask(taskId, userId, true);
+                //await TaskService.completeTask(taskId, userId, true);
               } else {
                 console.log('wrong tx amount: ', txValue, expectedCost);
               }
             } else if (itemId) {
               const expectedCost = new Big(cost);
               if (expectedCost.eq(txValue)) {
-                await ShopService.giveGoods(userId, itemId);
+                await ShopService.giveGoods(userId, itemId, dbTx);
               } else {
                 console.log('wrong tx amount: ', txValue, expectedCost);
               }
             } else {
-              await updateUserBalance(userId, txValue);
+              await updateUserBalance(userId, txValue, dbTx);
               sendNotificationToUser(userId, { message: `Successful top up: ${txValue.toFixed(9)} TON` });
             }
           } else {
@@ -181,7 +182,7 @@ async function processIncomingTransactions() {
       lastCheckedLt = lastCheckedLtRow.lastCheckedLt;
     }
     console.log('got last value', lastCheckedLt);
-    await fetchAndProcessTransactions(lastCheckedLt);
+    await fetchAndProcessTransactions(lastCheckedLt, transaction);
     console.log('saving new value', lastCheckedLt);
     lastCheckedLtRow.set('lastCheckedLt', lastCheckedLt);
     lastCheckedLtRow.changed('lastCheckedLt', true); // Mark the field as changed
