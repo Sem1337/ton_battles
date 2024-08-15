@@ -7,7 +7,7 @@ import jwt from 'jsonwebtoken';
 import ShopService from "./ShopService.js";
 import { updateUserBalance } from "./balanceService.js";
 import { sendNotificationToUser } from "./messageService.js";
-//import TaskService from "./TaskService.js";
+import TaskService from "./TaskService.js";
 import sequelize from "../database/db.js";
 import TransactionState from "../database/model/tonServiceModel.js"
 import { Transaction } from "sequelize";
@@ -106,49 +106,49 @@ async function fetchAndProcessTransactions(toLT: string, dbTx?: Transaction): Pr
         || !transaction.in_msg
         || !transaction.in_msg.message
         || lastProcessedTxLt === lastCheckedLt) continue;
-        const txValue = new Big(fromNano(transaction.in_msg.value));
-        const payloadEncrypted = transaction.in_msg.message
+      const txValue = new Big(fromNano(transaction.in_msg.value));
+      const payloadEncrypted = transaction.in_msg.message
+      try {
+        const payloadDecrypted = jwt.verify(payloadEncrypted, process.env.JWT_SECRET_KEY || '');
 
-        jwt.verify(payloadEncrypted, process.env.JWT_SECRET_KEY || '', async (err, payloadDecrypted) => {
-          if (err || !payloadDecrypted) {
-            return;
-          }
-          console.log('Decoded Data:', payloadDecrypted);
-          if (typeof payloadDecrypted === 'string') {
-            throw new Error('Unexpected token format');
-          }
-          const tag = payloadDecrypted['tag'];
-          if (tag === 'TONBTL') {
-            const userId = payloadDecrypted['userId'];
-            const itemId = payloadDecrypted['itemId'];
-            const taskId = payloadDecrypted['taskId'];
-            const cost = payloadDecrypted['cost'];
-            console.log(userId, itemId, cost);
-            if (userId) {
-              if (taskId) {
-                const expectedCost = new Big(cost);
-                if (expectedCost.eq(txValue)) {
-                  //await TaskService.completeTask(taskId, userId, true);
-                } else {
-                  console.log('wrong tx amount: ', txValue, expectedCost);
-                }
-              } else if (itemId) {
-                const expectedCost = new Big(cost);
-                if (expectedCost.eq(txValue)) {
-                  await ShopService.giveGoods(userId, itemId, dbTx);
-                } else {
-                  console.log('wrong tx amount: ', txValue, expectedCost);
-                }
+        console.log('Decoded Data:', payloadDecrypted);
+        if (typeof payloadDecrypted === 'string') {
+          throw new Error('Unexpected token format');
+        }
+        const tag = payloadDecrypted['tag'];
+        if (tag === 'TONBTL') {
+          const userId = payloadDecrypted['userId'];
+          const itemId = payloadDecrypted['itemId'];
+          const taskId = payloadDecrypted['taskId'];
+          const cost = payloadDecrypted['cost'];
+          console.log(userId, itemId, cost);
+          if (userId) {
+            if (taskId) {
+              const expectedCost = new Big(cost);
+              if (expectedCost.eq(txValue)) {
+                await TaskService.completeTask(taskId, userId, true);
               } else {
-                await updateUserBalance(userId, txValue, dbTx);
-                sendNotificationToUser(userId, { message: `Successful top up: ${txValue.toFixed(9)} TON` });
+                console.log('wrong tx amount: ', txValue, expectedCost);
+              }
+            } else if (itemId) {
+              const expectedCost = new Big(cost);
+              if (expectedCost.eq(txValue)) {
+                await ShopService.giveGoods(userId, itemId, dbTx);
+              } else {
+                console.log('wrong tx amount: ', txValue, expectedCost);
               }
             } else {
-              console.log('unknown user Id');
+              await updateUserBalance(userId, txValue, dbTx);
+              sendNotificationToUser(userId, { message: `Successful top up: ${txValue.toFixed(9)} TON` });
             }
-
+          } else {
+            console.log('unknown user Id');
           }
-        });
+
+        }
+      } catch (error) {
+
+      }
     }
   } while (response.length == blockSize);
 
