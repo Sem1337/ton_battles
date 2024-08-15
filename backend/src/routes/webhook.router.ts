@@ -23,9 +23,7 @@ bot.on('pre_checkout_query', async (ctx) => {
   await ctx.answerPreCheckoutQuery(true);
 });
 
-// Wrap the Buffer in an object to satisfy the InputFile type
-const publicKeyFile: InputFile = {
-  source: '-----BEGIN PUBLIC KEY-----\
+const pubKey = '-----BEGIN PUBLIC KEY-----\
 MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAtkwaumxncsroNVHbxdsY\
 ruVTJrRfbejR/2Z5UwPpRETiKCml7XX6F3HIzG4OppeoXeOqU7W96KLBDnQalSoS\
 Axyg7aTeW1M3pqY/S4cyAtozXZkXqfd6+0GsMkqkLKi4w0o9cgbhjz/X9l9kpqNe\
@@ -38,7 +36,10 @@ PSvGXr8Urw8DqM8wAZgAxY1oeqdxZ1pRUAiNzZXlCS7k8wPfBzgO1EdZA1Gqw8CW\
 F2wffE17tI02fJSgv8rnJ3WhAHTOuTqr6nqdqVNe4ZPYfHsrfEeEJ4r0fSeWgbKF\
 dOai/eOzvKyMn4cSKKRp+37nmDS2vaCS9s9rzdzblryxCvRQzn3yow9jh+BA1mjv\
 mpy+jhkMguvACIcyG/+OPW8CAwEAAQ==\
------END PUBLIC KEY-----',
+-----END PUBLIC KEY-----'
+// Wrap the Buffer in an object to satisfy the InputFile type
+const publicKeyFile: InputFile = {
+  source: Buffer.from(pubKey),
   filename: 'public-key.pem',
 };
 
