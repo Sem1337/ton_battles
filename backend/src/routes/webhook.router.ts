@@ -99,8 +99,8 @@ router.post('/webhook', jsonParser, async (req: Request, res: Response) => {
     if (pre_checkout_query) {
       console.log(pre_checkout_query.id);
       const checkoutResponse = await bot.telegram.answerPreCheckoutQuery(pre_checkout_query.id, true);
-      return checkoutResponse;
-
+      console.log('response: ', checkoutResponse);
+      return res.sendStatus(200);
     }
     if (!message || !message.text) {
       return res.sendStatus(200);
