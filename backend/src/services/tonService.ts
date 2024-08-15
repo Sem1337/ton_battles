@@ -163,29 +163,29 @@ async function processIncomingTransactions() {
   try {
     await sequelize.transaction(async (transaction) => {
       console.log('trying to get exclusive lock');
-      await sequelize.query('LOCK TABLE "transaction_state" IN EXCLUSIVE MODE', { transaction });
+      //await sequelize.query('LOCK TABLE "transaction_state" IN EXCLUSIVE MODE', { transaction });
       console.log('got lock');
       let lastCheckedLtRow = await TransactionState.findOne({
         transaction,
       });
       if (!lastCheckedLtRow) {
         // Insert lastCheckedLt if it doesn't exist
-        lastCheckedLtRow = await TransactionState.create({
+        /*lastCheckedLtRow = await TransactionState.create({
           lastCheckedLt: lastCheckedLt,
-        }, { transaction });
+        }, { transaction });*/
       } else {
         // Use the existing lastCheckedLt from the database
-        lastCheckedLtRow.lastCheckedLt = '47978777000003';
+        /*lastCheckedLtRow.lastCheckedLt = '47978777000003';
         console.log(lastCheckedLtRow.lastCheckedLt);
         await lastCheckedLtRow.save({ transaction });
-        lastCheckedLt = lastCheckedLtRow.lastCheckedLt;
+        lastCheckedLt = lastCheckedLtRow.lastCheckedLt;*/
       }
-      await lastCheckedLtRow.save({ transaction });
+      //await lastCheckedLtRow.save({ transaction });
       console.log('got last value', lastCheckedLt);
       await fetchAndProcessTransactions(lastCheckedLt);
-      lastCheckedLtRow.lastCheckedLt = lastCheckedLt;
+      //lastCheckedLtRow.lastCheckedLt = lastCheckedLt;
       console.log('saving new value', lastCheckedLt)
-      await lastCheckedLtRow.save({ transaction });
+      //await lastCheckedLtRow.save({ transaction });
     });
     console.log('commited');
 
