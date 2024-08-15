@@ -175,9 +175,10 @@ async function processIncomingTransactions() {
         }, { transaction });
       } else {
         // Use the existing lastCheckedLt from the database
+        lastCheckedLtRow.lastCheckedLt = '47978777000003';
         lastCheckedLt = lastCheckedLtRow.lastCheckedLt;
-        lastCheckedLt = '47978777000003'
       }
+      await lastCheckedLtRow.save({ transaction });
       console.log('got last value', lastCheckedLt);
       await fetchAndProcessTransactions(lastCheckedLt);
       lastCheckedLtRow.lastCheckedLt = lastCheckedLt;
