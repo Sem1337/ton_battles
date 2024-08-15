@@ -278,15 +278,12 @@ export class GameRoomService {
           shield: user.shield,
           userId: userId
         });
-        console.log('player created');
         gameRoom.currentPlayers++;
         gameRoom.players.push(player);
         await gameRoom.save();
 
         console.log('remainingTime', remainingTime);
         io.to(roomId).emit('message', { type: 'PLAYER_JOINED', payload: { players: gameRoom.players, remainingTime: remainingTime, roomName: gameRoom.roomName, totalbank: game.total_bank } });
-
-        console.log('success');
         return gameRoom;
       });
       return gameRoom;
