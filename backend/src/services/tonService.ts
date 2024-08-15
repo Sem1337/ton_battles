@@ -146,11 +146,6 @@ async function fetchAndProcessTransactions(toLT: string): Promise<void> {
 
         }
       } catch (error) {
-        if (error instanceof Error) {
-          console.log(error.message)
-        } else {
-          console.log('An unknown error occurred')
-        }
       }
     }
   } while (response.length == blockSize);
@@ -166,7 +161,9 @@ async function fetchAndProcessTransactions(toLT: string): Promise<void> {
 async function processIncomingTransactions() {
   try {
     await sequelize.transaction(async (transaction) => {
+      console.log('trying to get exclusive lock');
       await sequelize.query('LOCK TABLE "transaction_state" IN EXCLUSIVE MODE', { transaction });
+      console.log('got lock');
       let lastCheckedLtRow = await TransactionState.findOne({
         transaction,
       });
@@ -179,8 +176,10 @@ async function processIncomingTransactions() {
         // Use the existing lastCheckedLt from the database
         lastCheckedLt = lastCheckedLtRow.lastCheckedLt;
       }
+      console.log('got last value', lastCheckedLt);
       await fetchAndProcessTransactions(lastCheckedLt);
       lastCheckedLtRow.lastCheckedLt = lastCheckedLt;
+      console.log('saving new value', lastCheckedLt)
       await lastCheckedLtRow.save({ transaction });
     });
 
@@ -193,5 +192,5 @@ async function processIncomingTransactions() {
 }
 
 
-// Schedule the processIncomingTransactions function to run every 5 seconds
+// Schedule the processIncomingTransactions function to run every 15 seconds
 setInterval(processIncomingTransactions, 15000);
