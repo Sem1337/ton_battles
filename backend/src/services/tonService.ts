@@ -160,35 +160,38 @@ async function fetchAndProcessTransactions(toLT: string): Promise<void> {
 
 // Function to process incoming transactions
 async function processIncomingTransactions() {
+  const transaction = await sequelize.transaction();
   try {
-    await sequelize.transaction(async (transaction) => {
-      console.log('trying to get exclusive lock');
-      //await sequelize.query('LOCK TABLE "transaction_state" IN EXCLUSIVE MODE', { transaction });
-      console.log('got lock');
-      let lastCheckedLtRow = await TransactionState.findOne({
-        transaction,
-        lock: transaction.LOCK.UPDATE
-      });
-      if (!lastCheckedLtRow) {
-        // Insert lastCheckedLt if it doesn't exist
-        lastCheckedLtRow = await TransactionState.create({
-          lastCheckedLt: lastCheckedLt,
-        }, { transaction });
-      } else {
-        // Use the existing lastCheckedLt from the database
-        lastCheckedLt = lastCheckedLtRow.lastCheckedLt;
-      }
-      console.log('got last value', lastCheckedLt);
-      await fetchAndProcessTransactions(lastCheckedLt);
-      console.log('saving new value', lastCheckedLt);
-      lastCheckedLtRow.set('lastCheckedLt', lastCheckedLt);
-      lastCheckedLtRow.changed('lastCheckedLt', true); // Mark the field as changed
-      await lastCheckedLtRow.save({ transaction });
-      console.log('New lastCheckedLt saved:', lastCheckedLtRow.lastCheckedLt);
+
+
+    console.log('trying to get exclusive lock');
+    //await sequelize.query('LOCK TABLE "transaction_state" IN EXCLUSIVE MODE', { transaction });
+    console.log('got lock');
+    let lastCheckedLtRow = await TransactionState.findOne({
+      transaction,
+      lock: transaction.LOCK.UPDATE
     });
+    if (!lastCheckedLtRow) {
+      // Insert lastCheckedLt if it doesn't exist
+      lastCheckedLtRow = await TransactionState.create({
+        lastCheckedLt: lastCheckedLt,
+      }, { transaction });
+    } else {
+      // Use the existing lastCheckedLt from the database
+      lastCheckedLt = lastCheckedLtRow.lastCheckedLt;
+    }
+    console.log('got last value', lastCheckedLt);
+    await fetchAndProcessTransactions(lastCheckedLt);
+    console.log('saving new value', lastCheckedLt);
+    lastCheckedLtRow.set('lastCheckedLt', lastCheckedLt);
+    lastCheckedLtRow.changed('lastCheckedLt', true); // Mark the field as changed
+    await lastCheckedLtRow.save({ transaction });
+    console.log('New lastCheckedLt saved:', lastCheckedLtRow.lastCheckedLt);
+    await transaction.commit();
     console.log('commited');
 
   } catch (error) {
+    await transaction.rollback();
     if (error instanceof Error) {
       console.log(error.message);
     }
