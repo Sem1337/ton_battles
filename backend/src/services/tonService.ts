@@ -163,10 +163,11 @@ async function processIncomingTransactions() {
   try {
     await sequelize.transaction(async (transaction) => {
       console.log('trying to get exclusive lock');
-      await sequelize.query('LOCK TABLE "transaction_state" IN EXCLUSIVE MODE', { transaction });
+      //await sequelize.query('LOCK TABLE "transaction_state" IN EXCLUSIVE MODE', { transaction });
       console.log('got lock');
       let lastCheckedLtRow = await TransactionState.findOne({
         transaction,
+        lock: transaction.LOCK.UPDATE
       });
       if (!lastCheckedLtRow) {
         // Insert lastCheckedLt if it doesn't exist
