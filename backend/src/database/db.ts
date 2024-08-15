@@ -18,7 +18,7 @@ const sequelize = new Sequelize(
     host: process.env.DB_HOST,
     dialect: 'postgres',
     port: 6432,
-    logging: true, // Disable logging (optional)
+    logging: false, // Disable logging (optional)
     dialectOptions: {
       ssl: {
         ca: fs.readFileSync('/root/.postgresql/root.crt').toString(),

@@ -54,6 +54,7 @@ app.get('/', (_req, res) => {
 sequelize.authenticate()
   .then(() => {
     console.log('Connection has been established successfully.');
+
     return sequelize.sync({ force: false }); // Set to true to drop and re-create tables during development
   })
   .then(() => {
@@ -62,7 +63,7 @@ sequelize.authenticate()
   })
   .then(() => {
     console.log('seeding tasks');
-    return TaskService.seedTasks();    
+    return TaskService.seedTasks();
   })
   .then(() => {
     return Player.destroy({ truncate: true, cascade: true });
