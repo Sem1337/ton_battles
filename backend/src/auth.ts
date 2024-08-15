@@ -50,8 +50,8 @@ function parseInitData(initData: string) {
   const userObject = JSON.parse(userJson);
   const userId = userObject.id;
 
-  const firstName = userObject.first_name || 'id';
-  const lastName = userObject.last_name || userId;
+  const firstName = userObject.first_name || userId;
+  const lastName = userObject.last_name || '';
 
   if (!userId) {
     throw new Error('User ID is required');

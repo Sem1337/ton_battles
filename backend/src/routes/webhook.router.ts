@@ -31,7 +31,7 @@ const jsonParser = bodyParser.json();
 const handleStart = async (startPayload: string, message: any) => {
   let referredBy: number | null = null;
   const chatId = message.chat.id;
-  const username = message.from.first_name + ' ' + message.from.last_name;
+  const username = (message.from.first_name || message.from.id) + ' ' + (message.from.last_name || '');
   if (startPayload) {
     try {
       referredBy = +startPayload;
@@ -44,13 +44,14 @@ const handleStart = async (startPayload: string, message: any) => {
           referredBy,
           points: '0',
         })
-      } else {
-        user.referredBy = referredBy;
-        await user.save();
-      }
-      console.log('assigned refferal');
-      await updateUserPoints(referredBy, new Big(50000));
-      await updateUserGems(referredBy, new Big(10));
+        console.log('assigned refferal');
+        await updateUserPoints(referredBy, new Big(50000));
+        await updateUserGems(referredBy, new Big(10));
+      } //else {
+        //user.referredBy = referredBy;
+        //await user.save();
+      //}
+
     } catch (error) {
       return {
         method: 'sendMessage',
