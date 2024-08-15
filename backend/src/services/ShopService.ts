@@ -108,9 +108,9 @@ class ShopService {
       return {
         ...item.toJSON(),
         points: item.points,
-        gems: user.userId === 482910486 ? 1 : item.gems,
-        stars: user.userId === 482910486 ? 1 : item.stars,
-        TON: user.userId === 482910486 ? 0.1 : item.TON,
+        gems: user.userId.toString() === '482910486' ? 1 : item.gems,
+        stars: user.userId.toString() === '482910486' ? 1 : item.stars,
+        TON: user.userId.toString() === '482910486' ? 0.1 : item.TON,
       };
     }
   }
