@@ -179,8 +179,9 @@ async function processIncomingTransactions() {
       }
       console.log('got last value', lastCheckedLt);
       await fetchAndProcessTransactions(lastCheckedLt);
-      lastCheckedLtRow.lastCheckedLt = lastCheckedLt;
       console.log('saving new value', lastCheckedLt);
+      lastCheckedLtRow.set('lastCheckedLt', lastCheckedLt);
+      lastCheckedLtRow.changed('lastCheckedLt', true); // Mark the field as changed
       await lastCheckedLtRow.save({ transaction });
       console.log('New lastCheckedLt saved:', lastCheckedLtRow.lastCheckedLt);
     });
