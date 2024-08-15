@@ -106,48 +106,49 @@ async function fetchAndProcessTransactions(toLT: string, dbTx?: Transaction): Pr
         || !transaction.in_msg
         || !transaction.in_msg.message
         || lastProcessedTxLt === lastCheckedLt) continue;
-      try {
         const txValue = new Big(fromNano(transaction.in_msg.value));
         const payloadEncrypted = transaction.in_msg.message
 
-        const payloadDecrypted = jwt.verify(payloadEncrypted, process.env.JWT_SECRET_KEY || '');
-        console.log('Decoded Data:', payloadDecrypted);
-        if (typeof payloadDecrypted === 'string') {
-          throw new Error('Unexpected token format');
-        }
-        const tag = payloadDecrypted['tag'];
-        if (tag === 'TONBTL') {
-          const userId = payloadDecrypted['userId'];
-          const itemId = payloadDecrypted['itemId'];
-          const taskId = payloadDecrypted['taskId'];
-          const cost = payloadDecrypted['cost'];
-          console.log(userId, itemId, cost);
-          if (userId) {
-            if (taskId) {
-              const expectedCost = new Big(cost);
-              if (expectedCost.eq(txValue)) {
-                //await TaskService.completeTask(taskId, userId, true);
+        jwt.verify(payloadEncrypted, process.env.JWT_SECRET_KEY || '', async (err, payloadDecrypted) => {
+          if (err || !payloadDecrypted) {
+            return;
+          }
+          console.log('Decoded Data:', payloadDecrypted);
+          if (typeof payloadDecrypted === 'string') {
+            throw new Error('Unexpected token format');
+          }
+          const tag = payloadDecrypted['tag'];
+          if (tag === 'TONBTL') {
+            const userId = payloadDecrypted['userId'];
+            const itemId = payloadDecrypted['itemId'];
+            const taskId = payloadDecrypted['taskId'];
+            const cost = payloadDecrypted['cost'];
+            console.log(userId, itemId, cost);
+            if (userId) {
+              if (taskId) {
+                const expectedCost = new Big(cost);
+                if (expectedCost.eq(txValue)) {
+                  //await TaskService.completeTask(taskId, userId, true);
+                } else {
+                  console.log('wrong tx amount: ', txValue, expectedCost);
+                }
+              } else if (itemId) {
+                const expectedCost = new Big(cost);
+                if (expectedCost.eq(txValue)) {
+                  await ShopService.giveGoods(userId, itemId, dbTx);
+                } else {
+                  console.log('wrong tx amount: ', txValue, expectedCost);
+                }
               } else {
-                console.log('wrong tx amount: ', txValue, expectedCost);
-              }
-            } else if (itemId) {
-              const expectedCost = new Big(cost);
-              if (expectedCost.eq(txValue)) {
-                await ShopService.giveGoods(userId, itemId, dbTx);
-              } else {
-                console.log('wrong tx amount: ', txValue, expectedCost);
+                await updateUserBalance(userId, txValue, dbTx);
+                sendNotificationToUser(userId, { message: `Successful top up: ${txValue.toFixed(9)} TON` });
               }
             } else {
-              await updateUserBalance(userId, txValue, dbTx);
-              sendNotificationToUser(userId, { message: `Successful top up: ${txValue.toFixed(9)} TON` });
+              console.log('unknown user Id');
             }
-          } else {
-            console.log('unknown user Id');
-          }
 
-        }
-      } catch (error) {
-      }
+          }
+        });
     }
   } while (response.length == blockSize);
 
@@ -184,7 +185,7 @@ async function processIncomingTransactions() {
     console.log('got last value', lastCheckedLt);
     await fetchAndProcessTransactions(lastCheckedLt, transaction);
     console.log('saving new value', lastCheckedLt);
-    lastCheckedLtRow.set('lastCheckedLt', lastCheckedLt);
+    lastCheckedLtRow.lastCheckedLt = lastCheckedLt;
     lastCheckedLtRow.changed('lastCheckedLt', true); // Mark the field as changed
     await lastCheckedLtRow.save({ transaction });
     console.log('New lastCheckedLt saved:', lastCheckedLtRow.lastCheckedLt);
