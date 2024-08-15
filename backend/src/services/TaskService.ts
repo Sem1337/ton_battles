@@ -77,7 +77,7 @@ class TaskService {
           taskName: 'Telegram community',
           taskDescription: 'Join our telegram community to get this reward.',
           reward: '10000',
-          payload: 'https://t.me/crypto_airdrops2024_1',
+          payload: 'https://t.me/ton_battles_community',
           actionType: 'url'
         },
         {
