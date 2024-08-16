@@ -32,6 +32,9 @@ export class GameRoomController {
         res.status(400).json({ error: 'User ID is required' });
       }
       const gameRoom = await GameRoomService.joinGameRoom(roomId, userId)
+      if (!gameRoom) {
+        throw new Error('error joining room');
+      }
       res.status(200).json(gameRoom)
     } catch (error) {
         if (error instanceof Error) {

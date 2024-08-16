@@ -245,7 +245,7 @@ export class GameRoomService {
         });
         console.log('game room fetched');
         if (!gameRoom || gameRoom.status === 'closed') {
-          throw new Error('Game room not found');
+          return null;
         }
         const game = await Game.findByPk(gameRoom.currentGame.gameId, {
           lock: true,

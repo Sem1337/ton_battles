@@ -77,7 +77,7 @@ const GameRoomComponent = () => {
       clearInterval(interval)
       leaveRoom(roomId!);
     };
-  }, [on, off]);
+  }, []);
 
   const makeBet = useCallback(() => {
     sendMessage('MAKE_BET', { roomId, betSize });
