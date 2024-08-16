@@ -36,7 +36,7 @@ const Home: React.FC = () => {
   ), []);
 
   return (
-    <div className="home-container full-width-container">
+    <div className="home-container">
       {memoizedHeader}
       <PointsCounter />
       {memoizedLinks}
