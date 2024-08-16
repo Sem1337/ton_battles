@@ -37,6 +37,7 @@ const Home: React.FC = () => {
 
   return (
     <div className="home-container">
+      <div className="home-overlay"></div>
       {memoizedHeader}
       <PointsCounter />
       {memoizedLinks}
