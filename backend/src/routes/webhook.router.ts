@@ -122,7 +122,7 @@ router.post('/webhook', jsonParser, async (req: Request, res: Response) => {
     console.log('checking successful_payment');
     if (!successful_payment || !successful_payment.invoice_payload) {
       console.log('not successful_payment or payload');
-      return res.status(400).send('Not successful payment');
+      return res.status(200).send('ok');
     }
     console.log('handling purchase');
     await StarService.handlePurchase(successful_payment);
