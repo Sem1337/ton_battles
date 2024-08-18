@@ -1,14 +1,12 @@
 .header {
-  background: linear-gradient(90deg, #0372e0, #00aaff); /* Gradient from blue to lighter blue */
+  background: linear-gradient(90deg, #0372e0, #00aaff); /* Gradient background */
   color: white;
   padding: 1rem;
   box-shadow: 0 0 10px rgba(255, 215, 0, 0.5), 0 0 20px rgba(255, 215, 0, 0.5); /* Glowing border effect */
-  border-radius: 10px; /* Slightly round the corners to enhance the glow effect */
-  transition: box-shadow 0.3s ease-in-out; /* Smooth transition for the glow */
-}
-
-.header:hover {
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.7), 0 0 30px rgba(255, 215, 0, 0.7); /* Stronger glow on hover */
+  border-radius: 0 0 10px 10px; /* Round only the bottom corners */
+  margin: 0; /* Remove any default margin */
+  position: relative; /* Position relative to ensure it's on top */
+  overflow: hidden; /* Hide any overflow to avoid issues with rounded corners */
 }
 
 .header-container {
@@ -17,6 +15,7 @@
   align-items: center;
   gap: 1rem; /* Increased gap to give more spacing between items */
   flex-wrap: wrap; /* Wrap items if there's not enough space */
+  margin: 0; /* Ensure no margin inside the container */
 }
 
 .header-title {
