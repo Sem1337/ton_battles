@@ -35,7 +35,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const [onlineUsers, setOnlineUsers] = useState<number>(0);
 
   useEffect(() => {
-    if (isAuthenticated && token && !isConnected) {
+    if (isAuthenticated && token) {
       console.log('Connecting to WebSocket server...');
       webSocketManager.connect(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}`, token);
 
@@ -74,7 +74,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
         webSocketManager.disconnect();
       };
     }
-  }, [isAuthenticated, token, isConnected]);
+  }, [isAuthenticated, token]);
 
   const joinRoom = (roomId: string) => {
     webSocketManager.sendMessage('join', roomId);
