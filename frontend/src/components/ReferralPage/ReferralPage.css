@@ -72,6 +72,22 @@
   
   .referral-item {
     padding: 0.5rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 100%; /* Ensure the item doesn't exceed the container width */
+  }
+  
+  .referral-username {
+    max-width: 70%; /* Adjust this percentage as needed */
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis; /* Add ellipsis for long text */
+  }
+  
+  .referral-date {
+    flex-shrink: 0; /* Prevent date from shrinking */
+    margin-left: 0.5rem; /* Add spacing between username and date */
   }
   
   .back-button {

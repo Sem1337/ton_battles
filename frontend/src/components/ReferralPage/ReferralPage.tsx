@@ -72,7 +72,8 @@ const ReferralPage: React.FC = () => {
         <ul className="referrals-list">
           {referrals.map((referral, index) => (
             <li key={index} className="referral-item">
-              {referral.username} - {referral.date}
+              <span className="referral-username">{referral.username}</span>
+              <span className="referral-date">{referral.date}</span>
             </li>
           ))}
         </ul>
