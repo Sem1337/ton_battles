@@ -66,6 +66,7 @@
     max-width: 32rem;
     position: relative;
     text-align: center;
+    z-index: 50;
   }
   
   .modal-body {

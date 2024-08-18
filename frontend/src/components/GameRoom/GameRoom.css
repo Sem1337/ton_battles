@@ -131,6 +131,7 @@
   max-width: 32rem;
   text-align: center;
   color: black;
+  z-index: 50;
 }
 
 .modal-title {
