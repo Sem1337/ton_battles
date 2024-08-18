@@ -15,7 +15,7 @@ body {
     flex-grow: 1;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 2rem 2rem 0; /* Add padding at the top to prevent content overlap */
+    padding: 0rem 0rem 0; /* Add padding at the top to prevent content overlap */
     position: relative; /* Ensure content respects the header’s overlap */
     z-index: 1; /* Ensure the main content stays below the header */
   }

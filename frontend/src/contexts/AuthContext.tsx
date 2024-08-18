@@ -53,6 +53,7 @@ export const AuthProvider = ({ children } : AuthProviderProps) => {
   }
 
   const authenticate = async () => {
+    if (isAuthenticated) return;
     const initData = WebApp.initData;
     console.log("Init Data:", initData);
 

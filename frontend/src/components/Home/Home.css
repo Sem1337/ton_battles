@@ -52,7 +52,6 @@
 .home-button {
   padding: 1rem;
   background: linear-gradient(90deg, #0372e0, #00aaff); /* Gradient background */
-  box-shadow: 0 0 10px rgba(0, 225, 255, 0.5), 0 0 20px rgba(0, 140, 255, 0.5); /* Glowing border effect */
   color: white;
   border: none;
   border-radius: 0.5rem;
@@ -65,6 +64,7 @@
 
 .home-button:hover {
   background: linear-gradient(90deg, #03a1e0, #00e1ff); /* Gradient background */
+  box-shadow: 0 0 10px rgba(0, 225, 255, 0.5), 0 0 20px rgba(0, 140, 255, 0.5); /* Glowing border effect */
 }
 
 @media (min-width: 768px) {
