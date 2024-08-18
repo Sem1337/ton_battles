@@ -13,10 +13,13 @@ body {
   
   .main-container {
     flex-grow: 1;
-    max-width: 1200px;
+    width: 100%; /* Set width to 100% to allow full width scaling */
+    max-width: 1200px; /* Max width for larger screens */
+    min-width: 320px; /* Ensure a minimum width for smaller screens */
     margin: 0 auto;
     padding: 0rem 0rem 0; /* Add padding at the top to prevent content overlap */
     position: relative; /* Ensure content respects the header’s overlap */
+    box-sizing: border-box; /* Include padding and border in the element's width and height */
   }
   
   .footer {
