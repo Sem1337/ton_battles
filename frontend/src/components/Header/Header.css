@@ -1,53 +1,60 @@
 .header {
-    background-color: #0372e0;
-    color: white;
-    padding: 1rem;
-  }
-  
-  .header-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  
-  @media (min-width: 768px) {
-    .header-container {
-      flex-direction: row;
-    }
-  }
-  
-  .header-title {
-    font-size: 2rem;
-    font-weight: bold;
-  }
-  
-  .header-link {
-    color: white;
-    text-decoration: none;
-  }
-  
-  .header-link:hover {
-    text-decoration: underline;
-  }
-  
-  .header-button {
-    background-color: #FFD700;
-    color: white;
-    font-weight: bold;
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 0.5rem;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .header-button:hover {
-    background-color: #FFA500;
-  }
-  
-  .header-button:active {
-    background-color: #FF8C00;
-  }
-  
+  background: linear-gradient(90deg, #0372e0, #00aaff); /* Gradient from blue to lighter blue */
+  color: white;
+  padding: 1rem;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.5), 0 0 20px rgba(255, 215, 0, 0.5); /* Glowing border effect */
+  border-radius: 10px; /* Slightly round the corners to enhance the glow effect */
+  transition: box-shadow 0.3s ease-in-out; /* Smooth transition for the glow */
+}
+
+.header:hover {
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.7), 0 0 30px rgba(255, 215, 0, 0.7); /* Stronger glow on hover */
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between; /* Space between title and buttons */
+  align-items: center;
+  gap: 1rem; /* Increased gap to give more spacing between items */
+  flex-wrap: wrap; /* Wrap items if there's not enough space */
+}
+
+.header-title {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.header-link {
+  color: white;
+  text-decoration: none;
+}
+
+.header-link:hover {
+  text-decoration: underline;
+}
+
+.header-button {
+  background-color: #FFD700;
+  color: white;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s, box-shadow 0.3s ease-in-out;
+}
+
+.header-button:hover {
+  background-color: #FFA500;
+  box-shadow: 0 0 10px rgba(255, 165, 0, 0.7); /* Glowing effect on button hover */
+}
+
+.header-button:active {
+  background-color: #FF8C00;
+}
+
+.header-buttons {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}

@@ -77,22 +77,24 @@ export const Header: React.FC = () => {
   return (
     <header className="header">
       <div className="header-container">
-        <h1 className="header-title">
+        <h2 className="header-title">
           <Link to="/" className="header-link">TON Battles</Link>
-        </h1>
+        </h2>
         <TonConnectButton />
         <BalanceInfo />
-        <button
-          className="header-button"
-          onClick={() => setIsLeaderboardOpen(true)}>
-          Leaderboard
-        </button>
-        <button
-          onClick={() => navigate('/tasks')}
-          className="header-button"
-        >
-          Tasks
-        </button>
+        <div className="header-buttons">
+          <button
+            className="header-button"
+            onClick={() => setIsLeaderboardOpen(true)}>
+            Leaderboard
+          </button>
+          <button
+            onClick={() => navigate('/tasks')}
+            className="header-button"
+          >
+            Tasks
+          </button>
+        </div>
         <LeaderboardModal
           isOpen={isLeaderboardOpen}
           onClose={() => setIsLeaderboardOpen(false)}

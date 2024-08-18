@@ -41,7 +41,7 @@ const BalanceInfo = () => {
 
   return (
     <div className="balance-info">
-      <h2 className="balance-title">Your Gems</h2>
+      <h3 className="balance-title">Your Gems</h3>
       <p className="balance-amount">{gems !== null ? `${gems} gems` : 'Balance not available'}</p>
     </div>
   );
