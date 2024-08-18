@@ -6,7 +6,6 @@
   border-radius: 0 0 10px 10px; /* Round only the bottom corners */
   margin: 0; /* Remove any default margin */
   position: relative; /* Position relative to ensure it's on top */
-  z-index: 10; /* Ensure the header stays on top */
   overflow: hidden; /* Hide any overflow to avoid issues with rounded corners */
   margin-bottom: -20px; /* Adjust this value to overlap with the next section */
 }
