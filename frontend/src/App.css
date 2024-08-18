@@ -17,7 +17,6 @@ body {
     margin: 0 auto;
     padding: 0rem 0rem 0; /* Add padding at the top to prevent content overlap */
     position: relative; /* Ensure content respects the header’s overlap */
-    z-index: 1; /* Ensure the main content stays below the header */
   }
   
   .footer {
