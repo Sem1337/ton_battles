@@ -83,7 +83,7 @@ class TaskService {
         {
           taskName: 'TON Transaction',
           taskDescription: 'Confirm transaction in TON blockchain.',
-          reward: '20000',
+          reward: '77777',
           payload: '0.1',
           actionType: 'transaction'
         },
