@@ -11,8 +11,8 @@
 
   /* Background image settings */
   background-image: linear-gradient(
-    rgba(0, 0, 0, 0.1), 
-    rgba(0, 0, 0, 0.1)
+    rgba(0, 0, 0, 0.08), 
+    rgba(0, 0, 0, 0.08)
   ),
   url('/homebg.jpg'); /* Adjust the path accordingly */
   background-size: cover;
