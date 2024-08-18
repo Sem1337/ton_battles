@@ -11,8 +11,8 @@
 
   /* Background image settings */
   background-image: linear-gradient(
-    rgba(0, 0, 0, 0.15), 
-    rgba(0, 0, 0, 0.15)
+    rgba(0, 0, 0, 0.1), 
+    rgba(0, 0, 0, 0.1)
   ),
   url('/homebg.jpg'); /* Adjust the path accordingly */
   background-size: cover;
@@ -51,7 +51,8 @@
 
 .home-button {
   padding: 1rem;
-  background-color: #063b70;
+  background: linear-gradient(90deg, #0372e0, #00aaff); /* Gradient background */
+  box-shadow: 0 0 10px rgba(0, 225, 255, 0.5), 0 0 20px rgba(0, 140, 255, 0.5); /* Glowing border effect */
   color: white;
   border: none;
   border-radius: 0.5rem;
@@ -63,7 +64,7 @@
 }
 
 .home-button:hover {
-  background-color: #1c86ee;
+  background: linear-gradient(90deg, #03a1e0, #00e1ff); /* Gradient background */
 }
 
 @media (min-width: 768px) {
