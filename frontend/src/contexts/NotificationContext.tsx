@@ -47,7 +47,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
         isOpen={notification !== null}
         onRequestClose={closeNotification}
         className="fixed inset-0 flex items-center justify-center z-50"
-        overlayClassName="fixed inset-0 bg-black bg-opacity-50"
+        overlayClassName="fixed inset-0 bg-black bg-opacity-50 z-50"
         contentLabel="Notification"
       >
         <div className="bg-white p-6 rounded shadow-lg max-w-md w-full">
@@ -65,7 +65,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
         isOpen={errorMsg !== null}
         onRequestClose={closeError}
         className="fixed inset-0 flex items-center justify-center z-50"
-        overlayClassName="fixed inset-0 bg-black bg-opacity-50"
+        overlayClassName="fixed inset-0 bg-black bg-opacity-50 z-50"
         contentLabel="Error"
       >
         <div className="bg-white p-6 rounded shadow-lg max-w-md w-full">
