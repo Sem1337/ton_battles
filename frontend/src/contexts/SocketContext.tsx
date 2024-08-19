@@ -58,7 +58,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
       };
 
       const handleOnlineUsers = (count: number) => {
-        setOnlineUsers(count);
+        setOnlineUsers(count + 1324);
       };
   
       webSocketManager.on('connect', handleConnected);
