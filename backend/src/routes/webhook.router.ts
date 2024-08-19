@@ -22,16 +22,13 @@ bot.on('pre_checkout_query', async (ctx) => {
 
 
 const handleCallbackQuery = async (callbackQuery: any) => {
-  const callbackData = callbackQuery.data;
+  const callbackData = callbackQuery?.data;
+  const chatId = callbackQuery?.message?.chat.id;
   if (callbackData === 'help') {
     console.log('successfully received help');
-    return {
-      method: 'sendMessage',
-      chat_id: callbackQuery.message.chat.id,
-      text: 'If you need help, please visit our support form: https://forms.gle/Hzit6evtEdXDRN5CA.',
-    };
+    await bot.telegram.answerCbQuery(callbackQuery.id);
+    await bot.telegram.sendMessage(chatId, 'If you need help, please visit our support form: https://forms.gle/Hzit6evtEdXDRN5CA.');
   }
-  return {};
 };
 
 bot.createWebhook({ domain: `${process.env.BACKEND_DOMAIN}`, path: '/webhook'});
@@ -83,7 +80,7 @@ const handleStart = async (startPayload: string, message: any) => {
     text: `Welcome ${username}!`,
     reply_markup: {
       inline_keyboard: [
-        [{ text: '🎮 Play game', url: 'https://www.tonbattles.ru/' }], // Replace with your actual mini app link
+        [{ text: '🎮 Play game', url: 'https://t.me/ton_battles_bot?start' }], // Replace with your actual mini app link
         [{ text: '❓ Help', callback_data: 'help' }]
       ]
     }
@@ -128,8 +125,8 @@ router.post('/webhook', jsonParser, async (req: Request, res: Response) => {
 
     if (callback_query) {
       console.log('Received callback query:', callback_query);
-      const result = handleCallbackQuery(callback_query);
-      return res.json(result).send();
+      await handleCallbackQuery(callback_query);
+      return res.sendStatus(200);
     }
 
     console.log('checking message', message);
