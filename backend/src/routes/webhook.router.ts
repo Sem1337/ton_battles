@@ -70,7 +70,7 @@ const handleStart = async (startPayload: string, message: any) => {
         text: 'Invalid referral link or user already registered.',
         reply_markup: {
           inline_keyboard: [
-            [{ text: '🎮 Play game', url: 'https://www.tonbattles.ru/' }], // Replace with your actual mini app link
+            [{ text: '🎮 Play game', url: 'https://t.me/ton_battles_bot?start' }], // Replace with your actual mini app link
             [{ text: '❓ Help', callback_data: 'help' }]
           ]
         }
