@@ -15,13 +15,19 @@ bot.use((ctx, next) => {
 });
 
 
-bot.start((ctx) => ctx.reply('Welcome! Use /buy to purchase points.'));
-
 // Handle pre-checkout queries
 bot.on('pre_checkout_query', async (ctx) => {
   await ctx.answerPreCheckoutQuery(true);
 });
 
+
+const handleCallbackQuery = async (ctx: any) => {
+  const callbackData = ctx.callbackQuery?.data;
+  if (callbackData === 'help') {
+    await ctx.answerCbQuery();
+    await ctx.reply('If you need help, please visit our support form: https://forms.gle/Hzit6evtEdXDRN5CA');
+  }
+};
 
 bot.createWebhook({ domain: `${process.env.BACKEND_DOMAIN}`, path: '/webhook'});
 
@@ -57,6 +63,12 @@ const handleStart = async (startPayload: string, message: any) => {
         method: 'sendMessage',
         chat_id: chatId,
         text: 'Invalid referral link or user already registered.',
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🎮 Play game', url: 'https://www.tonbattles.ru/' }], // Replace with your actual mini app link
+            [{ text: '❓ Help', callback_data: 'help' }]
+          ]
+        }
       };
     }
   }
@@ -64,6 +76,12 @@ const handleStart = async (startPayload: string, message: any) => {
     method: 'sendMessage',
     chat_id: chatId,
     text: `Welcome ${username}!`,
+    reply_markup: {
+      inline_keyboard: [
+        [{ text: '🎮 Play game', url: 'https://www.tonbattles.ru/' }], // Replace with your actual mini app link
+        [{ text: '❓ Help', callback_data: 'help' }]
+      ]
+    }
   };
 }
 
@@ -93,7 +111,7 @@ router.get('/buy_points', async (req: Request, res: Response) => {
 });
 
 router.post('/webhook', jsonParser, async (req: Request, res: Response) => {
-  const { update_id, message, pre_checkout_query } = req.body;
+  const { update_id, message, pre_checkout_query, callback_query } = req.body;
   console.log('Received update with ID:', update_id);
   try {
     if (pre_checkout_query) {
@@ -102,6 +120,13 @@ router.post('/webhook', jsonParser, async (req: Request, res: Response) => {
       console.log('response: ', checkoutResponse);
       return res.status(200).send(checkoutResponse);
     }
+
+    if (callback_query) {
+      console.log('Received callback query:', callback_query);
+      await handleCallbackQuery({ callbackQuery: callback_query });
+      return res.sendStatus(200);
+    }
+
     console.log('checking message', message);
     if (!message) {
       return res.sendStatus(200);
