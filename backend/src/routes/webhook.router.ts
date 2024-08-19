@@ -24,6 +24,7 @@ bot.on('pre_checkout_query', async (ctx) => {
 const handleCallbackQuery = async (callbackQuery: any) => {
   const callbackData = callbackQuery.data;
   if (callbackData === 'help') {
+    console.log('successfully received help');
     return {
       method: 'sendMessage',
       chat_id: callbackQuery.message.chat.id,
