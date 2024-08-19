@@ -21,12 +21,16 @@ bot.on('pre_checkout_query', async (ctx) => {
 });
 
 
-const handleCallbackQuery = async (ctx: any) => {
-  const callbackData = ctx.callbackQuery?.data;
+const handleCallbackQuery = async (callbackQuery: any) => {
+  const callbackData = callbackQuery.data;
   if (callbackData === 'help') {
-    await ctx.answerCbQuery();
-    await ctx.reply('If you need help, please visit our support form: https://forms.gle/Hzit6evtEdXDRN5CA');
+    return {
+      method: 'sendMessage',
+      chat_id: callbackQuery.message.chat.id,
+      text: 'If you need help, please visit our support form: https://forms.gle/Hzit6evtEdXDRN5CA.',
+    };
   }
+  return {};
 };
 
 bot.createWebhook({ domain: `${process.env.BACKEND_DOMAIN}`, path: '/webhook'});
@@ -123,8 +127,8 @@ router.post('/webhook', jsonParser, async (req: Request, res: Response) => {
 
     if (callback_query) {
       console.log('Received callback query:', callback_query);
-      await handleCallbackQuery({ callbackQuery: callback_query });
-      return res.sendStatus(200);
+      const result = handleCallbackQuery(callback_query);
+      return res.json(result).send();
     }
 
     console.log('checking message', message);
