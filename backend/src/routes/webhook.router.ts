@@ -67,7 +67,7 @@ const handleStart = async (startPayload: string, message: any) => {
         text: 'Invalid referral link or user already registered.',
         reply_markup: {
           inline_keyboard: [
-            [{ text: '🎮 Play game', url: 'https://t.me/ton_battles_bot?start' }], // Replace with your actual mini app link
+            [{ text: '🎮 Play game', web_app: {url: 'https://t.me/ton_battles_bot?start'} }], // Replace with your actual mini app link
             [{ text: '❓ Help', callback_data: 'help' }]
           ]
         }
@@ -80,7 +80,7 @@ const handleStart = async (startPayload: string, message: any) => {
     text: `Welcome ${username}!`,
     reply_markup: {
       inline_keyboard: [
-        [{ text: '🎮 Play game', url: 'https://t.me/ton_battles_bot?start' }], // Replace with your actual mini app link
+        [{ text: '🎮 Play game', web_app: {url: 'https://t.me/ton_battles_bot?start'} }], // Replace with your actual mini app link
         [{ text: '❓ Help', callback_data: 'help' }]
       ]
     }
