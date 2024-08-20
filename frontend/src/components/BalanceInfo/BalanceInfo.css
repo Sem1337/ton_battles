@@ -1,10 +1,10 @@
 .balance-info {
   text-align: center;
-  margin: 0 1rem;
+  margin: 0 0.2rem;
 }
 
 .balance-title {
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   font-weight: bold;
   margin-bottom: 0.25rem; /* Adjusted for better spacing */
   color: #0372e0; /* Optional: Change color to match the theme */

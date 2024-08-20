@@ -15,7 +15,7 @@
   display: flex;
   justify-content: center; /* Space between title and buttons */
   align-items: flex-end;
-  gap: 1.5rem; /* Increased gap to give more spacing between items */
+  gap: 0.75rem; /* Increased gap to give more spacing between items */
   flex-wrap: wrap; /* Wrap items if there's not enough space */
   margin: 0; /* Ensure no margin inside the container */
 }
@@ -30,7 +30,7 @@
 }
 
 .header-title {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   font-weight: bold;
 }
 
