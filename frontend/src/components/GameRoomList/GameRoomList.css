@@ -25,6 +25,22 @@
 
 .filter-sort-container {
   margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column; /* Arrange rows vertically */
+}
+
+.filter-row,
+.sort-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem; /* Add space between rows */
+}
+
+.filter-label,
+.filter-input,
+.sort-label,
+.sort-select {
+  display: inline-block;
 }
 
 .filter-label,
@@ -37,20 +53,8 @@
   padding: 0.5rem;
   border: 1px solid #ccc;
   border-radius: 0.5rem;
-  margin-right: 1rem;
 }
 
-.filter-label,
-.filter-input {
-  display: inline-block;
-  margin-right: 8px; /* Optional: Add some space between the label and select */
-}
-
-.sort-label,
-.sort-select {
-  display: inline-block;
-  margin-right: 8px; /* Optional: Add some space between the label and select */
-}
 
 .tab-buttons {
   display: flex;

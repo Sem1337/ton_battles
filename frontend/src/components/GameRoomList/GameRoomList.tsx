@@ -63,27 +63,31 @@ const GameRoomList = () => {
         Close
       </button>
       <div className="filter-sort-container">
-        <label htmlFor="filter" className="filter-label">
-          Room name:
-        </label>
-        <input
-          id="filter"
-          type="text"
-          placeholder="Filter by name"
-          value={filter}
-          onChange={handleFilterChange}
-          className="filter-input"
-        />
-        <label htmlFor="sortBy" className="sort-label">
-          Sort by:
-        </label>
-        <select id="sortBy" value={sort} onChange={handleSortChange} className="sort-select">
-          <option value="roomName">Name</option>
-          <option value="minBet">Min Bet</option>
-          <option value="maxBet">Max Bet</option>
-          <option value="maxPlayers">Max Players</option>
-          <option value="currentPlayers">Current Players</option>
-        </select>
+        <div className="filter-row">
+          <label htmlFor="filter" className="filter-label">
+            Room name:
+          </label>
+          <input
+            id="filter"
+            type="text"
+            placeholder="Filter by name"
+            value={filter}
+            onChange={handleFilterChange}
+            className="filter-input"
+          />
+        </div>
+        <div className="sort-row">
+          <label htmlFor="sortBy" className="sort-label">
+            Sort by:
+          </label>
+          <select id="sortBy" value={sort} onChange={handleSortChange} className="sort-select">
+            <option value="roomName">Name</option>
+            <option value="minBet">Min Bet</option>
+            <option value="maxBet">Max Bet</option>
+            <option value="maxPlayers">Max Players</option>
+            <option value="currentPlayers">Current Players</option>
+          </select>
+        </div>
       </div>
       <div className="tab-buttons">
         {['points', 'gems', 'TON'].map((type) => (
