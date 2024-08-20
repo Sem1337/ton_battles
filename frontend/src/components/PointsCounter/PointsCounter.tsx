@@ -4,7 +4,7 @@ import { User } from '../../types/types';
 import './PointsCounter.css';
 
 const PointsCounter: React.FC = () => {
-
+  const [gems, setGems] = useState<number>(0);
   const [points, setPoints] = useState<number>(0);
   const [productionSpeed, setProductionSpeed] = useState<number>(0);
 
@@ -14,6 +14,7 @@ const PointsCounter: React.FC = () => {
 
     const handlePointsUpdated = (data: User) => {
       console.log('user info received: ', data.points, data.productionSpeed);
+      setGems(data.gems);
       setPoints(Number(data.points));
       setProductionSpeed(Number(data.productionSpeed));
     };
@@ -52,6 +53,7 @@ const PointsCounter: React.FC = () => {
   return (
     <div className="points-counter">
       <h2 className="points-counter-title">Points: {points}</h2>
+      <h2 className="gems-title">gems: {gems}</h2>
     </div>
   );
 };

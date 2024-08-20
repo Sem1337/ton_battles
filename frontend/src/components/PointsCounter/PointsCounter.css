@@ -7,10 +7,16 @@
     border-radius: 0.5rem;
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
     margin-bottom: 2rem;
+    flex-direction: column;
   }
   
   .points-counter-title {
     font-size: 1.25rem;
+    font-weight: bold;
+  }
+
+  .gems-title {
+    font-size: 0.8rem;
     font-weight: bold;
   }
   

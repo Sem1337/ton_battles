@@ -13,16 +13,23 @@
 
 .header-container {
   display: flex;
-  justify-content: space-evenly; /* Space between left and right sections */
+  justify-content: space-between; /* Space between title and buttons */
   align-items: center;
-  flex-wrap: nowrap; /* Prevent wrapping of the items */
+  gap: 1rem; /* Increased gap to give more spacing between items */
+  flex-wrap: wrap; /* Wrap items if there's not enough space */
   margin: 0; /* Ensure no margin inside the container */
 }
 
-.header-left {
+.header-left,
+.header-middle,
+.header-right {
   display: flex;
-  flex-direction: column; /* Stack title and BalanceInfo vertically */
-  gap: 0.5rem; /* Add spacing between title and BalanceInfo */
+  align-items: center;
+  gap: 1rem;
+}
+
+.header-left {
+  flex-direction: column;
 }
 
 .header-title {
@@ -39,21 +46,40 @@
   text-decoration: underline;
 }
 
-.header-right {
-  display: flex;
-  flex-direction: column; /* Stack TonConnectButton and buttons vertically */
-  align-items: flex-end; /* Align items to the right */
-  gap: 0.5rem;
+.withdraw-button {
+  background-color: #FF6347; /* Tomato color */
+  color: white;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s, box-shadow 0.3s ease-in-out;
 }
 
-.header-buttons {
-  display: flex;
-  flex-direction: column; /* Stack buttons vertically */
-  gap: 0.5rem;
+.withdraw-button:hover {
+  background-color: #FF4500; /* Darker tomato color */
+  box-shadow: 0 0 10px rgba(255, 99, 71, 0.7); /* Glowing effect on button hover */
+}
+
+.top-up-button {
+  background-color: #32CD32; /* LimeGreen color */
+  color: white;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s, box-shadow 0.3s ease-in-out;
+}
+
+.top-up-button:hover {
+  background-color: #2E8B57; /* Darker LimeGreen color */
+  box-shadow: 0 0 10px rgba(50, 205, 50, 0.7); /* Glowing effect on button hover */
 }
 
 .header-button {
-  background-color: #FFD700;
+  background-color: #FFD700; /* Gold color */
   color: white;
   font-weight: bold;
   padding: 0.5rem 1rem;
@@ -64,10 +90,17 @@
 }
 
 .header-button:hover {
-  background-color: #FFA500;
+  background-color: #FFA500; /* Darker gold color */
   box-shadow: 0 0 10px rgba(255, 165, 0, 0.7); /* Glowing effect on button hover */
 }
 
 .header-button:active {
   background-color: #FF8C00;
+}
+
+.header-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
 }

@@ -4,7 +4,6 @@ import { User } from '../../types/types';
 import './BalanceInfo.css';
 
 const BalanceInfo = () => {
-  const [gems, setGems] = useState<number>(0);
   const [balance, setBalance] = useState<string>('0');
   const [loading, setLoading] = useState<boolean>(true);
   const [error] = useState<string | null>(null)
@@ -15,7 +14,6 @@ const BalanceInfo = () => {
 
     const handleBalanceUpdate = (data: User) => {
       setBalance(Number(data.balance).toString());
-      setGems(data.gems);
       setLoading(false);
     };
 
@@ -42,8 +40,6 @@ const BalanceInfo = () => {
 
   return (
     <div className="balance-info">
-      <h3 className="balance-title">Your Gems</h3>
-      <p className="balance-amount">{gems !== null ? `${gems} gems` : 'Balance not available'}</p>
       <h3 className="balance-title">Your Balance</h3>
       <p className="balance-amount">{balance} TON</p>
     </div>

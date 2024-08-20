@@ -4,32 +4,27 @@ import BalanceInfo from '../BalanceInfo/BalanceInfo'; // Adjust the import path 
 import LeaderboardModal from '../Leaderboard/Leaderboard';
 import { Link, useNavigate } from 'react-router-dom';
 import './Header.css';
+//import { useAuth } from '../../contexts/AuthContext';
+//import { useTonTransaction } from '../../utils/tonUtils';
+//import { WithdrawModal } from '../WithdrawModal/WithdrawModal';
+//import { TopUpModal } from '../TopUpModal/TopUpModal';
+import toast from 'react-hot-toast';
 
 export const Header: React.FC = () => {
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
   const navigate = useNavigate();
+  //const { authFetch } = useAuth();
+  //const { sendTonTransaction } = useTonTransaction();
+  //const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
+  //const [isTopUpModalOpen, setIsTopUpModalOpen] = useState(false);
 
   /*const handleTopUp = async (amount: string) => {
     try {
-      const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/topup`, token);
+      const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/topup`);
       const data = await response.json();
       const txPayload = data.txPayload;
       if (txPayload) {
-        const body = beginCell()
-          .storeUint(0, 32) // write 32 zero bits to indicate that a text comment will follow
-          .storeStringTail(txPayload) // write our text comment
-          .endCell();
-        const transaction = {
-          validUntil: Math.floor(Date.now() / 1000) + 60, // 60 sec
-          messages: [
-            {
-              address: 'UQCn0VvM7Rx7t3IJ38RBUnCFEpqUfOval4SJ2mV8HQOV79O3', // replace with your main wallet address
-              amount: toNano(amount).toString(),
-              payload: body.toBoc().toString("base64")
-            }
-          ]
-        };
-        await tonConnectUI.sendTransaction(transaction);
+        await sendTonTransaction(amount, txPayload);
       }
     } catch (error) {
       console.error('Transaction error:', error);
@@ -42,7 +37,7 @@ export const Header: React.FC = () => {
       console.log('amount: ', amount);
       console.log('address: ', walletAddress);
       // Assuming the transaction is created and confirmed in the modal
-      const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/withdraw`, token, {
+      const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/withdraw`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount, walletAddress }),
@@ -56,9 +51,9 @@ export const Header: React.FC = () => {
       console.error('Withdraw error:', error);
     }
     setIsWithdrawModalOpen(false);
-  };
+  };*/
 
-  const handleBuyPoints = async () => {
+  /*const handleBuyPoints = async () => {
     const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/buy_points`, token, {
       method: 'GET',
       headers: {
@@ -83,6 +78,26 @@ export const Header: React.FC = () => {
           </h2>
           <BalanceInfo />
         </div>
+        <div className="header-middle">
+          <div className="balance-actions">
+            <button className="withdraw-button" onClick={() => {
+              toast('Soon!', {
+                icon: '🚀',
+              });
+              //setIsWithdrawModalOpen(true)
+            }}>
+              Withdraw
+            </button>
+            <button className="top-up-button" onClick={() => {
+              toast('Soon!', {
+                icon: '🚀',
+              });
+              //setIsTopUpModalOpen(true)
+            }}>
+              Top-Up
+            </button>
+          </div>
+        </div>
         <div className="header-right">
           <TonConnectButton />
           <div className="header-buttons">
@@ -106,6 +121,18 @@ export const Header: React.FC = () => {
       </div>
     </header>
   );
+  /*
+          <WithdrawModal
+            isOpen={isWithdrawModalOpen}
+            onClose={() => setIsWithdrawModalOpen(false)}
+            onWithdraw={handleWithdraw}
+          />
+          <TopUpModal
+            isOpen={isTopUpModalOpen}
+            onClose={() => setIsTopUpModalOpen(false)}
+            onTopUp={handleTopUp}
+          />
+  */
 };
 
 export default Header;
