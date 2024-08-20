@@ -13,9 +13,8 @@
 
 .header-container {
   display: flex;
-  justify-content: space-between; /* Space between left and right sections */
+  justify-content: space-evenly; /* Space between left and right sections */
   align-items: center;
-  gap: 1rem; /* Increased gap to give more spacing between items */
   flex-wrap: nowrap; /* Prevent wrapping of the items */
   margin: 0; /* Ensure no margin inside the container */
 }
