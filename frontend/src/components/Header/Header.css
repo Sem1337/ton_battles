@@ -13,10 +13,10 @@
 
 .header-container {
   display: flex;
-  justify-content: space-between; /* Space between title and buttons */
+  justify-content: space-between; /* Space between title and right-side content */
   align-items: center;
   gap: 1rem; /* Increased gap to give more spacing between items */
-  flex-wrap: wrap; /* Wrap items if there's not enough space */
+  flex-wrap: nowrap; /* Prevent wrapping of the items */
   margin: 0; /* Ensure no margin inside the container */
 }
 
@@ -32,6 +32,22 @@
 
 .header-link:hover {
   text-decoration: underline;
+}
+
+.balance-info {
+  margin-right: auto; /* Pushes the balance info to the left */
+}
+
+.right-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.header-buttons {
+  display: flex;
+  flex-direction: column; /* Stack buttons vertically */
+  gap: 0.5rem;
 }
 
 .header-button {
@@ -52,10 +68,4 @@
 
 .header-button:active {
   background-color: #FF8C00;
-}
-
-.header-buttons {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
 }
