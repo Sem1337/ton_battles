@@ -77,11 +77,13 @@ export const Header: React.FC = () => {
   return (
     <header className="header">
       <div className="header-container">
-        <h2 className="header-title">
-          <Link to="/" className="header-link">TON Battles</Link>
-        </h2>
-        <BalanceInfo />
-        <div className="right-section">
+        <div className="header-left">
+          <h2 className="header-title">
+            <Link to="/" className="header-link">TON Battles</Link>
+          </h2>
+          <BalanceInfo />
+        </div>
+        <div className="header-right">
           <TonConnectButton />
           <div className="header-buttons">
             <button
