@@ -26,9 +26,6 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-}
-
-.header-left {
   flex-direction: column;
 }
 
@@ -44,6 +41,12 @@
 
 .header-link:hover {
   text-decoration: underline;
+}
+
+.balance-actions {
+  display: flex;
+  flex-direction: column; /* Stack withdraw and top-up buttons vertically */
+  gap: 0.5rem;
 }
 
 .withdraw-button {
