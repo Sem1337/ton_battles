@@ -1,15 +1,25 @@
 .balance-info {
-    text-align: center;
-    margin: 0 1rem;
-  }
-  
-  .balance-title {
-    font-size: 1.25rem;
-    font-weight: bold;
-    margin-bottom: 0.5rem;
-  }
-  
-  .balance-amount {
-    font-size: 1rem;
-  }
-  
+  text-align: center;
+  margin: 0 1rem;
+}
+
+.balance-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 0.25rem; /* Adjusted for better spacing */
+  color: #0372e0; /* Optional: Change color to match the theme */
+}
+
+.balance-amount {
+  font-size: 1rem;
+  margin-bottom: 1rem; /* Added margin for spacing between balance amounts */
+  color: #333; /* Optional: Adjust color for better readability */
+}
+
+/* Optional: Add a border or background to separate balance info visually */
+.balance-info {
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  background-color: #f9c8ff;
+}

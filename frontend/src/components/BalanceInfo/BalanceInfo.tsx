@@ -5,6 +5,7 @@ import './BalanceInfo.css';
 
 const BalanceInfo = () => {
   const [gems, setGems] = useState<number>(0);
+  const [balance, setBalance] = useState<string>('0');
   const [loading, setLoading] = useState<boolean>(true);
   const [error] = useState<string | null>(null)
   const { sendMessage, on, off } = useSocket();
@@ -13,7 +14,7 @@ const BalanceInfo = () => {
     console.log('balance info use effect')
 
     const handleBalanceUpdate = (data: User) => {
-      //setBalance(parseFloat(data.balance));
+      setBalance(Number(data.balance).toFixed(9));
       setGems(data.gems);
       setLoading(false);
     };
@@ -43,6 +44,8 @@ const BalanceInfo = () => {
     <div className="balance-info">
       <h3 className="balance-title">Your Gems</h3>
       <p className="balance-amount">{gems !== null ? `${gems} gems` : 'Balance not available'}</p>
+      <h3 className="balance-title">Your Balance</h3>
+      <p className="balance-amount">{balance} TON</p>
     </div>
   );
 };
