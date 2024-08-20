@@ -77,8 +77,6 @@ export const Header: React.FC = () => {
             <Link to="/" className="header-link">TON Battles</Link>
           </h2>
           <BalanceInfo />
-        </div>
-        <div className="header-middle">
           <div className="balance-actions">
             <button className="withdraw-button" onClick={() => {
               toast('Soon!', {

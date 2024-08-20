@@ -21,7 +21,6 @@
 }
 
 .header-left,
-.header-middle,
 .header-right {
   display: flex;
   align-items: center;
@@ -48,7 +47,7 @@
 
 .balance-actions {
   display: flex;
-  flex-direction: column; /* Stack withdraw and top-up buttons vertically */
+  flex-direction: row; /* Stack withdraw and top-up buttons vertically */
   gap: 0.5rem;
   font-size: 0.75rem;
 }
