@@ -14,7 +14,7 @@ const BalanceInfo = () => {
     console.log('balance info use effect')
 
     const handleBalanceUpdate = (data: User) => {
-      setBalance(Number(data.balance).toFixed(9));
+      setBalance(Number(data.balance).toString());
       setGems(data.gems);
       setLoading(false);
     };
