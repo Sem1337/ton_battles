@@ -18,8 +18,8 @@
 
 /* Optional: Add a border or background to separate balance info visually */
 .balance-info {
-  padding: 1rem;
+  padding: 0.4rem;
   border: 1px solid #ccc;
   border-radius: 0.5rem;
-  background-color: hsl(175, 100%, 85%);
+  background-color: hsl(0, 0%, 100%);
 }
