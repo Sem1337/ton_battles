@@ -16,7 +16,7 @@
   justify-content: center; /* Space between title and buttons */
   align-items: flex-end;
   gap: 0.75rem; /* Increased gap to give more spacing between items */
-  flex-wrap: wrap; /* Wrap items if there's not enough space */
+  flex-wrap: nowrap;
   margin: 0; /* Ensure no margin inside the container */
 }
 
@@ -27,6 +27,9 @@
   align-items: center;
   gap: 0.5rem;
   flex-direction: column;
+  flex-grow: 1; /* Allow sections to grow and fill available space */
+  flex-shrink: 1; /* Allow sections to shrink if necessary */
+  flex-basis: 0; /* Ensure sections take equal space */
 }
 
 .header-title {
@@ -108,8 +111,4 @@
   flex-direction: column;
   gap: 0.5rem;
   align-items: center;
-}
-
-.ton-connect-button {
-  font-size: 0.75rem;
 }

@@ -99,7 +99,7 @@ export const Header: React.FC = () => {
           </div>
         </div>
         <div className="header-right">
-          <TonConnectButton className="ton-connect-button" style={{ backgroundColor: '#2E8B57' }} />
+          <TonConnectButton />
           <div className="header-buttons">
             <button
               className="header-button"
