@@ -230,7 +230,7 @@ export class GameRoomService {
 
   static async joinGameRoom(roomId: string, userId: string) {
     try {
-      const gameRoom = await sequelize.transaction(async () => {
+      const gameRoom = await sequelize.transaction(async (transaction) => {
         console.log(`${userId} user joins to ${roomId}`);
         const gameRoom = await GameRoom.findByPk(roomId, {
           include: [
@@ -250,14 +250,16 @@ export class GameRoomService {
           lock: {
             level: Transaction.LOCK.UPDATE,
             of: GameRoom
-          }
+          },
+          transaction
 
         });
         if (!gameRoom || gameRoom.status === 'closed') {
           return null;
         }
         const game = await Game.findByPk(gameRoom.currentGame.gameId, {
-          lock: true,
+          lock: Transaction.LOCK.UPDATE,
+          transaction
         });
         if (!game) {
           throw new Error('Game does not exists');
@@ -275,7 +277,7 @@ export class GameRoomService {
           sendNotificationToUser(userId, { message: 'Room is already full!' });
           throw new Error('Game room is full');
         }
-        const user = await User.findByPk(userId);
+        const user = await User.findByPk(userId, {transaction});
         if (!user) {
           throw new Error('user not found');
         }
@@ -285,10 +287,10 @@ export class GameRoomService {
           gameRoomId: roomId,
           shield: user.shield,
           userId: userId
-        });
+        }, {transaction});
         gameRoom.currentPlayers++;
         gameRoom.players.push(player);
-        await gameRoom.save();
+        await gameRoom.save({transaction});
 
         io.to(roomId).emit('message', { type: 'PLAYER_JOINED', payload: { players: gameRoom.players, remainingTime: remainingTime, roomName: gameRoom.roomName, totalbank: game.total_bank } });
         return gameRoom;
@@ -296,7 +298,7 @@ export class GameRoomService {
       return gameRoom;
     } catch (error) {
       if (error instanceof Error) {
-        console.log(error.message);
+        console.log(error);
       }
       throw new Error('Failed to join game room');
     }
