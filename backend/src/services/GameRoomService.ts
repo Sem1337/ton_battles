@@ -200,7 +200,6 @@ export class GameRoomService {
   static async createNewGame(gameRoomId: string) {
     try {
       const gameRoom = await sequelize.transaction(async (transaction) => {
-        console.log('creating new game in ', gameRoomId);
         const gameRoom = await GameRoom.findByPk(gameRoomId, {
           include: [{ model: Player, as: 'players' }],
           transaction,
@@ -208,11 +207,8 @@ export class GameRoomService {
             level: transaction.LOCK.UPDATE,
             of: GameRoom
           },
-          logging: console.log
         });
-        console.log('fetched game room', gameRoom?.id);
         if (!gameRoom) {
-          console.log('no such game room');
           throw new Error('Game room not found');
         }
 
@@ -220,10 +216,9 @@ export class GameRoomService {
         const newGame = await Game.create({
           gameRoomId: gameRoomId,
           total_bank: 0,
+        }, {
           transaction,
-          logging: console.log
         });
-        console.log('created new game instance', newGame?.gameId);
         gameRoom.currentGame = newGame;
         await newGame.save({ transaction });
         await gameRoom.save({ transaction });
@@ -287,7 +282,7 @@ export class GameRoomService {
           sendNotificationToUser(userId, { message: 'Room is already full!' });
           throw new Error('Game room is full');
         }
-        const user = await User.findByPk(userId, {transaction});
+        const user = await User.findByPk(userId, { transaction });
         if (!user) {
           throw new Error('user not found');
         }
@@ -297,10 +292,10 @@ export class GameRoomService {
           gameRoomId: roomId,
           shield: user.shield,
           userId: userId
-        }, {transaction});
+        }, { transaction });
         gameRoom.currentPlayers++;
         gameRoom.players.push(player);
-        await gameRoom.save({transaction});
+        await gameRoom.save({ transaction });
 
         io.to(roomId).emit('message', { type: 'PLAYER_JOINED', payload: { players: gameRoom.players, remainingTime: remainingTime, roomName: gameRoom.roomName, totalbank: game.total_bank } });
         return gameRoom;
