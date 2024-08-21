@@ -78,6 +78,7 @@ export class GameRoomService {
       if (error instanceof Error) {
         console.log('startGameLoop error: ', error);
       }
+      console.log('error in game loop');
       throw new Error('Failed to start game loop');
     }
   }
@@ -186,7 +187,7 @@ export class GameRoomService {
         }
         return gameRoom;
       });
-      console.log('SUCCESSFULLY COMPLETED GAME', gameRoom, gameRoom?.status, gameRoom?.id);
+      console.log('SUCCESSFULLY COMPLETED GAME', gameRoom?.status, gameRoom?.id);
       return gameRoom;
     } catch (error) {
       if (error instanceof Error) {
@@ -199,6 +200,7 @@ export class GameRoomService {
   static async createNewGame(gameRoomId: string) {
     try {
       const gameRoom = await sequelize.transaction(async (transaction) => {
+        console.log('creating new game in ', gameRoomId);
         const gameRoom = await GameRoom.findByPk(gameRoomId, {
           include: [{ model: Player, as: 'players' }],
           transaction,
@@ -227,6 +229,7 @@ export class GameRoomService {
       if (error instanceof Error) {
         console.log(error);
       }
+      console.log('error in creating new game');
       throw new Error('Failed to create new game');
     }
   }
