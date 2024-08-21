@@ -11,7 +11,7 @@ import cookieParser from 'cookie-parser';
 import sequelize from './database/db.js';
 import { authenticateUser, refreshToken, verifyToken } from './auth.js';
 import { createServer } from 'http';
-import { initializeSocket } from './utils/socket.js';
+import { disconnectAllSockets, initializeSocket } from './utils/socket.js';
 import ShopService from './services/ShopService.js';
 import TaskService from './services/TaskService.js';
 import { Game, GameRoom, Player } from './database/model/gameRoom.js';
@@ -56,6 +56,7 @@ process.on('SIGTERM', async () => {
   console.log('Received SIGTERM, shutting down gracefully...');
   sendNotificationToAllUsers({ message: 'Technical service. All bets will be returned to your balance' });
   await new Promise(resolve => setTimeout(resolve, 3000));
+  disconnectAllSockets();
   await GameRoomService.returnAllBets();
   // Then exit the process
   process.exit(0);
@@ -65,6 +66,7 @@ process.on('SIGINT', async () => {
   console.log('Received SIGINT, shutting down gracefully...');
   sendNotificationToAllUsers({ message: 'Technical service. All bets will be returned to your balance' });
   await new Promise(resolve => setTimeout(resolve, 3000));
+  disconnectAllSockets();
   await GameRoomService.returnAllBets();
   // Then exit the process
   process.exit(0);

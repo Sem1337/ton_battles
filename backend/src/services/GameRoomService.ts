@@ -360,7 +360,11 @@ export class GameRoomService {
     try {
       const gameRoom = await sequelize.transaction(async (transaction) => {
 
-        const gameRoom = await GameRoom.findByPk(roomId, {
+        const gameRoom = await GameRoom.findOne({
+          where: {
+            id: roomId,
+            status: 'active',
+          },
           transaction,
           lock: transaction.LOCK.UPDATE,  // Lock the GameRoom row
         });

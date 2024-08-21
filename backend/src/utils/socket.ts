@@ -125,3 +125,13 @@ export const getSocketInstance = () => {
   }
   return io;
 };
+
+export const disconnectAllSockets = () => {
+  if (!io) {
+    throw new Error("Socket.io not initialized!");
+  }
+  
+  io.sockets.sockets.forEach(socket => {
+    socket.disconnect(true); // Disconnect each socket
+  });
+};
