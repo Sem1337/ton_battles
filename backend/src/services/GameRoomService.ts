@@ -198,7 +198,7 @@ export class GameRoomService {
 
   static async createNewGame(gameRoomId: string) {
     try {
-      await sequelize.transaction(async (transaction) => {
+      const gameRoom = await sequelize.transaction(async (transaction) => {
         const gameRoom = await GameRoom.findByPk(gameRoomId, {
           include: [{ model: Player, as: 'players' }],
           transaction,
@@ -220,10 +220,12 @@ export class GameRoomService {
         gameRoom.currentGame = newGame;
         await newGame.save({ transaction });
         await gameRoom.save({ transaction });
+        return gameRoom;
       });
+      console.log('created new game in ', gameRoom.id);
     } catch (error) {
       if (error instanceof Error) {
-        console.log(error.message);
+        console.log(error);
       }
       throw new Error('Failed to create new game');
     }
