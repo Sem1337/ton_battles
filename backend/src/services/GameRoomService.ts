@@ -186,6 +186,7 @@ export class GameRoomService {
         }
         return gameRoom;
       });
+      console.log('SUCCESSFULLY COMPLETED GAME', gameRoom, gameRoom?.status, gameRoom?.id);
       return gameRoom;
     } catch (error) {
       if (error instanceof Error) {

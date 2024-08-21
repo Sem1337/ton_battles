@@ -155,7 +155,6 @@ async function fetchAndProcessTransactions(toLT: string, dbTx?: Transaction): Pr
   if (firstProcessedTxLt) {
     lastCheckedLt = firstProcessedTxLt;
   }
-  console.log('processing finished');
 
 }
 
@@ -177,14 +176,10 @@ async function processIncomingTransactions() {
       // Use the existing lastCheckedLt from the database
       lastCheckedLt = lastCheckedLtRow.lastCheckedLt;
     }
-    console.log('got last value', lastCheckedLt);
     await fetchAndProcessTransactions(lastCheckedLt, transaction);
-    console.log('saving new value', lastCheckedLt);
     lastCheckedLtRow.set('lastCheckedLt', lastCheckedLt);
     lastCheckedLtRow = await lastCheckedLtRow.save({ transaction });
-    console.log('New lastCheckedLt saved:', lastCheckedLtRow.lastCheckedLt);
     await transaction.commit();
-    console.log('commited');
 
   } catch (error) {
     await transaction.rollback();
