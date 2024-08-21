@@ -30,7 +30,6 @@ export const initializeSocket = (server: HttpServer) => {
       try {
         const decoded = authenticateWebSocket(token as string);
         socket.data.user = decoded;
-        console.log('decoded jwtToken in websocket', socket.data.user);
         next();
       } catch (err) {
         next(new Error('Authentication error'));
@@ -41,7 +40,6 @@ export const initializeSocket = (server: HttpServer) => {
   });
 
   io.on('connection', async (socket) => {
-    console.log('A user connected', socket.data.user);
     // Store the user's socket ID
     const userId = socket.data.user.userId;
     // Store the user's socket ID in Redis
@@ -53,8 +51,6 @@ export const initializeSocket = (server: HttpServer) => {
 
     socket.on('message', async (data: { type: string, payload: any }) => {
       const { type, payload } = data;
-
-      console.log(`received message of type ${type}`);
 
       try {
         switch (type) {

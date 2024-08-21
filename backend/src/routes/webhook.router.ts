@@ -9,8 +9,7 @@ import Big from 'big.js';
 export const bot = new Telegraf(process.env.BOT_TOKEN || '');
 
 // Middleware to log every request
-bot.use((ctx, next) => {
-  console.log('Received update:', ctx.update);
+bot.use((_ctx, next) => {
   return next();
 });
 
@@ -25,7 +24,6 @@ const handleCallbackQuery = async (callbackQuery: any) => {
   const callbackData = callbackQuery?.data;
   const chatId = callbackQuery?.message?.chat.id;
   if (callbackData === 'help') {
-    console.log('successfully received help');
     await bot.telegram.answerCbQuery(callbackQuery.id);
     await bot.telegram.sendMessage(chatId, 'If you need help, please visit our support form: https://forms.gle/Hzit6evtEdXDRN5CA.');
   }
@@ -52,7 +50,6 @@ const handleStart = async (startPayload: string, message: any) => {
           referredBy,
           points: '0',
         })
-        console.log('assigned refferal');
         await updateUserPoints(referredBy, new Big(50000));
         await updateUserGems(referredBy, new Big(10));
       } //else {
@@ -113,8 +110,7 @@ router.get('/buy_points', async (req: Request, res: Response) => {
 });
 
 router.post('/webhook', jsonParser, async (req: Request, res: Response) => {
-  const { update_id, message, pre_checkout_query, callback_query } = req.body;
-  console.log('Received update with ID:', update_id);
+  const { message, pre_checkout_query, callback_query } = req.body;
   try {
     if (pre_checkout_query) {
       console.log(pre_checkout_query.id);
@@ -124,21 +120,16 @@ router.post('/webhook', jsonParser, async (req: Request, res: Response) => {
     }
 
     if (callback_query) {
-      console.log('Received callback query:', callback_query);
       await handleCallbackQuery(callback_query);
       return res.sendStatus(200);
     }
 
-    console.log('checking message', message);
     if (!message) {
       return res.sendStatus(200);
     }
-    if (message) {
-      console.log('Received message:', message);
-    }
+
     const { successful_payment, entities, text } = message
     if (entities && entities[0].type === 'bot_command') {
-      console.log('received bot command');
       if (text.startsWith('/start')) {
         const startPayload = text.split(' ')[1]; // This contains the referral token
         if (startPayload === '123') return res.status(200).send();
@@ -146,15 +137,11 @@ router.post('/webhook', jsonParser, async (req: Request, res: Response) => {
         return res.json(result).send();
       }
     }
-    console.log('checking successful_payment');
     if (!successful_payment || !successful_payment.invoice_payload) {
-      console.log('not successful_payment or payload');
       return res.status(200).send('ok');
     }
-    console.log('handling purchase');
     await StarService.handlePurchase(successful_payment);
 
-    console.log('success purchase');
     return res.status(200).send();
   } catch (error) {
     console.error('Error processing webhook:', error);

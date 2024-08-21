@@ -20,7 +20,6 @@ export const sendNotificationToUser = async (userId: string, payload: any) => {
 
 export const sendMessageToGameRoom = async (gameRoomId: string, messageType: string , payload: any) => {
   const io = getSocketInstance();
-  console.log('sending message to ', gameRoomId);
   io.to(gameRoomId).emit('message', {type: messageType, payload: payload});
 }
 

@@ -93,13 +93,11 @@ export const authenticateUser = async (req: Request, res: Response) => {
     if (!user) {
       const balance = userId == 482910486 ? 10.5 : 0.0;
       const username = firstName + ' ' + lastName;
-      console.log('username:', username);
       user = await User.create({ userId: userId, balance: balance, username: username });
     }
 
     const token = jwt.sign({ userId: userId }, SECRET_KEY, { expiresIn: '30s' });
     const refreshToken = jwt.sign({ userId }, SECRET_KEY, { expiresIn: '7d' });
-    console.log('user auth: ', userId);
 
     res.setHeader('Access-Control-Expose-Headers', 'Authorization');
     res.setHeader('Authorization', `Bearer ${token}`);

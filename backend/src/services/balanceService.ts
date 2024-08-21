@@ -38,7 +38,6 @@ export const updateUserBalance = async (userId: number, amount: Big, transaction
 
 export const updatePoints = async (userId: string, transaction?: Transaction) => {
   const executeUpdate = async (trans: Transaction) => {
-    console.log('updating points for user', userId);
     const user = await User.findByPk(userId, { lock: trans.LOCK.UPDATE, transaction: trans });
 
     if (user) {
@@ -51,10 +50,8 @@ export const updatePoints = async (userId: string, transaction?: Transaction) =>
       user.lastPointsUpdate = new Date(+currentTime * 1000);
 
       await user.save({ transaction: trans });
-      console.log('updated points for user', userId);
       return user;
     }
-    console.log('returning null');
     return null;
   };
 

@@ -72,7 +72,7 @@ User.init(
       allowNull: false,
     },
     referredBy: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.BIGINT,
       allowNull: true,
     },
 
