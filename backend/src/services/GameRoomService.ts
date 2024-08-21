@@ -207,7 +207,8 @@ export class GameRoomService {
           lock: {
             level: transaction.LOCK.UPDATE,
             of: GameRoom
-          }
+          },
+          logging: console.log
         });
         console.log('fetched game room', gameRoom?.id);
         if (!gameRoom) {
@@ -219,7 +220,8 @@ export class GameRoomService {
         const newGame = await Game.create({
           gameRoomId: gameRoomId,
           total_bank: 0,
-          transaction
+          transaction,
+          logging: console.log
         });
         console.log('created new game instance', newGame?.gameId);
         gameRoom.currentGame = newGame;
