@@ -16,7 +16,6 @@ export class GameRoomService {
         throw new Error('Failed to create game room');
       }
       const gameRoom = await sequelize.transaction(async () => {
-        console.log('creating game room: ', gameType, minBet, maxBet, maxPlayers);
         const gameRoom = await GameRoom.create({
           gameType,
           minBet,
@@ -72,17 +71,6 @@ export class GameRoomService {
           console.log(`Game loop stopped for room ${gameRoomId} because the room is closed.`);
           break;
         }
-        if (gameRoom.players.length === 0) {
-          gameRoom.status = 'closed';
-          await gameRoom.save();
-          console.log(`Game room ${gameRoomId} closed due to no players`);
-          break;
-        } else {
-          await Player.destroy({ where: { gameRoomId } });
-          gameRoom.players = [];
-          gameRoom.currentPlayers = 0;
-          await gameRoom.save();
-        }
 
         await this.createNewGame(gameRoomId); // Create a new game
       }
@@ -108,6 +96,11 @@ export class GameRoomService {
               },
             }
           ],
+          lock: {
+            level: Transaction.LOCK.UPDATE,
+            of: GameRoom
+          }
+          ,
           transaction
         });
         if (!gameRoom) {
@@ -121,6 +114,8 @@ export class GameRoomService {
 
         if (gameRoom.players.length === 0) {
           game.status = 'closed';
+          gameRoom.status = 'closed';
+          await gameRoom.save({ transaction });
           await game.save({ transaction });
           console.log('no players, no winner');
           return gameRoom;
@@ -155,7 +150,6 @@ export class GameRoomService {
               random -= winChance;
             }
           }
-          console.log('winner determined');
           if (!winner) {
             winner = gameRoom.players[0];
           }
@@ -180,12 +174,22 @@ export class GameRoomService {
         await sendMessageToGameRoom(gameRoomId, 'GAME_COMPLETED', gameResult);
         game.status = 'closed';
         await game.save({ transaction });
+        if (gameRoom.players.length === 0) {
+          gameRoom.status = 'closed';
+          await gameRoom.save({ transaction });
+          console.log(`Game room ${gameRoomId} closed due to no players`);
+        } else {
+          await Player.destroy({ where: { gameRoomId }, transaction });
+          gameRoom.players = [];
+          gameRoom.currentPlayers = 0;
+          await gameRoom.save({ transaction });
+        }
         return gameRoom;
       });
       return gameRoom;
     } catch (error) {
       if (error instanceof Error) {
-        console.log(error.message);
+        console.log(error);
       }
       throw new Error('Failed to complete game');
     }
@@ -193,9 +197,14 @@ export class GameRoomService {
 
   static async createNewGame(gameRoomId: string) {
     try {
-      await sequelize.transaction(async () => {
+      await sequelize.transaction(async (transaction) => {
         const gameRoom = await GameRoom.findByPk(gameRoomId, {
-          include: [{ model: Player, as: 'players' }]
+          include: [{ model: Player, as: 'players' }],
+          transaction,
+          lock: {
+            level: Transaction.LOCK.UPDATE,
+            of: GameRoom
+          }
         });
         if (!gameRoom) {
           throw new Error('Game room not found');
@@ -205,10 +214,11 @@ export class GameRoomService {
         const newGame = await Game.create({
           gameRoomId: gameRoomId,
           total_bank: 0,
+          transaction
         });
         gameRoom.currentGame = newGame;
-
-        await gameRoom.save();
+        await newGame.save({ transaction });
+        await gameRoom.save({ transaction });
       });
     } catch (error) {
       if (error instanceof Error) {
@@ -243,7 +253,6 @@ export class GameRoomService {
           }
 
         });
-        console.log('game room fetched');
         if (!gameRoom || gameRoom.status === 'closed') {
           return null;
         }
@@ -259,7 +268,6 @@ export class GameRoomService {
         const existingPlayer = gameRoom.players.find(player => player.userId.toString() === userId.toString());
         if (existingPlayer) {
           console.log('Player already in the game room');
-          console.log('remainingTime', remainingTime);
           io.to(roomId).emit('message', { type: 'PLAYER_JOINED', payload: { players: gameRoom.players, remainingTime: remainingTime, roomName: gameRoom.roomName, totalbank: game.total_bank } });
           return gameRoom;
         }
@@ -282,7 +290,6 @@ export class GameRoomService {
         gameRoom.players.push(player);
         await gameRoom.save();
 
-        console.log('remainingTime', remainingTime);
         io.to(roomId).emit('message', { type: 'PLAYER_JOINED', payload: { players: gameRoom.players, remainingTime: remainingTime, roomName: gameRoom.roomName, totalbank: game.total_bank } });
         return gameRoom;
       });
@@ -291,7 +298,6 @@ export class GameRoomService {
       if (error instanceof Error) {
         console.log(error.message);
       }
-      console.log('Failed to join game room log');
       throw new Error('Failed to join game room');
     }
   }
@@ -350,7 +356,6 @@ export class GameRoomService {
 
   static async makeBet(roomId: string, userId: string, betSize: number) {
     try {
-      console.log('making bet')
       const gameRoom = await sequelize.transaction(async (transaction) => {
 
         const gameRoom = await GameRoom.findByPk(roomId, {
@@ -361,7 +366,6 @@ export class GameRoomService {
         if (!gameRoom) {
           throw new Error('Game room not found');
         }
-        console.log('fetched gameRoom');
         // Find and lock the active Game
         const game = await Game.findOne({
           where: {
@@ -375,7 +379,6 @@ export class GameRoomService {
         if (!game) {
           throw new Error('Active game not found');
         }
-        console.log('fetched game');
         // Find and lock the Player
         const player = await Player.findOne({
           where: {
@@ -389,7 +392,6 @@ export class GameRoomService {
         if (!player) {
           throw new Error('Player not found in this game room');
         }
-        console.log('fetched player');
         // Validate bet size considering maxBet can be null for unlimited bet
         if (
           new Big(player.bet).plus(betSize).lt(gameRoom.minBet) ||
@@ -399,9 +401,7 @@ export class GameRoomService {
           throw new Error('Invalid bet size');
         }
 
-        console.log('updating balance in make bet');
         await this.updateUserBalanceByGameType(+userId, gameRoom.gameType, new Big(-betSize), transaction);
-        console.log('updated balance in make bet');
 
         player.bet = new Big(player.bet).plus(betSize).toFixed(9); // Update player's bet using Big.js
         game.total_bank = new Big(game.total_bank).plus(betSize).toFixed(9); // Update game's total bank using Big.js
@@ -417,7 +417,6 @@ export class GameRoomService {
           lock: transaction.LOCK.UPDATE, // Optionally lock all players as well
         });
 
-        console.log(`${userId} bet ${betSize} in ${roomId}, total_bet ${player.bet}, total_bank: ${game.total_bank}`);
         // Notify clients of the bet made
         const io = getSocketInstance();
 
@@ -430,9 +429,55 @@ export class GameRoomService {
 
     } catch (error) {
       if (error instanceof Error) {
-        console.log(error.message);
+        console.log(error);
       }
       throw new Error('Failed to make a bet');
+    }
+  }
+
+
+  static async returnAllBets() {
+    try {
+      await sequelize.transaction(async (transaction) => {
+        const gameRooms = await GameRoom.findAll({
+          where: { status: 'active' },  // Only look at active game rooms
+          include: [{ model: Player, as: 'players' }],
+          lock: {
+            level: transaction.LOCK.UPDATE,
+            of: GameRoom
+          },
+          transaction  // Use the global transaction
+        });
+
+        for (const gameRoom of gameRooms) {
+          // Fetch players and current game
+          const { players } = gameRoom;
+
+          if (!players || players.length === 0) {
+            // No players in the game room, mark the room as closed
+            gameRoom.status = 'closed';
+            await gameRoom.save({ transaction });
+            continue;
+          }
+
+          // Refund each player's bet
+          for (const player of players) {
+            const betAmount = new Big(player.bet);
+            await this.updateUserBalanceByGameType(player.userId, gameRoom.gameType, betAmount, transaction);
+          }
+
+          gameRoom.status = 'closed';
+          await Player.destroy({ where: { gameRoomId: gameRoom.id }, transaction });  // Remove all players from the room
+          await gameRoom.save({ transaction });
+        }
+
+      });
+
+    } catch (error) {
+      if (error instanceof Error) {
+        console.log(error);
+      }
+      throw new Error('Failed to return bets after start up');
     }
   }
 

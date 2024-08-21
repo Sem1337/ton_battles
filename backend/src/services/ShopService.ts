@@ -162,13 +162,11 @@ class ShopService {
         return { success: false, message };
       }
       if (invoice) {
-        console.log(invoice);
         const invoiceURL = await bot.telegram.createInvoiceLink(invoice);
         return { success: true, invoiceURL };
       }
 
       if (txPayload) {
-        console.log(txPayload);
         return { success: true, txPayload, cost: cost.toFixed(9) };
       }
 

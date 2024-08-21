@@ -87,29 +87,34 @@ const GameRoomComponent = () => {
     navigate('/'); // Navigates to the previous page
   }, [navigate]);
 
-  const memoizedPlayersList = useMemo(() => (
-    <table className="players-list-table">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Bet</th>
-          <th>Win Chance</th>
-        </tr>
-      </thead>
-      <tbody>
-        {players.map((player) => {
-          const winChance = totalBank > 0 ? (Number(player.bet) / totalBank) * 100 : 0;
-          return (
-            <tr key={player.id} className="player-item">
-              <td>{player.name}</td>
-              <td>{Number(player.bet).toFixed(2)}</td>
-              <td>{winChance.toFixed(2)}%</td>
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
-  ), [players, totalBank]);
+  const memoizedPlayersList = useMemo(() => {
+    // Sort players by bet amount in descending order
+    const sortedPlayers = [...players].sort((a, b) => b.bet - a.bet);
+  
+    return (
+      <table className="players-list-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Bet</th>
+            <th>Win Chance</th>
+          </tr>
+        </thead>
+        <tbody>
+          {sortedPlayers.map((player) => {
+            const winChance = totalBank > 0 ? (Number(player.bet) / totalBank) * 100 : 0;
+            return (
+              <tr key={player.id} className="player-item">
+                <td>{player.name}</td>
+                <td>{Number(player.bet).toFixed(2)}</td>
+                <td>{winChance.toFixed(2)}%</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    );
+  }, [players, totalBank]);
 
   const memoizedModal = useMemo(() => (
     winner && (

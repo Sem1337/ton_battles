@@ -15,13 +15,15 @@ import { initializeSocket } from './utils/socket.js';
 import ShopService from './services/ShopService.js';
 import TaskService from './services/TaskService.js';
 import { Game, GameRoom, Player } from './database/model/gameRoom.js';
+import { GameRoomService } from './services/GameRoomService.js';
+import { sendNotificationToAllUsers } from './services/messageService.js';
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 
 app.use(cors({
-  origin: ['https://sem1337.github.io', 'https://www.tonbattles.ru', '*'], // Replace with your frontend URL
+  origin: ['https://sem1337.github.io', 'https://www.tonbattles.ru'], // Replace with your frontend URL
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true
 }));
@@ -50,6 +52,24 @@ app.get('/', (_req, res) => {
   res.send('Hello world');
 });
 
+process.on('SIGTERM', async () => {
+  console.log('Received SIGTERM, shutting down gracefully...');
+  sendNotificationToAllUsers({ message: 'Technical service. All bets will be returned to your balance' });
+  await new Promise(resolve => setTimeout(resolve, 3000));
+  await GameRoomService.returnAllBets();
+  // Then exit the process
+  process.exit(0);
+});
+
+process.on('SIGINT', async () => {
+  console.log('Received SIGINT, shutting down gracefully...');
+  sendNotificationToAllUsers({ message: 'Technical service. All bets will be returned to your balance' });
+  await new Promise(resolve => setTimeout(resolve, 3000));
+  await GameRoomService.returnAllBets();
+  // Then exit the process
+  process.exit(0);
+});
+
 
 sequelize.authenticate()
   .then(() => {
@@ -64,6 +84,10 @@ sequelize.authenticate()
   .then(() => {
     console.log('seeding tasks');
     return TaskService.seedTasks();
+  })
+  .then(() => {
+    console.log('handling interrupted games');
+    return GameRoomService.returnAllBets();
   })
   .then(() => {
     return Player.destroy({ truncate: true, cascade: true });

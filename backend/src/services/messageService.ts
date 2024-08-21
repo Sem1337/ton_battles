@@ -14,6 +14,11 @@ export const sendMessageToUser = async (userId: string, messageType: string, pay
   }
 };
 
+export const sendNotificationToAllUsers = async (payload: any) => {
+  const io = getSocketInstance();
+  io.emit('message', {type: 'NOTIFY', payload: payload})
+}
+
 export const sendNotificationToUser = async (userId: string, payload: any) => {
   await sendMessageToUser(userId, 'NOTIFY', payload);
 };

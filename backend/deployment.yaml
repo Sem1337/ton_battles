@@ -12,6 +12,7 @@ spec:
       labels:
         app: my-app
     spec:
+      terminationGracePeriodSeconds: 30  # Add this line
       imagePullSecrets:
       - name: ycr-secret
       containers:
