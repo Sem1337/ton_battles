@@ -24,6 +24,12 @@ const sequelize = new Sequelize(
         ca: fs.readFileSync('/root/.postgresql/root.crt').toString(),
       },
     },
+    pool: {
+      max: 300,
+      min: 0,
+      acquire: 30000,
+      idle: 10000,
+    },
   }
 );
 
