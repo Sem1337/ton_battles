@@ -88,7 +88,7 @@ export class GameRoomService {
       }
     } catch (error) {
       if (error instanceof Error) {
-        console.log(error.message);
+        console.log('startGameLoop error: ', error);
       }
       throw new Error('Failed to start game loop');
     }
