@@ -56,12 +56,10 @@ export const initializeSocket = (server: HttpServer) => {
         switch (type) {
           case 'join': {
             socket.join(payload);
-            console.log(`Socket ${socket.id} joined room ${payload}`);
             break;
           }
           case 'leave': {
             socket.leave(payload);
-            console.log(`Socket ${socket.id} left room ${payload}`);
             break;
           }
           case 'UPDATE_POINTS': {
@@ -109,7 +107,6 @@ export const initializeSocket = (server: HttpServer) => {
     });
 
     socket.on('disconnect', async () => {
-      console.log('A user disconnected', socket.data.user);
       await pubClient.del(`socket:${userId}`);
     });
 

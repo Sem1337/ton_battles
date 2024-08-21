@@ -205,11 +205,13 @@ export class GameRoomService {
           include: [{ model: Player, as: 'players' }],
           transaction,
           lock: {
-            level: Transaction.LOCK.UPDATE,
+            level: transaction.LOCK.UPDATE,
             of: GameRoom
           }
         });
+        console.log('fetched game room', gameRoom?.id);
         if (!gameRoom) {
+          console.log('no such game room');
           throw new Error('Game room not found');
         }
 
@@ -219,6 +221,7 @@ export class GameRoomService {
           total_bank: 0,
           transaction
         });
+        console.log('created new game instance', newGame?.gameId);
         gameRoom.currentGame = newGame;
         await newGame.save({ transaction });
         await gameRoom.save({ transaction });
@@ -237,7 +240,6 @@ export class GameRoomService {
   static async joinGameRoom(roomId: string, userId: string) {
     try {
       const gameRoom = await sequelize.transaction(async (transaction) => {
-        console.log(`${userId} user joins to ${roomId}`);
         const gameRoom = await GameRoom.findByPk(roomId, {
           include: [
             {
