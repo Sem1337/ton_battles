@@ -40,7 +40,7 @@ class TaskService {
       }
 
       if (task.actionType === 'transaction' && !fromTonService) {
-        transaction.commit();
+        await transaction.commit();
         return;
       }
 
@@ -52,19 +52,19 @@ class TaskService {
 
       if (task.actionType !== 'transaction') {
         // Check if the user already completed the task to avoid duplicates
-        const hasTask = await (user as any).hasCompletedTask(task);
+        const hasTask = await (user as any).hasCompletedTask(task, {transaction});
         if (hasTask) {
           throw new Error('Task already completed');
         }
 
         // Mark the task as completed by the user
-        await (user as any).addCompletedTask(task);
+        await (user as any).addCompletedTask(task, {transaction});
       }
       await updateUserPoints(user.userId, new Big(task.reward), transaction);
-      transaction.commit();
+      await transaction.commit();
       await sendNotificationToUser(userId.toString(), { message: `Task completed! You received "${task.reward}" points` });
     } catch (error) {
-      transaction.rollback();
+      await transaction.rollback();
       throw error;
     }
   }

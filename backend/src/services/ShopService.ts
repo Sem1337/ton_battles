@@ -94,7 +94,7 @@ class ShopService {
         points: item.points ? item.points * Math.pow(2, userProductionLevel - 1) : null,
         gems: item.gems ? item.gems * Math.pow(2, userProductionLevel - 1) : null,
         stars: item.stars ? item.stars * Math.pow(2, userProductionLevel - 1) : null,
-        TON: item.TON ? item.TON * Math.pow(2, userProductionLevel - 1) : null,
+        TON: item.TON ? (item.TON * Math.pow(2, userProductionLevel - 1)).toFixed(3) : null,
       };
     } else if (item.itemId === ShopItemId.SHIELD_LVL_UP) {
       return {
@@ -102,7 +102,7 @@ class ShopService {
         points: item.points ? item.points * Math.pow(3, userShieldLevel) : null,
         gems: item.gems ? item.gems * Math.pow(3, userShieldLevel) : null,
         stars: item.stars ? item.stars * Math.pow(3, userShieldLevel) : null,
-        TON: item.TON ? item.TON * Math.pow(3, userShieldLevel) : null,
+        TON: item.TON ? (item.TON * Math.pow(3, userShieldLevel)).toFixed(3) : null,
         description: `You win if your bet is >= ${100-10*(userShieldLevel+1)}% of total bank`,
       };
     } else {
