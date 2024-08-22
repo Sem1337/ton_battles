@@ -25,7 +25,7 @@ const sequelize = new Sequelize(
       },
     },
     pool: {
-      max: 100,
+      max: 100,  // 200 * CPU - max_connections,  (200 * CPU - 50) conn_max for db user,  ((200 * CPU - 100) / nodesCount)  current value
       min: 0,
       acquire: 45000,
       idle: 10000,

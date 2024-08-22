@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import { User } from './database/model/user.js';
+import sequelize from './database/db.js';
 
 
 const BOT_TOKEN = process.env.BOT_TOKEN || 'your_bot_token_here';
@@ -86,23 +87,26 @@ export const authenticateUser = async (req: Request, res: Response) => {
   if (currentTime - authDate > 86400) { // 86400 seconds = 24 hours;
     return res.status(403).send({ status: 'error', message: 'Auth date is too old' });
   }
-
+  const transaction = await sequelize.transaction();
   try {
-    let user = await User.findByPk(userId);
-
+    let user = await User.findByPk(userId, {transaction, lock: transaction.LOCK.UPDATE});
+    const username = firstName + ' ' + lastName;
     if (!user) {
       const balance = userId == 482910486 ? 10.5 : 0.0;
-      const username = firstName + ' ' + lastName;
-      user = await User.create({ userId: userId, balance: balance, username: username });
+      user = await User.create({ userId: userId, balance: balance, username: username }, {transaction});
+    } else if (user.username !== username) {
+      user.username = username;
+      await user.save({transaction});
     }
-
-    const token = jwt.sign({ userId: userId }, SECRET_KEY, { expiresIn: '30s' });
+    await transaction.commit();
+    const token = jwt.sign({ userId: userId }, SECRET_KEY, { expiresIn: '1h' });
     const refreshToken = jwt.sign({ userId }, SECRET_KEY, { expiresIn: '7d' });
 
     res.setHeader('Access-Control-Expose-Headers', 'Authorization');
     res.setHeader('Authorization', `Bearer ${token}`);
     return res.status(200).send({ status: 'ok', userId: user.userId, balance: user.balance, refreshToken });
   } catch (error) {
+    await transaction.rollback();
     console.error(error);
     return res.status(500).send({ status: 'error', message: 'Server error' });
   }

@@ -25,28 +25,31 @@ class TaskService {
 
     return tasks.map(task => ({
       ...task.get(),
-      completed: user?.completedTasks?.some((completedTask: Task) => completedTask.id === task.id) || false,
+      completed: user?.completedTasks?.some((completedTask: Task) => completedTask.id === task.id && task.actionType !== 'transaction') || false,
     }));
   }
 
   static async completeTask(taskId: string, userId: number, fromTonService: boolean) {
-
+    const transaction = await sequelize.transaction();
     try {
-      await sequelize.transaction(async () => {
-        const task = await Task.findByPk(taskId);
-        if (!task) {
-          throw new Error('Task not found');
-        }
 
-        if (task.actionType === 'transaction' && !fromTonService) {
-          return;
-        }
+      const task = await Task.findByPk(taskId, { transaction });
+      if (!task) {
+        throw new Error('Task not found');
+      }
 
-        const user = await User.findByPk(userId, { lock: true });
+      if (task.actionType === 'transaction' && !fromTonService) {
+        transaction.commit();
+        return;
+      }
 
-        if (!user) {
-          throw new Error('User not found');
-        }
+      const user = await User.findByPk(userId, { transaction, lock: true });
+
+      if (!user) {
+        throw new Error('User not found');
+      }
+
+      if (task.actionType !== 'transaction') {
         // Check if the user already completed the task to avoid duplicates
         const hasTask = await (user as any).hasCompletedTask(task);
         if (hasTask) {
@@ -55,9 +58,11 @@ class TaskService {
 
         // Mark the task as completed by the user
         await (user as any).addCompletedTask(task);
-        await updateUserPoints(user.userId, new Big(task.reward));
-      });
+      }
+      await updateUserPoints(user.userId, new Big(task.reward), transaction);
+      transaction.commit();
     } catch (error) {
+      transaction.rollback();
       throw error;
     }
   }

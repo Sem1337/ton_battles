@@ -91,13 +91,17 @@ jobs:
         kubectl apply -f backend/deployment.yaml
         kubectl apply -f backend/service.yaml
 
+    - name: Restart Pods
+      run: |
+        kubectl rollout restart deployment/redis
+        kubectl rollout restart deployment/my-app
+        
     - name: Wait for Deployment
       run: |
         kubectl rollout status deployment/my-app
 
-    - name: Restart Pods
-      run: |
-        kubectl rollout restart deployment/my-app
+
+        
 
     - name: Get External IP
       run: |

@@ -4,6 +4,7 @@ import type { GameRoom } from '../../types/types'; // Import shared types
 import { useNavigate } from 'react-router-dom';
 import './GameRoomList.css';
 import { useAuth } from '../../contexts/AuthContext';
+import toast from 'react-hot-toast';
 
 const GameRoomList = () => {
   const [gameRooms, setGameRooms] = useState<GameRoom[]>([]);
@@ -16,19 +17,20 @@ const GameRoomList = () => {
   const navigate = useNavigate(); // Get navigate function from useNavigate hook
   const { authFetch } = useAuth();
 
+  const fetchGameRooms = async () => {
+    const response = await authFetch(
+      `${import.meta.env.VITE_REACT_APP_BACKEND_URL}/gamerooms?page=${page}&limit=${limit}&sort=${sort}&filter=${filter}&gameType=${selectedTab}`);
+    if (response.ok) {
+      const data = await response.json();
+      setGameRooms(data.data);
+      setTotal(data.total);
+    } else {
+      // Handle error response
+      console.error('Failed to fetch game rooms');
+    }
+  };
+
   useEffect(() => {
-    const fetchGameRooms = async () => {
-      const response = await authFetch(
-        `${import.meta.env.VITE_REACT_APP_BACKEND_URL}/gamerooms?page=${page}&limit=${limit}&sort=${sort}&filter=${filter}&gameType=${selectedTab}`);
-      if (response.ok) {
-        const data = await response.json();
-        setGameRooms(data.data);
-        setTotal(data.total);
-      } else {
-        // Handle error response
-        console.error('Failed to fetch game rooms');
-      }
-    };
     fetchGameRooms();
   }, [page, limit, sort, filter, selectedTab]);
 
@@ -39,8 +41,8 @@ const GameRoomList = () => {
     if (response.ok) {
       navigate(`/game-room/${roomId}`); // Call onJoinGameRoom when a game room is joined
     } else {
-      // Handle error response
-      console.error('Failed to join game room');
+      toast.error('Failed to join game room');
+      await fetchGameRooms();
     }
   };
 

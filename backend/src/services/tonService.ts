@@ -9,8 +9,7 @@ import { updateUserBalance } from "./balanceService.js";
 import { sendNotificationToUser } from "./messageService.js";
 import TaskService from "./TaskService.js";
 import sequelize from "../database/db.js";
-import TransactionState from "../database/model/tonServiceModel.js"
-import { Transaction } from "sequelize";
+import {TransactionState, HandledTransactions} from "../database/model/tonServiceModel.js"
 
 dotenv.config();
 
@@ -79,7 +78,7 @@ export const confirmTransaction = async (transfer: Cell) => {
 
 
 // Function to fetch and process transactions since the last checked logical time
-async function fetchAndProcessTransactions(toLT: string, dbTx?: Transaction): Promise<void> {
+async function fetchAndProcessTransactions(toLT: string): Promise<void> {
 
   let lastProcessedTxLt: string | undefined = undefined;
   let lastProcessedTxHash: string | undefined = undefined;
@@ -106,6 +105,10 @@ async function fetchAndProcessTransactions(toLT: string, dbTx?: Transaction): Pr
         || !transaction.in_msg
         || !transaction.in_msg.message
         || lastProcessedTxLt === lastCheckedLt) continue;
+      const historyNote = await HandledTransactions.findByPk(lastProcessedTxLt);
+      if (historyNote) {
+        continue;
+      }
       const txValue = new Big(fromNano(transaction.in_msg.value));
       const payloadEncrypted = transaction.in_msg.message
       try {
@@ -133,12 +136,12 @@ async function fetchAndProcessTransactions(toLT: string, dbTx?: Transaction): Pr
             } else if (itemId) {
               const expectedCost = new Big(cost);
               if (expectedCost.eq(txValue)) {
-                await ShopService.giveGoods(userId, itemId, dbTx);
+                await ShopService.giveGoods(userId, itemId);
               } else {
                 console.log('wrong tx amount: ', txValue, expectedCost);
               }
             } else {
-              await updateUserBalance(userId, txValue, dbTx);
+              await updateUserBalance(userId, txValue);
               sendNotificationToUser(userId, { message: `Successful top up: ${txValue.toFixed(9)} TON` });
             }
           } else {
@@ -146,9 +149,11 @@ async function fetchAndProcessTransactions(toLT: string, dbTx?: Transaction): Pr
           }
 
         }
+
       } catch (error) {
 
       }
+      await HandledTransactions.create({lt: lastProcessedTxLt});
     }
   } while (response.length == blockSize);
 
@@ -176,7 +181,7 @@ async function processIncomingTransactions() {
       // Use the existing lastCheckedLt from the database
       lastCheckedLt = lastCheckedLtRow.lastCheckedLt;
     }
-    await fetchAndProcessTransactions(lastCheckedLt, transaction);
+    await fetchAndProcessTransactions(lastCheckedLt);
     lastCheckedLtRow.set('lastCheckedLt', lastCheckedLt);
     lastCheckedLtRow = await lastCheckedLtRow.save({ transaction });
     await transaction.commit();

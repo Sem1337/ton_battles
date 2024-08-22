@@ -38,7 +38,9 @@ const TaskCardModal: React.FC<TaskCardModalProps> = ({ task, onClose }) => {
     switch (task.actionType) {
       case 'url':
         window.open(task.payload, '_blank');
-        await handleTaskCompletion();
+        if (!task.completed) {
+          await handleTaskCompletion();
+        }
         break;
       case 'transaction': {
         const response = await authFetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/tasks/${task.id}/getPayload`);

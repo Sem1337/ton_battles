@@ -12,7 +12,7 @@ export class GameRoomService {
     try {
       const maxBetValue = maxBet === 'Infinity' ? null : maxBet;
       if (maxBetValue && new Big(maxBetValue).lt(minBet) ||
-        maxPlayers < 2 || maxPlayers > 100 || new Big(minBet).lte(0)) {
+        maxPlayers < 2 || maxPlayers > 30 || new Big(minBet).lte(0) || roomName.length > 50) {
         throw new Error('Failed to create game room');
       }
       const gameRoom = await sequelize.transaction(async () => {
@@ -328,7 +328,6 @@ export class GameRoomService {
         order,
         limit,
         offset,
-        include: [{ model: Player, as: 'players', attributes: [] }]
       });
       return {
         data: gameRooms.rows,
@@ -388,7 +387,7 @@ export class GameRoomService {
         });
 
         if (!game) {
-          throw new Error('Active game not found');
+          throw new Error('Game not found');
         }
         // Find and lock the Player
         const player = await Player.findOne({
@@ -401,7 +400,7 @@ export class GameRoomService {
         });
 
         if (!player) {
-          throw new Error('Player not found in this game room');
+          throw new Error('Player not found in game room');
         }
         // Validate bet size considering maxBet can be null for unlimited bet
         if (
@@ -441,8 +440,9 @@ export class GameRoomService {
     } catch (error) {
       if (error instanceof Error) {
         console.log(error);
+        throw new Error(error.message);
       }
-      throw new Error('Failed to make a bet');
+      throw new Error('Failed to make bet');
     }
   }
 

@@ -24,4 +24,20 @@ TransactionState.init({
   timestamps: false,
 });
 
-export default TransactionState;
+
+class HandledTransactions extends Model {
+  public lt!: string;
+}
+
+HandledTransactions.init({
+  lt: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    primaryKey: true,
+  },
+}, {
+  sequelize,
+  timestamps: false,
+})
+
+export { TransactionState, HandledTransactions };

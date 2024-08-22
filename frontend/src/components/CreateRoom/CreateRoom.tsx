@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './CreateRoom.css';
 import { useAuth } from '../../contexts/AuthContext';
+import toast from 'react-hot-toast';
 
 const CreateGame = () => {
   const [gameType, setGameType] = useState<'points' | 'gems' | 'TON'>('points');
@@ -48,7 +49,7 @@ const CreateGame = () => {
       const data = await response.json();
       navigate(`/game-room/${data.id}`);
     } else {
-      console.error('Failed to create game room');
+      toast.error('Failed to create game room');
     }
   };
 
@@ -77,6 +78,7 @@ const CreateGame = () => {
             onChange={(e) => setRoomName(e.target.value)}
             className="form-input"
             required
+            maxLength={50}
           />
         </div>
         <div className="form-group">
@@ -125,7 +127,7 @@ const CreateGame = () => {
             onChange={(e) => setMaxPlayers(parseInt(e.target.value, 10) || '')}
             className="form-input"
             required
-            max={100}
+            max={30}
             min={2}
           />
         </div>
