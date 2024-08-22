@@ -72,10 +72,8 @@ class WebSocketManager {
   private invokeCallbacks(event: string, data?: any) {
     const callbacks = this.eventCallbacks.get(event);
     if (callbacks) {
-      console.log('callbacks count: ', callbacks.size);
       callbacks.forEach(callback => {
         try {
-          console.log('invoking callback for', event);
           callback(data);
         } catch (error) {
           console.error(`Error handling ${event}:`, error);

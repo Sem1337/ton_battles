@@ -10,8 +10,6 @@ const PointsCounter: React.FC = () => {
 
   const { sendMessage, on, off } = useSocket();
   useEffect(() => {
-    console.log('enable points counter intervals');
-
     const handlePointsUpdated = (data: User) => {
       console.log('user info received: ', data.points, data.productionSpeed);
       setGems(data.gems);
@@ -42,7 +40,6 @@ const PointsCounter: React.FC = () => {
 
 
     return () => {
-      console.log('disable points counter intevals');
       clearInterval(pointsIncrementInterval);
       clearInterval(pointsUpdateInterval);
       off('USER_INFO', handlePointsUpdated);
@@ -52,7 +49,7 @@ const PointsCounter: React.FC = () => {
 
   return (
     <div className="points-counter">
-      <h2 className="points-counter-title">Points: {points}</h2>
+      <h2 className="points-counter-title">Points: {points === 0 ? 'Loading...' : points }</h2>
       <h2 className="gems-title">gems: {gems}</h2>
     </div>
   );

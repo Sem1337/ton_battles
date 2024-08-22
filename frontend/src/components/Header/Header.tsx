@@ -86,14 +86,14 @@ export const Header: React.FC = () => {
             }}>
               Withdraw
             </button>
-            <button className="top-up-button" onClick={() => {
+            {/*<button className="top-up-button" onClick={() => {
               toast('Soon!', {
                 icon: '🚀',
               });
               //setIsTopUpModalOpen(true)
             }}>
               Top-Up
-            </button>
+            </button>*/}
           </div>
         </div>
         <div className="header-right">

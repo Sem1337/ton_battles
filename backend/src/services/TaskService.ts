@@ -5,6 +5,7 @@ import { User } from '../database/model/user.js';
 import { updateUserPoints } from './balanceService.js';
 import sequelize from '../database/db.js';
 import jwt from 'jsonwebtoken';
+import { sendNotificationToUser } from './messageService.js';
 
 class TaskService {
 
@@ -61,6 +62,7 @@ class TaskService {
       }
       await updateUserPoints(user.userId, new Big(task.reward), transaction);
       transaction.commit();
+      await sendNotificationToUser(userId.toString(), { message: `Task completed! You received "${task.reward}" points` });
     } catch (error) {
       transaction.rollback();
       throw error;
@@ -89,7 +91,7 @@ class TaskService {
           taskName: 'TON Transaction',
           taskDescription: 'Confirm transaction in TON blockchain.',
           reward: '77777',
-          payload: '0.1',
+          payload: '0.08',
           actionType: 'transaction'
         },
         // Add more tasks as needed

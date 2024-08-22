@@ -80,8 +80,8 @@ class ShopService {
     }
     const item = await ShopItem.findByPk(itemId, {transaction});
     if (item) {
-      sendNotificationToUser(userId, { message: `Successfully purchased "${item?.name}"` });
-      sendUserInfo(+userId, transaction);
+      await sendNotificationToUser(userId, { message: `Successfully purchased "${item?.name}"` });
+      await sendUserInfo(+userId, transaction);
     }
   }
 
