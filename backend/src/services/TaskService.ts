@@ -44,7 +44,7 @@ class TaskService {
         return;
       }
 
-      const user = await User.findByPk(userId, { transaction, lock: true });
+      const user = await User.findByPk(userId, {include: [{ model: User, as: 'referrals' }], transaction, lock: true });
 
       if (!user) {
         throw new Error('User not found');
@@ -101,7 +101,7 @@ class TaskService {
         },
 
         {
-          taskName: 'invite friends',
+          taskName: 'invite 50 friends',
           taskDescription: 'Invite 50 friend.',
           reward: '3000000',
           payload: '50',
@@ -109,7 +109,7 @@ class TaskService {
         },
 
         {
-          taskName: 'invite friends',
+          taskName: 'invite 200 friends',
           taskDescription: 'Invite 200 friend.',
           reward: '15000000',
           payload: '200',
