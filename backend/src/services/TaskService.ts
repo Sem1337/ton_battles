@@ -44,7 +44,7 @@ class TaskService {
         return;
       }
 
-      const user = await User.findByPk(userId, {include: [{ model: User, as: 'referrals' }], transaction, lock: true });
+      const user = await User.findByPk(userId, {include: [{ model: User, as: 'referrals' }], transaction });
 
       if (!user) {
         throw new Error('User not found');
