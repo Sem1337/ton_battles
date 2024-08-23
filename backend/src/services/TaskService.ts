@@ -51,6 +51,11 @@ class TaskService {
       }
 
       if (task.actionType !== 'transaction') {
+        if (task.actionType === 'refs' && user.referrals.length < parseInt(task.payload)) {
+          await sendNotificationToUser(userId.toString(), { message: `Task not completed` });
+          await transaction.rollback();
+          return;
+        }
         // Check if the user already completed the task to avoid duplicates
         const hasTask = await (user as any).hasCompletedTask(task, {transaction});
         if (hasTask) {
@@ -72,14 +77,7 @@ class TaskService {
 
   static async seedTasks() {
     try {
-      const taskCount = await Task.count();
-
-      if (taskCount > 0) {
-        console.log('Tasks already exist. Skipping seeding.');
-        return;
-      }
-
-      await Task.bulkCreate([
+      const tasksData = [
         {
           taskName: 'Telegram community',
           taskDescription: 'Join our telegram community to get this reward.',
@@ -90,12 +88,43 @@ class TaskService {
         {
           taskName: 'TON Transaction',
           taskDescription: 'Confirm transaction in TON blockchain.',
-          reward: '77777',
+          reward: '120000',
           payload: '0.08',
           actionType: 'transaction'
         },
+        {
+          taskName: 'invite 5 friends',
+          taskDescription: 'Invite 5 friend.',
+          reward: '200000',
+          payload: '5',
+          actionType: 'refs'
+        },
+
+        {
+          taskName: 'invite friends',
+          taskDescription: 'Invite 50 friend.',
+          reward: '3000000',
+          payload: '50',
+          actionType: 'refs'
+        },
+
+        {
+          taskName: 'invite friends',
+          taskDescription: 'Invite 200 friend.',
+          reward: '15000000',
+          payload: '200',
+          actionType: 'refs'
+        },
         // Add more tasks as needed
-      ]);
+      ];
+      tasksData.forEach(async (taskData) => {
+        const task = await Task.findOne({where : taskData});
+        if (task) {
+          await task.update(taskData);
+        } else {
+          await Task.create(taskData);
+        }
+      });
 
       console.log('Tasks have been added.');
     } catch (error) {

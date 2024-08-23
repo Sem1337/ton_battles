@@ -98,7 +98,7 @@ export class GameRoomService {
             }
           ],
           lock: {
-            level: Transaction.LOCK.UPDATE,
+            level: transaction.LOCK.UPDATE,
             of: GameRoom
           }
           ,
@@ -253,7 +253,7 @@ export class GameRoomService {
               },
             }],
           lock: {
-            level: Transaction.LOCK.UPDATE,
+            level: transaction.LOCK.UPDATE,
             of: GameRoom
           },
           transaction
@@ -263,7 +263,7 @@ export class GameRoomService {
           return null;
         }
         const game = await Game.findByPk(gameRoom.currentGame.gameId, {
-          lock: Transaction.LOCK.UPDATE,
+          lock: transaction.LOCK.UPDATE,
           transaction
         });
         if (!game) {

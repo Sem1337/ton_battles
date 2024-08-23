@@ -8,7 +8,7 @@ class Task extends Model {
   public taskDescription!: string;
   public reward!: string;
   public payload!: string;
-  public actionType!: 'url' | 'transaction' | 'other';
+  public actionType!: 'url' | 'transaction' | 'refs' | 'other';
 }
 
 Task.init(
@@ -35,7 +35,7 @@ Task.init(
       allowNull: false,
     },
     actionType: {
-      type: DataTypes.ENUM('url', 'transaction', 'other'),
+      type: DataTypes.ENUM('url', 'transaction', 'refs', 'other'),
       allowNull: false,
     },
   },

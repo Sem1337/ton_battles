@@ -55,6 +55,9 @@ const TaskCardModal: React.FC<TaskCardModalProps> = ({ task, onClose }) => {
         }
       }
         break;
+      case 'refs':
+        await handleTaskCompletion();
+        break;
       case 'other':
         // Implement other action logic
         console.log('Other action');
